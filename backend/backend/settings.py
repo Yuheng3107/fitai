@@ -142,7 +142,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-GOOGLE_CLIENT_ID = "908101547092-2cg5rblc0ppg7dvn8csk6l8p8ehc6crt.apps.googleusercontent.com"
-SOCIAL_SECRET = "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"
-
 SITE_ID = 1
