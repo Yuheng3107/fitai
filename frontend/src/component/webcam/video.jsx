@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 class VideoFeed extends Component {
-    state = {  } 
-    render() { 
-        return (
-            <video src=""></video>
-        );
-    }
+  state = {};
+  render() {
+    return (
+      <div>
+        <video src=""></video>
+      </div>
+    );
+  }
 }
- 
-export default VideoFeed;
 
+export default VideoFeed;

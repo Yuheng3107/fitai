@@ -41,18 +41,10 @@ INSTALLED_APPS = [
     # django rest framework
     'rest_framework',
     'rest_framework.authtoken',
-    'dj_rest_auth',
-    #for social login
-    'allauth',
-    'allauth.account',
-    'dj_rest_auth.registration',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.google',
     # Applications
-    'homepage',
-    'exercise_planner',
-    'live_exercise',
+    'homepage.apps.HomepageConfig',
+    'exercise_planner.apps.ExercisePlannerConfig',
+    'live_exercise.apps.LiveExerciseConfig',
 ]
 
 MIDDLEWARE = [
@@ -141,4 +133,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-SITE_ID = 1
+# Custom User Model
+AUTH_USER_MODEL = 'homepage.AppUser'
