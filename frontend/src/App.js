@@ -23,19 +23,32 @@ function App() {
     () => {
       console.log("useEffect is running");
       if (Object.keys(user).length) {
-        console.log("user state has length")
-        axios
-          .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
-            headers: {
-              Authorization: `Bearer ${user.access_token}`,
-              Accept: 'application/json'
-            }
-          })
-          .then((res) => {
-            console.log(res);
-            setProfile(res.data);
-          })
-          .catch((err) => console.log(err));
+        console.log("user object not empty");
+
+        axios.post(
+          "http://localhost:8000/rest-auth/google/",
+          {
+            access_token: user.access_token,
+          }
+        )
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+        // axios
+        //   .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+        //     headers: {
+        //       Authorization: `Bearer ${user.access_token}`,
+        //       Accept: 'application/json'
+        //     }
+        //   })
+        //   .then((res) => {
+        //     console.log(res);
+        //     setProfile(res.data);
+        //   })
+        //   .catch((err) => console.log(err));
       }
     },
     [user]
