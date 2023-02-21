@@ -1,9 +1,15 @@
 import React, { Component } from "react";
 import { isMobile } from "react-device-detect";
+import * as poseDetection from '@tensorflow-models/pose-detection';
+import * as tf from '@tensorflow/tfjs-core';
+// Register one of the TF.js backends.
+import '@tensorflow/tfjs-backend-webgl';
+// import '@tensorflow/tfjs-backend-wasm';
 
 class VideoFeed extends Component {
   constructor(props) {
     super(props);
+    this.isActive = false;
 
     this.videoRef = React.createRef();
     this.state = {
@@ -37,8 +43,26 @@ class VideoFeed extends Component {
     return (
       <React.Fragment>
         <video ref={this.videoRef} autoPlay></video>
+        <button type="button" onClick={()=> this.start()}>Start</button>
+        <button type="button" onClick={()=> this.end()}>End</button>
       </React.Fragment>
     );
+  }
+
+  async start() {
+    console.log("start");
+    this.isActive = true;
+    const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
+    const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
+    while (this.isActive) {
+      const poses = await detector.estimatePoses(this.videoRef.current);
+      console.log(poses);
+    }  
+  }
+
+  end() {
+    this.isActive = false;
+    console.log("End");
   }
 }
 
