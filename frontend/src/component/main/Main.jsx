@@ -1,4 +1,5 @@
 import React from "react";
+import Webcam from 'react-webcam'
 
 import expandIcon from '../../assets/svg/expand-icon.svg';
 
@@ -9,6 +10,7 @@ function Main() {
     return <main>
         <canvas id="canvas" className="hidden"></canvas>
         <video id="video" className="video-feed" autoplay playsinline alt="Video"></video>
+        <Webcam />
         <div id="rep-info-group">
             <span id="rep-count"></span>
             <p id="rep-feedback"></p>
