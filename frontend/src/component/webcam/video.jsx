@@ -43,24 +43,25 @@ class VideoFeed extends Component {
     return (
       <React.Fragment>
         <video ref={this.videoRef} autoPlay></video>
-        <button type="button" onClick={()=> this.start()}>Start</button>
-        <button type="button" onClick={()=> this.end()}>End</button>
+        <button type="button" onClick={() => this.start()}>Start</button>
+        <button type="button" onClick={() => this.end()}>End</button>
       </React.Fragment>
     );
   }
 
+  ////////
+  // TF movenet
   async start() {
-    console.log("start");
+    console.log("Start");
     this.isActive = true;
     const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
     const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
     while (this.isActive) {
       const poses = await detector.estimatePoses(this.videoRef.current);
-      console.log(poses);
-    }  
+      console.log(poses);  
+    }
   }
-
-  end() {
+  end(){
     this.isActive = false;
     console.log("End");
   }
