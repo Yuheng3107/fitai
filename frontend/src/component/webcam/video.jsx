@@ -74,7 +74,6 @@ class VideoFeed extends Component {
       await delay(1);
     }
   }
-
   end() {
     this.isActive = false;
     console.log("End");
