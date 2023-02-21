@@ -53,6 +53,8 @@ class VideoFeed extends Component {
     );
   }
 
+  ////////
+  // TF movenet
   async start() {
     console.log("start");
     console.log(this);
@@ -69,7 +71,6 @@ class VideoFeed extends Component {
       console.log(poses);
     }
   }
-
   end() {
     this.isActive = false;
     console.log("End");
