@@ -1,12 +1,21 @@
+<<<<<<< HEAD
 import "./App.css";
 import React, { useState, useEffect } from "react";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+=======
+import './App.css';
+
+import Navbar from './component/navbar/Navbar';
+import Main from './component/main/Main';
+import Login from './component/login/Login';
+>>>>>>> 74d22ed8f6b1f62c6435b21427a271d91b689043
 
 import Navbar from "./component/navbar/Navbar";
 
 function App() {
+<<<<<<< HEAD
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
 
@@ -46,10 +55,14 @@ function App() {
     googleLogout();
     setProfile(null);
   };
+=======
+  
+>>>>>>> 74d22ed8f6b1f62c6435b21427a271d91b689043
 
   return (
     <div>
       <Navbar />
+<<<<<<< HEAD
       <span className="text-2xl">testing tailwindCSS text</span>
       <main></main>
       <div>
@@ -83,6 +96,24 @@ function App() {
           </p>
         </div>
       }
+=======
+      <span classNameName="text-2xl">testing tailwindCSS text</span>
+      <Main />
+
+      <Login />
+      
+      {/* <div>
+        <GoogleLogin
+          onSuccess={credentialResponse => {
+            console.log(credentialResponse);
+          }}
+          onError={() => {
+            console.log('Login Failed');
+          }}
+        />;
+        <p>Login State:<span classNameName=''></span></p>
+      </div> */}
+>>>>>>> 74d22ed8f6b1f62c6435b21427a271d91b689043
     </div>
   );
 }
