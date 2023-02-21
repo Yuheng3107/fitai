@@ -80,7 +80,13 @@ class VideoFeed extends Component {
     const detector = this.detector;
     while (this.isActive) {
       let poses = await detector.estimatePoses(this.videoRef.current);
-      console.log(poses);
+      fetch("http://localhost:8000/live_exercise/handle_key_points/", {
+        method: "POST",
+      })
+        .then((response) => response.text())
+        .then((data) => {
+          console.log(data);
+        });
       await delay(1);
     }
   }
