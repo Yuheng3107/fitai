@@ -6,6 +6,11 @@ import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 // import '@tensorflow/tfjs-backend-wasm';
 
+async function delay(ms) {
+  // return await for better async stack trace support in case of errors.
+  return await new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class VideoFeed extends Component {
   constructor(props) {
     super(props);
@@ -24,7 +29,7 @@ class VideoFeed extends Component {
   }
   state = {};
 
-  componentDidMount = () => {
+  async componentDidMount() {
     if (
       "mediaDevices" in navigator &&
       "getUserMedia" in navigator.mediaDevices
@@ -34,9 +39,17 @@ class VideoFeed extends Component {
         .then((stream) => {
           this.setState({ stream });
           this.videoRef.current.srcObject = stream;
+          return new Promise(resolve => {
+            this.videoRef.onloadedmetadata = () => {
+              this.videoRef.play()
+              resolve(this.videoRef)
+            }
+          })
         })
         .catch((error) => console.error(error));
     }
+    const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
+    this.detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
   };
 
   render() {
@@ -54,14 +67,15 @@ class VideoFeed extends Component {
   async start() {
     console.log("Start");
     this.isActive = true;
-    const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
-    const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
+    const detector = this.detector
     while (this.isActive) {
-      const poses = await detector.estimatePoses(this.videoRef.current);
-      console.log(poses);  
+      let poses = await detector.estimatePoses(this.videoRef.current);
+      console.log(poses);
+      await delay(1);
     }
   }
-  end(){
+
+  end() {
     this.isActive = false;
     console.log("End");
   }
