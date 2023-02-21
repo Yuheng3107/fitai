@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { isMobile } from "react-device-detect";
-import * as poseDetection from '@tensorflow-models/pose-detection';
-import * as tf from '@tensorflow/tfjs-core';
+import * as poseDetection from "@tensorflow-models/pose-detection";
+import * as tf from "@tensorflow/tfjs-core";
 // Register one of the TF.js backends.
-import '@tensorflow/tfjs-backend-webgl';
+import "@tensorflow/tfjs-backend-webgl";
 // import '@tensorflow/tfjs-backend-wasm';
 
 async function delay(ms) {
@@ -56,8 +56,12 @@ class VideoFeed extends Component {
     return (
       <React.Fragment>
         <video ref={this.videoRef} autoPlay></video>
-        <button type="button" onClick={() => this.start()}>Start</button>
-        <button type="button" onClick={() => this.end()}>End</button>
+        <button type="button" onClick={() => this.start()}>
+          Start
+        </button>
+        <button type="button" onClick={() => this.end()}>
+          End
+        </button>
       </React.Fragment>
     );
   }
@@ -65,7 +69,8 @@ class VideoFeed extends Component {
   ////////
   // TF movenet
   async start() {
-    console.log("Start");
+    console.log("start");
+    console.log(this);
     this.isActive = true;
     const detector = this.detector
     while (this.isActive) {
