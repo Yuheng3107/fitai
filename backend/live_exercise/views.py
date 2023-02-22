@@ -7,4 +7,6 @@ class HandleKeyPoints(APIView):
     def post(self, request):
         # Data is all in request
         # Put data in json format in Response
-        return Response("hello world")
+        json_data = request.data
+        print(json_data)
+        return Response("Success")
