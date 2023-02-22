@@ -6,7 +6,7 @@ import Login from "./component/login/Login";
 
 function App() {
   return (
-    <div>
+    <div className="bg-zinc-900 text-zinc-50">
       <Navbar />
       <Main />
 

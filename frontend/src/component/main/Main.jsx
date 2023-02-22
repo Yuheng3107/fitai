@@ -8,7 +8,7 @@ import expandIcon from "../../assets/svg/expand-icon.svg";
 
 function Main() {
   return (
-    <main>
+    <main className='flex flex-col items-center'>
       <VideoFeed />
       <div id="rep-info-group">
         <span id="rep-count"></span>

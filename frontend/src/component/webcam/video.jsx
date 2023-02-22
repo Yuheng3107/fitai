@@ -63,13 +63,16 @@ class VideoFeed extends Component {
   render = () => {
     return (
       <React.Fragment>
-        <video ref={this.videoRef} autoPlay></video>
-        <Button onClick={() => this.start()} className="bg-green-400">
-          Start
-        </Button>
-        <Button onClick={() => this.end()} className="bg-amber-200">
-          End
-        </Button>
+        <video className='pt-4 pb-3' ref={this.videoRef} autoPlay></video>
+        <div>
+          <Button onClick={() => this.start()} className="bg-green-400 w-16 mx-2">
+            Start
+          </Button>
+          <Button onClick={() => this.end()} className="bg-amber-200 w-16 mx-2">
+            End
+          </Button>
+        </div>
+
       </React.Fragment>
     );
   };
