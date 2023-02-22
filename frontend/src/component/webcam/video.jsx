@@ -80,10 +80,6 @@ function VideoFeed(props) {
       console.log(poses[0]);
       fetch("http://localhost:8000/live_exercise/handle_key_points/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(poses[0]),
       })
         .then((response) => response.text())
         .then((data) => {

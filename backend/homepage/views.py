@@ -16,5 +16,5 @@ class SaveLoginData(APIView):
         user = User.objects.create_user(email=email, first_name=first_name, last_name=last_name, username=username)
         user.save()
         print(user_data)
-        return Response("User Successully Registered")
+        return Response()
         
