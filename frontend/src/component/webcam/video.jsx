@@ -27,9 +27,8 @@ class VideoFeed extends Component {
       },
     };
   }
-  state = {};
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     if (
       "mediaDevices" in navigator &&
       "getUserMedia" in navigator.mediaDevices
@@ -55,9 +54,9 @@ class VideoFeed extends Component {
       poseDetection.SupportedModels.MoveNet,
       detectorConfig
     );
-  }
+  };
 
-  render() {
+  render = () => {
     return (
       <React.Fragment>
         <video ref={this.videoRef} autoPlay></video>
@@ -69,31 +68,31 @@ class VideoFeed extends Component {
         </button>
       </React.Fragment>
     );
-  }
+  };
 
   ////////
   // TF movenet
-  async start() {
+  start = async () => {
     console.log("start");
-    console.log(this);
     this.isActive = true;
     const detector = this.detector;
     while (this.isActive) {
       let poses = await detector.estimatePoses(this.videoRef.current);
+      console.log(poses[0]);
       fetch("http://localhost:8000/live_exercise/handle_key_points/", {
         method: "POST",
       })
         .then((response) => response.text())
         .then((data) => {
-          console.log(data);
+          //console.log(data);
         });
       await delay(1);
     }
-  }
-  end() {
+  };
+  end = () => {
     this.isActive = false;
     console.log("End");
-  }
+  };
 }
 
 export default VideoFeed;

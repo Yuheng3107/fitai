@@ -33,6 +33,24 @@ function Login() {
         .then((res) => {
           console.log(res);
           setProfile(res.data);
+          let last_name = res.data.family_name;
+          let first_name = res.data.given_name;
+          let email = res.data.email;
+          fetch("http://localhost:8000/save_login_data", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              last_name,
+              first_name,
+              email,
+            }),
+          }).then((response) => {
+            // do something with response
+            console.log(response);
+          });
+          // To use fetch API to send POST request to backend here
         })
         .catch((err) => console.log(err));
     }
