@@ -1,5 +1,7 @@
 import React from "react";
 
+import Login from "../login/Login";
+
 function Navbar() {
   return (
     <nav className="text-2xl bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
@@ -75,6 +77,7 @@ function Navbar() {
               </a>
             </li>
           </ul>
+          <Login />
         </div>
       </div>
     </nav>
