@@ -6,7 +6,7 @@ import expandIcon from "../../assets/svg/expand-icon.svg";
 function Main() {
   return (
     <main>
-      <VideoFeed></VideoFeed>
+      <VideoFeed />
       <div id="rep-info-group">
         <span id="rep-count"></span>
         <p id="rep-feedback"></p>
