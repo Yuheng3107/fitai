@@ -4,17 +4,15 @@ from django.contrib.auth import get_user_model
 class UsersManagersTests(TestCase):
     def test_create_user(self):
         User = get_user_model()
-        user = User.objects.create_user(email="test@user.com", first_name="Test", last_name="Person")
+        user = User.objects.create_user(email="test@user.com", first_name="Test", last_name="Person", username="test_username")
         self.assertEqual(user.email, "test@user.com")
         self.assertEqual(user.first_name, "Test")
         self.assertEqual(user.last_name, "Person")
+        self.assertEqual(user.username, "test_username")
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
-        try:
-            self.assertEqual(user.username, "")
-        except AttributeError:
-            pass
+
         with self.assertRaises(TypeError):
             User.objects.create_user()
         with self.assertRaises(ValueError):

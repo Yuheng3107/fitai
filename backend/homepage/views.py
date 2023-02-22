@@ -11,11 +11,10 @@ class SaveLoginData(APIView):
         first_name = user_data["first_name"]
         last_name = user_data["last_name"]
         email = user_data["email"]
+        username = f"{first_name} {last_name}"
         User = get_user_model()
-        user = User.objects.create_user(email=email, first_name=first_name, last_name=last_name)
+        user = User.objects.create_user(email=email, first_name=first_name, last_name=last_name, username=username)
         user.save()
-
-        print(type(user_data))
         print(user_data)
         return Response()
         
