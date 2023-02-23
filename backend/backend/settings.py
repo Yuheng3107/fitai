@@ -76,6 +76,12 @@ TEMPLATES = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
@@ -108,7 +114,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend', 
+]
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 

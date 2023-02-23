@@ -38,6 +38,7 @@ function Login() {
           let email = res.data.email;
           fetch("http://localhost:8000/save_login_data", {
             method: "POST",
+            credentials: "same-origin",
             headers: {
               "Content-Type": "application/json",
             },

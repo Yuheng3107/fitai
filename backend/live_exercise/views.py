@@ -8,5 +8,6 @@ class HandleKeyPoints(APIView):
         # Data is all in request
         # Put data in json format in Response
         json_data = request.data
-        print(json_data)
+        print(request.session.items())
+        print(request.user)
         return Response("Success")

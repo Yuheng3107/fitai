@@ -1,8 +1,7 @@
 from django.shortcuts import render
 
-from rest_framework.views import APIView
-from rest_framework.views import Response
-from django.contrib.auth import get_user_model
+from rest_framework.views import APIView, Response
+from django.contrib.auth import get_user_model, login, authenticate
 
 class SaveLoginData(APIView):
     def post(self, request):
@@ -13,8 +12,19 @@ class SaveLoginData(APIView):
         email = user_data["email"]
         username = f"{first_name} {last_name}"
         User = get_user_model()
-        user = User.objects.create_user(email=email, first_name=first_name, last_name=last_name, username=username)
-        user.save()
-        print(user_data)
-        return Response("User Successully Registered")
+        print(request.user)
+        try:
+            user = User.objects.get(email=email)
+            login(request, user)
+            return Response("User already in database")
+        except User.DoesNotExist:
+            user = User.objects.create_user(email=email, first_name=first_name, last_name=last_name, username=username)
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            user.save()
+            login(request, user)
+            user.save()
+            print(request.user)
+        print(request.session.items())
+        # Session not saved throughout views
+        return Response("User Successfully Registered")
         
