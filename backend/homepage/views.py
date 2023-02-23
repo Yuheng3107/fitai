@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model, login, authenticate
 class SaveLoginData(APIView):
     def post(self, request):
         user_data = request.data
+        print(user_data)
         # Need to serialize data
         first_name = user_data["first_name"]
         last_name = user_data["last_name"]
@@ -22,9 +23,10 @@ class SaveLoginData(APIView):
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             user.save()
             login(request, user)
-            user.save()
             print(request.user)
         print(request.session.items())
         # Session not saved throughout views
         return Response("User Successfully Registered")
-        
+    
+def index(request):
+    return render(request, 'index.html')
