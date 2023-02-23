@@ -10,6 +10,8 @@ django-cors-headers = "*"
 django-allauth = "*"
 google-api-python-client = "*"
 dj-rest-auth = "*"
+waitress = "*"
+whitenoise = "*"
 
 [dev-packages]
 

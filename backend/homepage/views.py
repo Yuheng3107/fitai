@@ -1,7 +1,8 @@
 from django.shortcuts import render
 
 from rest_framework.views import APIView, Response
-from django.contrib.auth import get_user_model, login, authenticate
+from django.contrib.auth import get_user_model, login
+
 
 class SaveLoginData(APIView):
     def post(self, request):
@@ -27,6 +28,3 @@ class SaveLoginData(APIView):
         print(request.session.items())
         # Session not saved throughout views
         return Response("User Successfully Registered")
-    
-def index(request):
-    return render(request, 'index.html')

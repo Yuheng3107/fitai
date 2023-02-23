@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "51559dbf1c2f56ed448ca7d96fbc3d22acbdd71459f096578ac5b11bafe77c89"
+            "sha256": "d974a0dd274cd64c71afd2e206fb7225bdb2e694743ad8517f377aeac1e0b3f0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -286,11 +286,11 @@
         },
         "google-api-python-client": {
             "hashes": [
-                "sha256:32d56a7522a338e525b9c664773230fc8ce382204d4b690eec67a3f8d55d9d63",
-                "sha256:34a7b73048d7573e99130ebba0a390929382690adccf605b188e74585fc94ea6"
+                "sha256:577c0aeae1eb3c754eacb9122d369d67609fef759bc6a4fa16cafeab4f30019b",
+                "sha256:b9b6dc5f139892310093ba75d0df4c78f48655078953c923957dab1ec86129e7"
             ],
             "index": "pypi",
-            "version": "==2.78.0"
+            "version": "==2.79.0"
         },
         "google-auth": {
             "hashes": [
@@ -489,6 +489,22 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
             "version": "==1.26.14"
+        },
+        "waitress": {
+            "hashes": [
+                "sha256:7500c9625927c8ec60f54377d590f67b30c8e70ef4b8894214ac6e4cad233d2a",
+                "sha256:780a4082c5fbc0fde6a2fcfe5e26e6efc1e8f425730863c04085769781f51eba"
+            ],
+            "index": "pypi",
+            "version": "==2.1.2"
+        },
+        "whitenoise": {
+            "hashes": [
+                "sha256:cf8ecf56d86ba1c734fdb5ef6127312e39e92ad5947fef9033dc9e43ba2777d9",
+                "sha256:fe0af31504ab08faa1ec7fc02845432096e40cc1b27e6a7747263d7b30fb51fa"
+            ],
+            "index": "pypi",
+            "version": "==6.3.0"
         }
     },
     "develop": {}
