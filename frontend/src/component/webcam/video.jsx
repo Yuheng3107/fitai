@@ -6,9 +6,7 @@ import * as tf from "@tensorflow/tfjs-core";
 import "@tensorflow/tfjs-backend-webgl";
 // import '@tensorflow/tfjs-backend-wasm';
 
-
 import Button from "../ui/Button";
-
 
 async function delay(ms) {
   // return await for better async stack trace support in case of errors.
@@ -63,16 +61,18 @@ class VideoFeed extends Component {
   render = () => {
     return (
       <React.Fragment>
-        <video className='pt-4 pb-3' ref={this.videoRef} autoPlay></video>
+        <video className="pt-4 pb-3" ref={this.videoRef} autoPlay></video>
         <div>
-          <Button onClick={() => this.start()} className="bg-green-400 w-16 mx-2">
+          <Button
+            onClick={() => this.start()}
+            className="bg-green-400 w-16 mx-2"
+          >
             Start
           </Button>
           <Button onClick={() => this.end()} className="bg-amber-200 w-16 mx-2">
             End
           </Button>
         </div>
-
       </React.Fragment>
     );
   };
@@ -88,15 +88,16 @@ class VideoFeed extends Component {
       console.log(poses[0]);
       fetch("http://localhost:8000/live_exercise/handle_key_points/", {
         method: "POST",
+        credentials: "include", // include cookies in the request
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": document.cookie.match(/csrftoken=([\w-]+)/)[1],
         },
-        body: JSON.stringify(poses[0]),
+        body: JSON.stringify(),
       })
-        .then((response) => response.text())
-        .then((data) => {
-          //console.log(data);
-        });
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error));
       await delay(1);
     }
   };

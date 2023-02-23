@@ -149,8 +149,8 @@ WHITENOISE_ROOT = FRONTEND_DIR / 'build' / 'root'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://localhost:8000']
 # Custom User Model
 AUTH_USER_MODEL = 'homepage.AppUser'

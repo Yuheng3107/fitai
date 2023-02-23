@@ -1,18 +1,38 @@
 import React, { useState, useEffect } from "react";
-import { googleLogout, useGoogleLogin } from "@react-oauth/google";
+import {
+  googleLogout,
+  useGoogleLogin,
+  useGoogleOneTapLogin,
+} from "@react-oauth/google";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
 function Login() {
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
+  const csrftoken = document.cookie.match(/csrftoken=([\w-]+)/)[1];
 
+  useGoogleOneTapLogin({
+    onSuccess: (credentialResponse) => {
+      console.log(credentialResponse);
+      setUser(credentialResponse);
+    },
+    onError: () => {
+      console.log("Login Failed");
+    },
+  });
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
       console.log(codeResponse);
       setUser(codeResponse);
     },
-    onError: (error) => console.log("Login Failed:", error),
+    onError: (error) => {
+      console.log("Login Failed:", error);
+    },
+    onNonOAuthError: (error) => {
+      console.log("Non Auth Error");
+      console.log(error);
+    },
   });
 
   useEffect(() => {
@@ -36,10 +56,12 @@ function Login() {
           let last_name = res.data.family_name;
           let first_name = res.data.given_name;
           let email = res.data.email;
+
           fetch("http://localhost:8000/save_login_data", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "X-CSRFToken": csrftoken,
             },
             body: JSON.stringify({
               last_name,
@@ -71,7 +93,7 @@ function Login() {
           <p>Email Address: {profile.email}</p>
           <br />
           <br />
-          <button onClick={logOut}>Log out</button>
+          <button onClick={() => logOut()}>Log out</button>
         </div>
       ) : (
         <button onClick={() => login()}>Sign in with Google 🚀 </button>
