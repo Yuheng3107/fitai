@@ -39,7 +39,7 @@ function Login() {
     console.log("useEffect is running");
     if (Object.keys(user).length) {
       console.log("user object not empty");
-      document.cookie.match(/csrftoken=([\w-]+)/)[1];
+      csrftoken = document.cookie.match(/csrftoken=([\w-]+)/)[1];
       axios
         .get(
           `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
