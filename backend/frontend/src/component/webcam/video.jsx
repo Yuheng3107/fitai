@@ -6,6 +6,10 @@ import * as tf from "@tensorflow/tfjs-core";
 import "@tensorflow/tfjs-backend-webgl";
 // import '@tensorflow/tfjs-backend-wasm';
 
+
+import Button from "../ui/Button";
+
+
 async function delay(ms) {
   // return await for better async stack trace support in case of errors.
   return await new Promise((resolve) => setTimeout(resolve, ms));
@@ -59,13 +63,16 @@ class VideoFeed extends Component {
   render = () => {
     return (
       <React.Fragment>
-        <video ref={this.videoRef} autoPlay></video>
-        <button type="button" onClick={() => this.start()}>
-          Start
-        </button>
-        <button type="button" onClick={() => this.end()}>
-          End
-        </button>
+        <video className='pt-4 pb-3' ref={this.videoRef} autoPlay></video>
+        <div>
+          <Button onClick={() => this.start()} className="bg-green-400 w-16 mx-2">
+            Start
+          </Button>
+          <Button onClick={() => this.end()} className="bg-amber-200 w-16 mx-2">
+            End
+          </Button>
+        </div>
+
       </React.Fragment>
     );
   };

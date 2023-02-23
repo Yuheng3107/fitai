@@ -1,22 +1,25 @@
 import React from "react";
 import Webcam from "react-webcam";
+
 import VideoFeed from "../webcam/video";
+import Button from "../ui/Button";
+import Select from "../ui/Select";
 import expandIcon from "../../assets/svg/expand-icon.svg";
 
 function Main() {
   return (
-    <main>
-      <VideoFeed></VideoFeed>
+    <main className='flex flex-col items-center'>
+      <VideoFeed />
       <div id="rep-info-group">
         <span id="rep-count"></span>
         <p id="rep-feedback"></p>
       </div>
-      <p id="main-feedback-group" className="text-center">
-        <span id="main-feedback" className="text-center"></span>
+      <p id="main-feedback-group" classNameName="text-center">
+        <span id="main-feedback" classNameName="text-center"></span>
       </p>
       <a
         id="feedback-button"
-        className="btn btn-secondary"
+        classNameName="btn btn-secondary"
         href="/errors"
         target="_blank"
       >
@@ -28,32 +31,33 @@ function Main() {
         <img src={expandIcon} alt="expand icon" />
       </button>
       <ul id="feedback-list"></ul>
-      <div id="start-button-group" className="flex">
-        <button id="start-button" className="btn btn-success mt-3">
+      <div id="start-button-group" classNameName="flex">
+        <button id="start-button" classNameName="btn btn-success mt-3">
           Start Camera
         </button>
-        <a className="btn btn-secondary mt-3" href="instructions">
+        <a classNameName="btn btn-secondary mt-3" href="instructions">
           Instructions
         </a>
       </div>
 
-      <form class="flex-row mt-3" id="changeExercise">
-        <select class="form-select" name="exerciseId" id="changeExercise">
+      <form className="flex-row mt-3" id="changeExercise">
+        <Select className="form-select" 
+        name="exerciseId" id="changeExercise">
           <option selected value="0">
             Squat (Right Side)
           </option>
           <option value="1">Squat (Front)</option>
           <option value="2">Push-Up (Right Side)</option>
-        </select>
+        </Select>
         <input
-          class="ms-2 btn btn-outline-info d-inline"
+          className="ms-2 btn btn-outline-info d-inline"
           type="submit"
           value="Start Exercise"
         />
       </form>
-      <button id="end-button" class="btn btn-secondary">
+      <Button id="end-button" className="bg-sky-300">
         End Exercise
-      </button>
+      </Button>
       <div id="alerter"></div>
     </main>
   );
