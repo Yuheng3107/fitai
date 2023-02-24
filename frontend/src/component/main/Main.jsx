@@ -14,12 +14,12 @@ function Main() {
         <span id="rep-count"></span>
         <p id="rep-feedback"></p>
       </div>
-      <p id="main-feedback-group" classNameName="text-center">
-        <span id="main-feedback" classNameName="text-center"></span>
+      <p id="main-feedback-group" className="text-center">
+        <span id="main-feedback" className="text-center"></span>
       </p>
       <a
         id="feedback-button"
-        classNameName="btn btn-secondary"
+        className="btn btn-secondary"
         href="/errors"
         target="_blank"
       >
@@ -31,11 +31,11 @@ function Main() {
         <img src={expandIcon} alt="expand icon" />
       </button>
       <ul id="feedback-list"></ul>
-      <div id="start-button-group" classNameName="flex">
-        <button id="start-button" classNameName="btn btn-success mt-3">
+      <div id="start-button-group" className="flex">
+        <button id="start-button" className="btn btn-success mt-3">
           Start Camera
         </button>
-        <a classNameName="btn btn-secondary mt-3" href="instructions">
+        <a className="btn btn-secondary mt-3" href="instructions">
           Instructions
         </a>
       </div>
