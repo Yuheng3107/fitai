@@ -5,7 +5,7 @@ import Main from "../components/main/Main"
 
 function App() {
   return (
-    <div className="dark:bg-zinc-900 dark:text-zinc-50">
+    <div className="h-screen dark:bg-zinc-900 dark:text-zinc-50">
       <Navbar />
       <Main />
 

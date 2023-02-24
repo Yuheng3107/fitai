@@ -1,5 +1,6 @@
 import React from "react";
 import Webcam from "react-webcam";
+import Image from "next/future/image";
 
 import VideoFeed from "../webcam/video";
 import Button from "../ui/Button";
@@ -28,7 +29,7 @@ function Main() {
       <p id="emotion-feedback"></p>
       <button id="show-log-button">
         <span>Show Feedback Log</span>
-        <img src={expandIcon} alt="expand icon" />
+        <Image src={expandIcon} alt="expand icon" />
       </button>
       <ul id="feedback-list"></ul>
       <div id="start-button-group" className="flex">

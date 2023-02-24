@@ -65,11 +65,13 @@ class VideoFeed extends Component {
         <div>
           <Button
             onClick={() => this.start()}
-            className="bg-green-400 w-16 mx-2"
+            className="bg-green-300 w-16 mx-2 text-zinc-900 
+            dark:bg-lime-700 dark:hover:bg-lime-500 dark:text-zinc-100"
           >
             Start
           </Button>
-          <Button onClick={() => this.end()} className="bg-amber-200 w-16 mx-2">
+          <Button onClick={() => this.end()} className="bg-amber-200 w-16 mx-2 text-zinc-900 
+          dark:bg-yellow-600 dark:hover:bg-amber-500 dark:text-zinc-100 ">
             End
           </Button>
         </div>
