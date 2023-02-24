@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
-
+from django.middleware.csrf import get_token
 
 class SaveLoginData(APIView):
     def post(self, request):
@@ -16,6 +16,7 @@ class SaveLoginData(APIView):
         User = get_user_model()
         print(request.user)
         response = HttpResponse()
+        csrf_token = get_token(request)
         try:
             user = User.objects.get(email=email)
             login(request, user)
