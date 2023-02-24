@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Login from "../login/Login";
 
 function Navbar() {
+
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
+
+  function showMobileMenu() {
+    setMobileMenuVisible((prevState) => {
+      return !prevState;
+    });
+  }
+
+
   return (
     <nav className="text-2xl bg-white text-zinc-900 border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
-      <div className="container flex flex-wrap items-center justify-between mx-auto">
+      <div className="container flex flex-wrap flex-row items-center justify-between mx-auto">
         <a href="#" className="flex items-center">
           <span className="self-center text-2xl font-semibold whitespace-nowrap text-zinc-900 dark:text-white">
             FIT AI
@@ -17,6 +27,7 @@ function Navbar() {
           className="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
           aria-controls="navbar-default"
           aria-expanded="false"
+          onClick={showMobileMenu}
         >
           <span className="sr-only">Open main menu</span>
           <svg
@@ -33,7 +44,7 @@ function Navbar() {
             ></path>
           </svg>
         </button>
-        <div className="hidden w-full md:block md:w-auto" id="navbar-default">
+        <div className={`${mobileMenuVisible ? "hidden" : "block"} w-full md:block md:w-auto`} id="navbar-default">
           <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
             <li>
               <a

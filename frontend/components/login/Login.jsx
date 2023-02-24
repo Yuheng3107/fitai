@@ -6,8 +6,11 @@ import {
 } from "@react-oauth/google";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import Image from 'next/future/image';
 
 import Button from "../ui/Button";
+
+import googleIcon from "../../public/assets/svg/google-icon.svg";
 
 function Login() {
   const [user, setUser] = useState({});
@@ -98,7 +101,9 @@ function Login() {
           <button onClick={() => logOut()}>Log out</button>
         </div>
       ) : (
-        <Button className="text-base border border-gray-800 border-1" onClick={() => login()}>Sign in with Google </Button>
+        <Button className="flex flex-row items-center dark:text-zinc-100 dark:border-zinc-100 text-base border border-gray-800 border-1" onClick={() => login()}>
+          Sign in with Google <Image className="ml-2" src={googleIcon} alt="Google icon" width="20" height={20} ></Image>
+        </Button>
       )}
     </div>
   );
