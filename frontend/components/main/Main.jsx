@@ -4,7 +4,7 @@ import Webcam from "react-webcam";
 import VideoFeed from "../webcam/video";
 import Button from "../ui/Button";
 import Select from "../ui/Select";
-import expandIcon from "../../assets/svg/expand-icon.svg";
+import expandIcon from "../../public/assets/svg/expand-icon.svg";
 
 function Main() {
   return (
