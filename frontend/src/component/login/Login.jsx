@@ -7,6 +7,8 @@ import {
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
+import Button from "../ui/Button";
+
 function Login() {
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
@@ -96,7 +98,7 @@ function Login() {
           <button onClick={() => logOut()}>Log out</button>
         </div>
       ) : (
-        <button onClick={() => login()}>Sign in with Google 🚀 </button>
+        <Button className="text-base border border-gray-800 border-1" onClick={() => login()}>Sign in with Google </Button>
       )}
     </div>
   );

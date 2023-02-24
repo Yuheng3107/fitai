@@ -2,4 +2,3 @@
 venv/*
 myenv/*
 node_modules
-backend/db.sqlite3

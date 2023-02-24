@@ -4,10 +4,10 @@ import Login from "../login/Login";
 
 function Navbar() {
   return (
-    <nav className="text-2xl bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
+    <nav className="text-2xl bg-white text-zinc-900 border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
       <div className="container flex flex-wrap items-center justify-between mx-auto">
-        <a href="https://flowbite.com/" className="flex items-center">
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+        <a href="#" className="flex items-center">
+          <span className="self-center text-2xl font-semibold whitespace-nowrap text-zinc-900 dark:text-white">
             FIT AI
           </span>
         </a>
