@@ -50,5 +50,5 @@ class GetLoginData(APIView):
         
 class CheckLoginStatus(APIView):
     def get(self, request):
-        return Response(json.dumps(request.user.is_authenticated))
+        return Response(json.dumps({"true": request.user.is_authenticated}))
         
