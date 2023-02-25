@@ -42,9 +42,8 @@ function Main() {
       </div>
 
       <form className="flex-row mt-3" id="changeExercise">
-        <Select className="form-select" 
-        name="exerciseId" id="changeExercise">
-          <option selected value="0">
+        <Select defaultValue="0" className="form-select" name="exerciseId" id="changeExercise">
+          <option  value="0">
             Squat (Right Side)
           </option>
           <option value="1">Squat (Front)</option>
