@@ -4,14 +4,26 @@
  * @param n number of selected frames
  * @param x key angles (11)
  */
-let selectedFrames;
+let frameArray;
+
+/**
+ * Number of frames
+ * @type {Number}
+ */
+let frameCount;
 
 /**
  * Scores of each stored frame
  * @type {Float32Array(n)}
  * @param n number of selected frames
  */
-let selectedFrameScores;
+let frameScores;
+
+/**
+ * Number of invalid frames in a row
+ * @type {Number}
+ */
+let invalidFrameCount;
 
 /**
  * The correct pose
@@ -28,13 +40,20 @@ let evalPose;
 let glossary;
 
 /**
- * Whether in keypose (depreciated)
- * @type {boolean}
+ * 0: 1st start Frame. 1: 1st mid Frame. 2: 1st end Frame.
+ * @type {Int8Array}
  */
-let inPose;
+let poseStates;
 
 /**
- * Weights that each angle should have in evaluation
+ * Acceptable rate of change for mid part of exercise to be within
+ * @type {Number}
+ */
+let scoreThreshold;
+
+/**
+ * Weights that each angle should have in evaluation. 
+ * Positive for angles that decrease as the exercise approaches the key pose, negative if vice versa.
  * @type {Float32Array(x)}
  */
 let angleWeights;
@@ -49,21 +68,34 @@ let angleThresholds;
 
 /**
  * number of times angle was too small
- * @type {let32Array(x)} 
+ * @type {Int8Array(x)} 
  */
 let smallErrorCount;
 
 /**
  * number of times angle was too large
- * @type {let32Array(x)}
+ * @type {Int8Array(x)}
  */
 let largeErrorCount;
 
 /**
  * number of perfect reps
- * @type {let}
+ * @type {Number}
  */
 let perfectReps;
+
+
+/**
+ * Array of feedback for each rep
+ * @type {Array(string)}
+ */
+ let repFeedback;
+
+ /**
+ * Number of completed reps
+ * @type {Number}
+ */
+ let repCount;
 
 /**
  * evaluates the similarity between the current pose (curPose)
@@ -72,10 +104,11 @@ let perfectReps;
     then store the angleDifferences to be processed when the rep is completed.
     It also evaluates the emotions of the user to determine level of workout.
  * @param {Float32Array} keypoints keypoints detected by MoveNet
- * @param {int} height height of img
- * @param {int} width width of img
+ * @param {Number} height height of img
+ * @param {Number} width width of img
  * @returns {idek} something
  */
+
 function run(keypoints, height, width) {
   let curPose = processData(keypoints,height,width);
   let score = poseScore(curPose);
@@ -84,6 +117,7 @@ function run(keypoints, height, width) {
     if (invalidFrameCount > 6) return ["Position Self in Frame"];
     return [];
   }
+  frameCount += 1;
   let frameStatus = shouldSelectFrames(score);
   return [];
 }
@@ -93,8 +127,10 @@ function run(keypoints, height, width) {
  * Called: when a rep is finished.
  */
 function resetFrames () {
-  selectedFrames = new Float32Array();
-  selectedFrameScores = new Float32Array();
+  frameArray = initArray();
+  frameCount = 0;
+  frameScores = initArray();
+  poseStates = new Int8Array(3);
 }
 
 /**
@@ -114,7 +150,7 @@ function resetAll () {
  * @returns {Float32Array} Array with size keyAngles
  */
 function initArray() {
-  return new Float32Array(0,0,0,0,0,0,0,0,0,0,0);
+  return new Float32Array(11);
 }
 
 /*
@@ -125,28 +161,31 @@ These methods are called once per exercise.
 /**
  * Initialises all necessary values for the exercise from the backend
  * @param {Float32Array} evalpose The correct pose
+ * @param {Number} scorethreshold Acceptable rate of change for mid part of exercise to be within
  * @param {Float32Array} angleweights Weights that each angle should have in evaluation
  * @param {Float32Array} anglethresholds Differences in angles required for feedback to be given 
  * @param {Array} glossaryy Text descriptions of each mistake
  */
-function init (evalpose, angleweights, anglethresholds, glossaryy) {
+function init (evalpose, scorethreshold, angleweights, anglethresholds, glossaryy) {
   evalPose = evalpose;
+  scoreThreshold = scorethreshold;
   angleWeights = angleweights;
   angleThresholds = anglethresholds;
   glossary = glossaryy;
   resetAll();
 }
+
 /**
- * Used to convert the rep feedback leto a feedback summary for the user.
+ * Used to convert the rep feedback into a feedback summary for the user.
  * Called: when exercise is finished. 
- * @enum smallErrorCount
- * @enum largeErorrCount
- * @enum feedback
+ * @param smallErrorCount
+ * @param largeErorrCount
+ * @param feedback
  * @returns {string} feedback for that rep
  */
 function summariseFeedback() {
   let feedback =  "";
-  feedback.push(repCount.toString() + " reps completed. ");
+  feedback += repCount.toString() + " reps completed. ";
   let n = smallErrorCount.length;
   for (let i=0;i<n;i++) {
       if (smallErrorCount[i] != 0) {
@@ -167,15 +206,17 @@ These methods are called once per rep.
 /**
  * Changes inPose to being in rest pose, gets the feedback for the rep, then deletes all frame data of the rep.
  * Called: when rep is finished.
- * @enum inPose
+ * @param inPose
  */
 function finishRep() {
+  repCount += 1;
   let angleDifferences = compareAngles();
+  
   repFeedback.push(giveFeedback(angleDifferences));
   resetFrames();
   
   inPose = false;
-    switchPoseCount = 0;
+  // tell backend?
 }
 
 /**
@@ -190,11 +231,11 @@ function middleOfRep() {
 /**
  * Used to process angle data leto text feedback to feed to front-end
  * Called: when rep is finished.
- * @param {Float32Array(x)} angleDifferences angle differences, positive is too large, negative is too small, 0 is no significant difference
+ * @param {Float32Array} angleDifferences angle differences, positive is too large, negative is too small, 0 is no significant difference
  * @returns {string} errors made in rep
  */
 function giveFeedback(angleDifferences) {
-  let feedback = "Rep " + repcount.toString() + ": ";
+  let feedback = "Rep " + repCount.toString() + ": ";
   let hasError = false;
   if (angleDifferences[0] == -99) {
     feedback += "No Frames Detected. ";
@@ -224,28 +265,27 @@ function giveFeedback(angleDifferences) {
 /**
  * Calculates the difference between ideal and observed angles in user's pose
  * Called: when rep is finished.
- * @enum evalPose
- * @enum angleThresholds
- * @enum selectedFrames
- * @param {Float32Array(11)} curPose the current pose detected by the camera.
- * @returns 
+ * @param evalPose
+ * @param angleThresholds
+ * @param frameArray
+ * @returns {Float32Array} differences large enough to count as errors
  */
-function compareAngles(curPose) {
+function compareAngles () {
   let n = evalPose.length;
-  if (selectedFrames.length == 0) {
-    return new Float32Array(-99);
+  if (frameArray.length == 0) {
+    return new Float32Array([-99]);
   }
   
-  let differences = new Float32Array();
+  let differences = initArray();
   // sum frames
-  for (let i=0;i<selectedFrames.length;i++) {
+  for (let i=0;i<frameArray.length;i++) {
     for (let j=0;j<n;j++) {
-      differences[j] += selectedFrames[i][j];
+      differences[j] += frameArray[i][j];
     }
   }
   for (let i=0;i<n;i++) {
     // average frames
-    differences[i] /= selectedFrames.length;
+    differences[i] /= frameArray.length;
     // finding difference
     differences[i] -= evalPose[i];
     // 0 if +ve, 1 if -ve
@@ -261,12 +301,12 @@ function compareAngles(curPose) {
 }
 
 /**
- * DEPRECIATED;
+ * @deprecated
  * Evaluates if rep time is too short
  * Called: when rep is finished
  * @param {*} evalTime 
  * @param {*} repTime 
- * @returns {int} 1 or 0
+ * @returns {Number} 1 or 0
  */
 function compareTime (evalTime, repTime) {
   if (repTime < evalTime) return 1;
@@ -280,38 +320,37 @@ These methods are called once per frame.
 */
 
 /**
- * DEPRECIATED;
+ * IM REWRITING THIS SHIT
  * Used to determine whether to select a frame to be used for evaluation of errors.
  * Called: every frame while rep detection is active.
- * @emun scoreThreshold
- * @param {float} score score returned by comparePoses, 0 being completely similar and 1 being completely different.
- * @returns 1 if selected, 0 if not selected, -1 if invalid
+ * @param {Number} scoreThreshold
+ * @param {Number} score score returned by comparePoses, 0 being completely similar and 1 being completely different.
+ * @returns 1 if selected, 2 if end of rep, 0 if nothing, -1 if invlid data
  */
 function shouldSelectFrames (score) {
-  if (score == -1) {
-    return -1;
+  if (score == -1) return -1;
+  // look for minimum score
+  if (score < minScore) {
+    minScore = score;
+    minFrame = frameCount;
+    increasingFrameCount = 0;
+    return 1;
   }
-  // REWRITE
+  // if no min score, count 3 frames before passing on 
+  increasingFrameCount += 1;
+  if (increasingFrameCount >= 3) {
+    //signify end of rep
+    return 2;
+  }
   return 0;
-}
-
-/**
- * Used to change between user being in a key pose and rest pose. If user is in key pose, add valid frames to selectedFrames.
- * Called: every frame while rep detection is active.
- * @param {Float32Array(x)} curPose the current pose detected by the camera.
- */
-function checkPose (curPose) {
-
-  return {};
-
 }
 
 /**
  * Used to convert keypoint data into angle data
  * Called: every frame while rep detection is active.
  * @param {Array} keypoints keypoints detected by MoveNet
- * @param {int} height height of img
- * @param {int} width width of img
+ * @param {Number} height height of img
+ * @param {Number} width width of img
  * @returns {Float32Array} angle data of the pose
  */
 function processData (keypoints, height, width) {
@@ -325,7 +364,7 @@ function processData (keypoints, height, width) {
   }
   let lines = new Array();
   // vertical
-  lines[0] = new Float32Array(0,1);
+  lines[0] = new Float32Array([0,1]);
 
   // leftShoulder-leftElbow
   lines[1] = makeLine(keypoints[5],keypoints[7]);
@@ -354,7 +393,7 @@ function processData (keypoints, height, width) {
   
   
   // curPose, 0 is invalid data
-  let curPose = new Float32Array();
+  let curPose = initArray();
 
   // rightHip-rightShoulder-rightElbow
   curPose[0] = calcAngle(negative(lines[6]),lines[2]);
@@ -384,18 +423,18 @@ function processData (keypoints, height, width) {
 }
 
 /**
- * Used to determine what state of the pose user is currently in.
+ * Pose Score decreases as the exercise approaches the key pose.
  * Called: every frame while rep detection is active.
- * @enum angleWeights
+ * @param angleWeights weight of each angle. 
  * @param {Float32Array} curPose 
- * @returns {float} a score between 0 and 1, 0 being completely similar and 1 being completely different. -1 if curPose is missing crucial angle data.
+ * @returns {Number} a score between 0 and 1, 0 being completely similar and 1 being completely different. -1 if curPose is missing crucial angle data.
  */
 function poseScore (curPose) {
   let angleWeightSum = 0;
   let n = curPose.length;
   let score = 0;
   for (let i=0;i<n;i++) {
-      angleWeightSum += angleWeights[i];
+      angleWeightSum += Math.abs(angleWeights[i]);
   }
   if (angleWeightSum == 0) return -1;
   for (let i=0;i<n;i++) {
@@ -411,17 +450,17 @@ function poseScore (curPose) {
 
 /**
  * Makes a line from 2 points
- * @param {float} point1 
- * @param {float} point2 
+ * @param {Float32Array} point1 
+ * @param {Float32Array} point2 
  * @returns {Float32Array} line from point1 to point2, (0,0) if the points cannot be calculated due to missing keypoint
  */
 function makeLine (point1, point2) {
   if((point1[0] == 0 && point1[1] == 0) || point2[0] == 0 && point2[1] == 0) {
-      return new Float32Array(0,0);
+    return new Float32Array([0,0]);
   }
-  let line = new Float32Array();
+  let line = new Float32Array(2);
   for (let i=0;i<point1.length;i++) {
-      line[i] = point2[i]-point1[i];
+    line[i] = point2[i]-point1[i];
   }
   return line;
 }
@@ -430,7 +469,7 @@ function makeLine (point1, point2) {
  * Calculates angle between 2 lines
  * @param {Float32Array} line1 
  * @param {Float32Array} line2 
- * @returns {float} angle between line1 and line2, 0 if the angle cannot be calculated due to missing line
+ * @returns {Number} angle between line1 and line2, 0 if the angle cannot be calculated due to missing line
  */
 function calcAngle (line1, line2) {
     if((line1[0] == 0 && line1[1] == 0) || line2[0] == 0 && line2[1] == 0) {
@@ -441,14 +480,14 @@ function calcAngle (line1, line2) {
     for (let i=0;i<2;i++) {
       dotproduct += line1[i]*line2[i];
     }
-    angle /= normalise(line1)*normalise(line2);
-    return Math.acos(angle);
+    dotproduct /= normalise(line1)*normalise(line2);
+    return Math.acos(dotproduct);
 }
 
 /**
  * Finds length of a line
  * @param {Float32Array} line 
- * @returns {float} the length of a line
+ * @returns {Number} the length of a line
  */
 function normalise (line) {
   if (line.length != 2) return -1; 
@@ -457,9 +496,9 @@ function normalise (line) {
 
 /**
  * Averages 2 angles
- * @param {*} angle1 
- * @param {*} angle2 
- * @returns {float} average of 2 angles, one of the angles if the other is missing, or 0 if both are missing
+ * @param {Number} angle1 
+ * @param {Number} angle2 
+ * @returns {Number} average of 2 angles, one of the angles if the other is missing, or 0 if both are missing
  */
 function calcAvg (angle1, angle2) {
     if (angle1 == 0) return angle2;
@@ -473,9 +512,23 @@ function calcAvg (angle1, angle2) {
  * @returns {Float32Array} negative of the array
  */
 function negative (x) {
-    let n = x.length;
-    for (let i=0;i<n;i++) {
-        x[i] = -x[i];
-    }
-    return x;
+  
+  let n = x.length;
+  let negArray = new Float32Array(n);
+  for (let i=0;i<n;i++) {
+    negArray[i] = -x[i];
+  }
+  return negArray;
 }
+
+let point1 = new Float32Array([2.0,2.0]);
+console.log(point1);
+let point2 = negative(point1);
+console.log(point1);
+console.log(point2);
+let point3 = new Float32Array([4,3]);
+let line1 = makeLine(point1,point3);
+console.log(line1);
+let line2 = ([5,4]);
+let angle = calcAngle(line1,line2);
+console.log(angle);
