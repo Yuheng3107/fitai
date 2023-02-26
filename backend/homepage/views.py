@@ -1,9 +1,12 @@
 from django.shortcuts import render
 
-from rest_framework.views import APIView
+from rest_framework.views import APIView, Response
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
 from django.middleware.csrf import get_token
+from .serializer import UserSerializer
+from rest_framework.renderers import JSONRenderer
+import json
 
 class SaveLoginData(APIView):
     def post(self, request):
@@ -31,3 +34,21 @@ class SaveLoginData(APIView):
             print(request.user)
         # Session not saved throughout views
         return response
+
+class GetLoginData(APIView):
+    def get(self, request):
+        # For Debugging
+        print(request.user)
+        # To retrieve data such as first and last name and email from user
+        if (request.user.is_authenticated):
+            serializer = UserSerializer(request.user)
+            print(serializer.data)
+            json = JSONRenderer().render(serializer.data)
+            return Response(json)
+        else:
+            return Response("User is not authenticated")
+        
+class CheckLoginStatus(APIView):
+    def get(self, request):
+        return Response(json.dumps({"true": request.user.is_authenticated}))
+        
