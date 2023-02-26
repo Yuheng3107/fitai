@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 
-import { setCookie, removeCookie, getCookie } from '../../utils/cookie';
-import Cookies from 'js-cookie';
-
 import Login from "../login/Login";
 
 
 function Navbar() {
 
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
-  const sessionid = getCookie('sessionid');
-  console.log(Cookies.get());
 
+
+  useEffect(() => {
+    props.fetchLogin
+  }, [])
 
   function showMobileMenu() {
     setMobileMenuVisible((prevState) => {
       return !prevState;
     });
   }
+
+
 
 
   return (
