@@ -7,6 +7,7 @@ import "@tensorflow/tfjs-backend-webgl";
 // import '@tensorflow/tfjs-backend-wasm';
 
 import Button from "../ui/Button";
+import * as formCorrection from "../../utils/formCorrection.js";
 
 async function delay(ms) {
   // return await for better async stack trace support in case of errors.
@@ -49,6 +50,7 @@ class VideoFeed extends Component {
         })
         .catch((error) => console.error(error));
     }
+
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
@@ -85,9 +87,33 @@ class VideoFeed extends Component {
     console.log("start");
     this.isActive = true;
     const detector = this.detector;
+
+    let evalposes = new Array();
+    evalposes[1] = new Float32Array([0.,0.,0.,0.,1.65,0.,0.,0.,0.44,0.,0.]);
+    let angleweights = new Float32Array([0.,0.,0.,0.,1.,0.,0.,0.,0.1,0.,0.]);
+    let anglethresholds = new Array();
+    anglethresholds[1] = new Array(new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.14,0.13]), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.15,0]),new Float32Array(2), new Float32Array(2))
+    let glossaryy = new Array();
+    glossaryy[1] = [['',''],['',''],['',''],['',''],
+    ['Squat not low enough','Squat too low'],
+    ['',''],['',''],['',''],
+    ['Leaning forward too much',''],
+    ['',''],['','']];
+    formCorrection.init(evalposes,0.1,angleweights,anglethresholds,glossaryy);
+
     while (this.isActive) {
       let poses = await detector.estimatePoses(this.videoRef.current);
-      console.log(poses[0]);
+      await delay(1);
+      // process raw data
+      console.log(poses);
+      let feedback = formCorrection.run(poses);
+      if (feedback != undefined) {
+        console.log(feedback);
+      }
+      
+      // formCorrection.run(poses)
+
+      /*
       fetch("http://localhost:8000/live_exercise/handle_key_points/", {
         method: "POST",
         credentials: "include", // include cookies in the request
@@ -100,12 +126,13 @@ class VideoFeed extends Component {
         .then((response) => response.json())
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
-      await delay(1);
+      */
     }
   };
   end = () => {
     this.isActive = false;
     console.log("End");
+    formCorrection.endExercise();
   };
 }
 
