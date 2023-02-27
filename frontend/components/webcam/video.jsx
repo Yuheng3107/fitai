@@ -109,8 +109,6 @@ class VideoFeed extends Component {
       if (feedback[0] != "") {
         console.log(feedback);
       }
-      
-      // formCorrection.run(poses)
 
       /*
       fetch("http://localhost:8000/live_exercise/handle_key_points/", {

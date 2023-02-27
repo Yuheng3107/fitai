@@ -1,17 +1,21 @@
 /*--------------------
 FRAME VARIABLES
 --------------------*/
+
+/**
+ * Minimum confidence for keypose to count
+ */
 const poseThreshold = 0.4;
 /**
  * Storage for frames
- * @type {Float32Array(n,x)}
+ * @type {Array(n,x)}
  * @param n number of selected frames
  * @param x key angles (11)
  */
 let frameArray;
 
 /**
- * Number of frames
+ * Number of frames stored
  * @type {Number}
  */
 let frameCount;
@@ -24,7 +28,7 @@ let frameCount;
 let frameScores;
 
 /**
- * Frame countdown to switch poses
+ * Frame count up to switch poses
  * @type {Number}
  */
 let switchPoseCount;
@@ -60,6 +64,7 @@ let keypoints;
  * The correct poses. 
  * @type {Array(3,x)}
  * @param three 0: keypose, 1: start->mid, 2: mid->end
+ * @param x key angles (11)
  */
 let evalPoses;
 
@@ -138,9 +143,10 @@ let perfectReps;
  let repCount;
 
 /**
- * Converts keypoints into keyposes
- * @summary Called every frame
+ * Processes poses to return feedback.
+ * @called every frame
  * @param {Array} poses Raw Array given by MoveNet
+ * @variables literally everything
  * @returns {Array} Feedback Array, General String
  */
 function run(poses) {
@@ -165,65 +171,6 @@ function run(poses) {
     return [repFeedback,"Exercise in Progress"];
   }
   return ["","Exercise in Progress"];
-}
-
-/**
- * Resets the stored angle data for that rep.
- * @summary Called when a rep is finished.
- */
-function resetFrames () {
-  frameArray = new Array();
-  frameCount = 0;
-  frameScores = new Float32Array(1000);
-  minFrame = 0;
-  minScore = 1;
-  switchPoseCount = 0;
-  poseStatus = 0;
-}
-
-/**
- * Resets all exercise-related variables.
- * @summary Called when new exercise begins
-*/
-function resetAll () {
-  resetFrames();
-  repCount = 0;
-  repFeedback = new Array();
-  smallErrorCount = initBigArray();
-  largeErrorCount = initBigArray();
-  perfectReps = 0;
-  keypoints = new Array();
-  for (let i=0;i<17;i++) {
-    keypoints.push(new Float32Array(2));
-  }
-}
-
-/**
- * Initialises a new array of size keyAngles
- * @returns {Float32Array} Array with size keyAngles
- */
-function initArray() {
-  return new Float32Array(11);
-}
-
-/**
- * Initialises a new array of size keyAngles
- * @returns {Int8Array} Array with size keyAngles
- */
-function initIntArray() {
-  return new Uint8Array(11);
-}
-
-/**
- * Initialises a new array of 4, keyAngles
- * @returns {Array} Array with size 4, keyAngles of datatype Uint8
- */
-function initBigArray() {
-  let x = new Array();
-  for (let i=0;i<3;i++) {
-    x.push(initIntArray());
-  }
-  return x;
 }
 
 /*--------------------
@@ -262,10 +209,9 @@ function endExercise() {
 }
 
 /**
- * Used to convert the rep feedback into a feedback summary for the user.
- * @summary Called when exercise is finished. 
- * @param smallErrorCount
- * @param largeErrorCount
+ * Used to generate a feedback summary for the user.
+ * @called when exercise is finished. 
+ * @variables repCount, smallErrorCount, largeErrorCount, perfectReps
  * @returns {string} feedback for that rep
  */
 function summariseFeedback() {
@@ -293,7 +239,8 @@ These methods are called once per rep.
 --------------------*/
 /**
  * Gets the feedback for the rep, then deletes all frame data of the rep.
- * @summary Called when rep is finished.
+ * @called when rep is finished.
+ * @variabes a lot 
  * @returns {String} feedback
  */
 function finishRep() {
@@ -340,7 +287,7 @@ function finishRep() {
 /**
  * Selects frames close enough to the centre frame.
  * @param {Number} centre number of centre frame
- * @param {Number} scoreDeviation Acceptable rate of change for mid part of exercise to be within
+ * @variables scoreDeviation, frameCount, frameScores
  */
 function splitFrames(centre) {
   // this is lazy af
@@ -363,9 +310,10 @@ function splitFrames(centre) {
 
 /**
  * Used to process angle data leto text feedback to feed to front-end
- * @summary Called when rep is finished.
+ * @called when rep is finished.
  * @param {Float32Array} angleDifferences angle differences, positive is too large, negative is too small, 0 is no significant difference
  * @param {Number} state 0: keypose, 1: start->mid, 2: mid->end
+ * @variables small&largeErrorCount
  * @returns {string} errors made in rep
  */
 function giveFeedback(angleDifferences, state) {
@@ -394,11 +342,11 @@ function giveFeedback(angleDifferences, state) {
 
 /**
  * Calculates the difference between ideal and observed angles in user's pose
- * @summary Called when rep is finished.
+ * @called when rep is finished.
  * @param {Uint8Array} range
  * @param {Float32Array} evalPose
  * @param {Float32Array} angleThreshold
- * @param {Array} frameArray
+ * @variables frameArray
  * @returns {Float32Array} differences large enough to count as errors
  */
 function compareAngles (range, evalPose, angleThreshold) {
@@ -422,8 +370,6 @@ function compareAngles (range, evalPose, angleThreshold) {
   }
   console.log("frames selected: %d", range[1]-range[0]+1);
   for (let i=0;i<n;i++) {
-    
-
     
     // average frames
     differences[i] /= (range[1]-range[0]+1);
@@ -450,7 +396,7 @@ function compareAngles (range, evalPose, angleThreshold) {
 /**
  * @deprecated
  * Evaluates if rep time is too short
- * @summary Called when rep is finished
+ * @called when rep is finished
  * @param {*} evalTime 
  * @param {*} repTime 
  * @returns {Number} 1 or 0
@@ -460,7 +406,6 @@ function compareTime (evalTime, repTime) {
   return 0;
 }
 
-
 /*--------------------
 FRAME METHODS
 These methods are called once per frame.
@@ -468,10 +413,10 @@ These methods are called once per frame.
 
 /**
  * Used to determine whether frames should be selected, as well as when the current rep should end. Also logs the min frame detected.
- * @summary Called every frame while rep detection is active.
+ * @called every frame while rep detection is active.
  * @param {Number} score score returned by comparePoses
- * @param {Number} scoreThreshold Scores below this threshold will be selected
- * @param {Number} poseStatus 0: start->mid, 1: mid->end
+ * @param {Float32Array}  curPose angle data of the current pose
+ * @variable scoreThreshold, poseStatus, switchPoseCount, minScore, minFrame
  * @returns {Boolean} false: nothing, true: end of rep
  */
 function checkScore (score, curPose) {
@@ -525,8 +470,9 @@ function checkScore (score, curPose) {
 
 /**
  * Selects frames to put inside frameArray
- * @param {Float32Array} curPose current pose detected by MoveNet
+ * @param {Float32Array} curPose angle data of the current pose
  * @param {Number} score score of current pose
+ * @variables frameScores, frameArray, frameCount
  * @returns {Boolean} true if successful.
  */
 function selectFrame(curPose, score) {
@@ -543,6 +489,7 @@ function selectFrame(curPose, score) {
 /**
  * Processes raw array given by MoveNet, checks poseThreshold.
  * @param {Array} poses Raw Array given by MoveNet
+ * @variables poseThreshold
  * @returns {Array} processed keypoints, (-1,-1) if invalid
  */
 function processKeypoints (poses) {
@@ -562,7 +509,7 @@ function processKeypoints (poses) {
 
 /**
  * Used to convert keypoint data into angle data
- * @summary Called every frame while rep detection is active.
+ * @called every frame while rep detection is active.
  * @param {Array} keypoints keypoints detected by MoveNet
  * @returns {Float32Array} angle data of the pose
  */
@@ -633,9 +580,9 @@ function processData (keypoints) {
 
 /**
  * Pose Score decreases as the exercise approaches the key pose.
- * @summary Called every frame while rep detection is active.
- * @param angleWeights weight of each angle. 
- * @param {Float32Array} curPose 
+ * @called every frame while rep detection is active.
+ * @param {Float32Array} curPose angle data of the current pose
+ * @variables angleWeights
  * @returns {Number} a score between 0 and 1, 0 being completely similar and 1 being completely different. -1 if curPose is missing crucial angle data.
  */
 function poseScore (curPose) {
@@ -659,6 +606,42 @@ function poseScore (curPose) {
     score += (curPose[i]/3.141592) * (angleWeights[i]/angleWeightSum);
   }
   return score;
+}
+
+
+/*--------------------
+HELPER FUNCTIONS
+They help do things
+--------------------*/
+/**
+ * Resets the stored angle data for that rep.
+ * @called when a rep is finished.
+ */
+ function resetFrames () {
+  frameArray = new Array();
+  frameCount = 0;
+  frameScores = new Float32Array(1000);
+  minFrame = 0;
+  minScore = 1;
+  switchPoseCount = 0;
+  poseStatus = 0;
+}
+
+/**
+ * Resets all exercise-related variables.
+ * @called when new exercise begins
+*/
+function resetAll () {
+  resetFrames();
+  repCount = 0;
+  repFeedback = new Array();
+  smallErrorCount = initBigArray();
+  largeErrorCount = initBigArray();
+  perfectReps = 0;
+  keypoints = new Array();
+  for (let i=0;i<17;i++) {
+    keypoints.push(new Float32Array(2));
+  }
 }
 
 /**
@@ -734,4 +717,32 @@ function negative (x) {
   return negArray;
 }
 export {init, run, endExercise};
+
+/**
+ * Initialises a new array of size keyAngles
+ * @returns {Float32Array} Array with size keyAngles
+ */
+ function initArray() {
+  return new Float32Array(11);
+}
+
+/**
+ * Initialises a new array of size keyAngles
+ * @returns {Int8Array} Array with size keyAngles
+ */
+function initIntArray() {
+  return new Uint8Array(11);
+}
+
+/**
+ * Initialises a new array of 4, keyAngles
+ * @returns {Array} Array with size 4, keyAngles of datatype Uint8
+ */
+function initBigArray() {
+  let x = new Array();
+  for (let i=0;i<3;i++) {
+    x.push(initIntArray());
+  }
+  return x;
+}
 
