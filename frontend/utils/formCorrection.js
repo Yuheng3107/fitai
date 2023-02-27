@@ -142,6 +142,15 @@ let perfectReps;
  */
  let repCount;
 
+
+
+
+
+/*--------------------
+EXPORTED FUNCTIONS
+These functions are called directly by webcam
+--------------------*/
+
 /**
  * Processes poses to return feedback.
  * @called every frame
@@ -173,11 +182,6 @@ function run(poses) {
   return ["","Exercise in Progress"];
 }
 
-/*--------------------
-EXERCISE METHODS
-These methods are called once per exercise.
---------------------*/
-
 /**
  * Initialises all necessary values for the exercise from the backend
  * @param {Array} evalposes The correct poses
@@ -187,7 +191,7 @@ These methods are called once per exercise.
  * @param {Float32Array} anglethresholds Differences in angles required for feedback to be given 
  * @param {Array} glossaryy Text descriptions of each mistake
  */
-function init (evalposes, scorethreshold, scoredeviation, angleweights, anglethresholds, glossaryy) {
+ function init (evalposes, scorethreshold, scoredeviation, angleweights, anglethresholds, glossaryy) {
   evalPoses = evalposes;
   scoreThreshold = scorethreshold;
   scoreDeviation = scoredeviation;
@@ -201,7 +205,7 @@ function init (evalposes, scorethreshold, scoredeviation, angleweights, anglethr
  * Called when exercise ends.
  * @returns feedback summary.
  */
-function endExercise() {
+ function endExercise() {
   if (repCount == 0) {
     return "No Reps Detected. "
   }
@@ -233,10 +237,15 @@ function summariseFeedback() {
   return feedback;
 }
 
+
+
+
+
 /*--------------------
 REP METHODS
 These methods are called once per rep.
 --------------------*/
+
 /**
  * Gets the feedback for the rep, then deletes all frame data of the rep.
  * @called when rep is finished.
@@ -406,6 +415,10 @@ function compareTime (evalTime, repTime) {
   return 0;
 }
 
+
+
+
+
 /*--------------------
 FRAME METHODS
 These methods are called once per frame.
@@ -413,7 +426,7 @@ These methods are called once per frame.
 
 /**
  * Used to determine whether frames should be selected, as well as when the current rep should end. Also logs the min frame detected.
- * @called every frame while rep detection is active.
+ * @called every frame
  * @param {Number} score score returned by comparePoses
  * @param {Float32Array}  curPose angle data of the current pose
  * @variable scoreThreshold, poseStatus, switchPoseCount, minScore, minFrame
@@ -488,6 +501,7 @@ function selectFrame(curPose, score) {
 
 /**
  * Processes raw array given by MoveNet, checks poseThreshold.
+ * @called every frame
  * @param {Array} poses Raw Array given by MoveNet
  * @variables poseThreshold
  * @returns {Array} processed keypoints, (-1,-1) if invalid
@@ -580,7 +594,7 @@ function processData (keypoints) {
 
 /**
  * Pose Score decreases as the exercise approaches the key pose.
- * @called every frame while rep detection is active.
+ * @called every frame
  * @param {Float32Array} curPose angle data of the current pose
  * @variables angleWeights
  * @returns {Number} a score between 0 and 1, 0 being completely similar and 1 being completely different. -1 if curPose is missing crucial angle data.
@@ -607,6 +621,9 @@ function poseScore (curPose) {
   }
   return score;
 }
+
+
+
 
 
 /*--------------------
