@@ -89,7 +89,7 @@ class VideoFeed extends Component {
     const detector = this.detector;
 
     let evalposes = new Array();
-    evalposes[0] = new Float32Array([0.,0.,0.,0.,1.1,0.,0.,0.,0.7,0.,0.]);
+    evalposes[0] = new Float32Array([0.,0.,0.,0.,1.0,0.,0.,0.,0.7,0.,0.]);
     let angleweights = new Float32Array([0.,0.,0.,0.,1.,0.,0.,0.,-1.,0.,0.]);
     let anglethresholds = new Array();
     anglethresholds[0] = new Array(new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.14,0.13]), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.15,0]),new Float32Array(2), new Float32Array(2))
@@ -106,7 +106,7 @@ class VideoFeed extends Component {
       await delay(1);
       // process raw data
       let feedback = formCorrection.run(poses);
-      if (feedback != "") {
+      if (feedback[0] != "") {
         console.log(feedback);
       }
       
@@ -131,7 +131,7 @@ class VideoFeed extends Component {
   end = () => {
     this.isActive = false;
     console.log("End");
-    formCorrection.endExercise();
+    console.log(formCorrection.endExercise());
   };
 }
 
