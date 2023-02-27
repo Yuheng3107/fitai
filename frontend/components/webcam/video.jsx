@@ -89,25 +89,24 @@ class VideoFeed extends Component {
     const detector = this.detector;
 
     let evalposes = new Array();
-    evalposes[1] = new Float32Array([0.,0.,0.,0.,1.65,0.,0.,0.,0.44,0.,0.]);
-    let angleweights = new Float32Array([0.,0.,0.,0.,1.,0.,0.,0.,0.1,0.,0.]);
+    evalposes[0] = new Float32Array([0.,0.,0.,0.,1.1,0.,0.,0.,0.7,0.,0.]);
+    let angleweights = new Float32Array([0.,0.,0.,0.,1.,0.,0.,0.,-1.,0.,0.]);
     let anglethresholds = new Array();
-    anglethresholds[1] = new Array(new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.14,0.13]), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.15,0]),new Float32Array(2), new Float32Array(2))
+    anglethresholds[0] = new Array(new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.14,0.13]), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.15,0]),new Float32Array(2), new Float32Array(2))
     let glossaryy = new Array();
-    glossaryy[1] = [['',''],['',''],['',''],['',''],
+    glossaryy[0] = [['',''],['',''],['',''],['',''],
     ['Squat not low enough','Squat too low'],
     ['',''],['',''],['',''],
     ['Leaning forward too much',''],
     ['',''],['','']];
-    formCorrection.init(evalposes,0.1,angleweights,anglethresholds,glossaryy);
+    formCorrection.init(evalposes,0.7,0.02,angleweights,anglethresholds,glossaryy);
 
     while (this.isActive) {
       let poses = await detector.estimatePoses(this.videoRef.current);
       await delay(1);
       // process raw data
-      console.log(poses);
       let feedback = formCorrection.run(poses);
-      if (feedback != undefined) {
+      if (feedback != "") {
         console.log(feedback);
       }
       
