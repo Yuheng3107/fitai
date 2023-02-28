@@ -109,7 +109,25 @@ let angleThresholds;
 FEEDBACK VARIABLES
 --------------------*/
 /**
- * number of times angle was too small
+ * Records the start time of the current rep
+ * @type {Number}
+ */
+let repStartTime;
+
+/**
+ * Rep times shorter than this are too short (in ms)
+ * @type {Number}
+ */
+let minRepTime;
+
+/**
+ * Number of times rep was too fast
+ * {type} Number
+ */
+let repTimeError; 
+
+/**
+ * Number of times angle was too small
  * @type {Array(3,x)} 
  * @param three 0: keypose, 1: start->mid, 2: mid->end
  * @param x key angles (11)
@@ -117,7 +135,7 @@ FEEDBACK VARIABLES
 let smallErrorCount;
 
 /**
- * number of times angle was too large
+ * Number of times angle was too large
  * @type {Array(3,x)}
  * @param three 0: keypose, 1: start->mid, 2: mid->end
  * @param x key angles (11)
@@ -125,7 +143,7 @@ let smallErrorCount;
 let largeErrorCount;
 
 /**
- * number of perfect reps
+ * Number of perfect reps
  * @type {Number}
  */
 let perfectReps;
@@ -189,14 +207,16 @@ function run(poses) {
  * @param {Number} scoredeviation Acceptable range of values for mid part of exercise to be within
  * @param {Float32Array} angleweights Weights that each angle should have in evaluation
  * @param {Float32Array} anglethresholds Differences in angles required for feedback to be given 
+ * @param {Number} minreptime Rep times shorter than this are too short (in ms)
  * @param {Array} glossaryy Text descriptions of each mistake
  */
- function init (evalposes, scorethreshold, scoredeviation, angleweights, anglethresholds, glossaryy) {
+ function init (evalposes, scorethreshold, scoredeviation, angleweights, anglethresholds, minreptime, glossaryy) {
   evalPoses = evalposes;
   scoreThreshold = scorethreshold;
   scoreDeviation = scoredeviation;
   angleWeights = angleweights;
   angleThresholds = anglethresholds;
+  minRepTime = minreptime;
   glossary = glossaryy;
   resetAll();
 }
@@ -221,7 +241,12 @@ function run(poses) {
 function summariseFeedback() {
   let feedback =  "";
   feedback += repCount.toString() + " reps completed. ";
+  // time
+  if (repTimeError !=0) {
+    feedback += "Reps too fast " + repTimeError.toString() + " times. ";
+  }
   
+  // form
   let n = smallErrorCount[0].length;
   for (let j=0;j<smallErrorCount.length;j++) {
     for (let i=0;i<n;i++) {
@@ -256,6 +281,13 @@ function finishRep() {
   repCount += 1;
   if (frameArray.length == 0) return "No Frames Detected";
   let feedback = ""
+
+  // time
+  let timeDifference = compareTime(minRepTime, repStartTime);
+  if (timeDifference == 1) {
+    repTimeError += 1;
+    feedback += "Rep too fast. "
+  }
 
   // keypose
   let midExerciseFrames = splitFrames(minFrame);
@@ -403,15 +435,15 @@ function compareAngles (range, evalPose, angleThreshold) {
 }
 
 /**
- * @deprecated
  * Evaluates if rep time is too short
  * @called when rep is finished
- * @param {*} evalTime 
- * @param {*} repTime 
- * @returns {Number} 1 or 0
+ * @param {*} evalTime Rep times shorter than this are too short (in ms)
+ * @param {*} repStartTime 
+ * @returns {Number} 1 if too short, 0 otherwise
  */
-function compareTime (evalTime, repTime) {
-  if (repTime < evalTime) return 1;
+function compareTime (evalTime, repStartTime) {
+  let curTime = new Date().getTime();
+  if (curTime - repStartTime < evalTime) return 1;
   return 0;
 }
 
@@ -642,6 +674,7 @@ They help do things
   minScore = 1;
   switchPoseCount = 0;
   poseStatus = 0;
+  repStartTime = new Date().getTime();
 }
 
 /**
@@ -652,6 +685,7 @@ function resetAll () {
   resetFrames();
   repCount = 0;
   repFeedback = new Array();
+  repTimeError = 0;
   smallErrorCount = initBigArray();
   largeErrorCount = initBigArray();
   perfectReps = 0;
