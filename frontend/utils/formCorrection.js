@@ -109,7 +109,7 @@ let angleThresholds;
 FEEDBACK VARIABLES
 --------------------*/
 /**
- * Records the start time of the current rep
+ * Start time of the current rep
  * @type {Number}
  */
 let repStartTime;
@@ -122,7 +122,7 @@ let minRepTime;
 
 /**
  * Number of times rep was too fast
- * {type} Number
+ * @type {Number}
  */
 let repTimeError; 
 
@@ -280,13 +280,13 @@ These methods are called once per rep.
 function finishRep() {
   repCount += 1;
   if (frameArray.length == 0) return "No Frames Detected";
-  let feedback = ""
+  let feedback = "";
 
   // time
   let timeDifference = compareTime(minRepTime, repStartTime);
   if (timeDifference == 1) {
     repTimeError += 1;
-    feedback += "Rep too fast. "
+    feedback += "Rep too fast. ";
   }
 
   // keypose
@@ -437,8 +437,8 @@ function compareAngles (range, evalPose, angleThreshold) {
 /**
  * Evaluates if rep time is too short
  * @called when rep is finished
- * @param {*} evalTime Rep times shorter than this are too short (in ms)
- * @param {*} repStartTime 
+ * @param {Number} evalTime Rep times shorter than this are too short (in ms)
+ * @param {Number} repStartTime Start time of the current rep
  * @returns {Number} 1 if too short, 0 otherwise
  */
 function compareTime (evalTime, repStartTime) {
