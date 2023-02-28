@@ -99,7 +99,7 @@ class VideoFeed extends Component {
     ['',''],['',''],['',''],
     ['Leaning forward too much',''],
     ['',''],['','']];
-    formCorrection.init(evalposes,0.7,0.02,angleweights,anglethresholds,1500,glossaryy);
+    formCorrection.init(evalposes,0.7,0.02,angleweights,anglethresholds,2000,glossaryy);
 
     while (this.isActive) {
       let poses = await detector.estimatePoses(this.videoRef.current);
