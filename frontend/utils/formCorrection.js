@@ -22,7 +22,7 @@ let frameCount;
 
 /**
  * Scores of each stored frame
- * @type {Float32Array(n)}
+ * @type {Array}
  * @param n number of selected frames
  */
 let frameScores;
@@ -522,11 +522,10 @@ function checkScore (score, curPose) {
  */
 function selectFrame(curPose, score) {
   if (frameCount >= 1000) {
-    console.log("Frames Maxed!");
-    return false;
+    console.log("bruh 1000 frames");
   }
   frameArray.push(curPose);
-  frameScores[frameCount] = score;
+  frameScores.push(score);
   frameCount += 1;
   return true;
 }
@@ -669,7 +668,7 @@ They help do things
  function resetFrames () {
   frameArray = new Array();
   frameCount = 0;
-  frameScores = new Float32Array(1000);
+  frameScores = new Array();
   minFrame = 0;
   minScore = 1;
   switchPoseCount = 0;
