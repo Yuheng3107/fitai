@@ -174,7 +174,7 @@ These functions are called directly by webcam
  * @called every frame
  * @param {Array} poses Raw Array given by MoveNet
  * @variables literally everything
- * @returns {Array} Feedback Array, General String
+ * @returns {Array} 0: {Array} Rep Feedback, 1: {String} General Feedback
  */
 function run(poses) {
   // check for empty
