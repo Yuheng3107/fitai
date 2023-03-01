@@ -203,22 +203,22 @@ function run(poses) {
 
 /**
  * Initialises all necessary values for the exercise from the backend
- * @param {Array} evalposes The correct poses
- * @param {Number} scorethreshold Scores below this threshold will be selected
- * @param {Number} scoredeviation Acceptable range of values for mid part of exercise to be within
- * @param {Float32Array} angleweights Weights that each angle should have in evaluation
- * @param {Float32Array} anglethresholds Differences in angles required for feedback to be given 
- * @param {Number} minreptime Rep times shorter than this are too short (in ms)
- * @param {Array} glossaryy Text descriptions of each mistake
+ * @param {Array} _evalPoses The correct poses
+ * @param {Number} _scoreThreshold Scores below this threshold will be selected
+ * @param {Number} _scoreDeviation Acceptable range of values for mid part of exercise to be within
+ * @param {Float32Array} _angleWeights Weights that each angle should have in evaluation
+ * @param {Float32Array} _angleThresholds Differences in angles required for feedback to be given 
+ * @param {Number} _minRepTime Rep times shorter than this are too short (in ms)
+ * @param {Array} _glossary Text descriptions of each mistake
  */
- function init (evalposes, scorethreshold, scoredeviation, angleweights, anglethresholds, minreptime, glossaryy) {
-  evalPoses = evalposes;
-  scoreThreshold = scorethreshold;
-  scoreDeviation = scoredeviation;
-  angleWeights = angleweights;
-  angleThresholds = anglethresholds;
-  minRepTime = minreptime;
-  glossary = glossaryy;
+ function init (_evalPoses, _scoreThreshold, _scoreDeviation, _angleWeights, _angleThresholds, _minRepTime, _glossary) {
+  evalPoses = _evalPoses;
+  scoreThreshold = _scoreThreshold;
+  scoreDeviation = _scoreDeviation;
+  angleWeights = _angleWeights;
+  angleThresholds = _angleThresholds;
+  minRepTime = _minRepTime;
+  glossary = _glossary;
   resetAll();
 }
 

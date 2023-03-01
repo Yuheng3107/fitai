@@ -76,7 +76,10 @@ class VideoFeed extends Component {
   // TF movenet
   start = async () => {
     console.log("start");
-
+    if (this.detector == undefined) {
+      window.alert('Loading!');
+      return;
+    }
     const detector = this.detector;
 
     // reset local variables
@@ -104,7 +107,7 @@ class VideoFeed extends Component {
         new Float32Array(2),
       ],
     ];
-    let glossaryy = [
+    let glossary = [
       [
         ["", ""],
         ["", ""],
@@ -128,9 +131,10 @@ class VideoFeed extends Component {
       angleweights,
       anglethresholds,
       2000,
-      glossaryy
+      glossary
     );
-
+    
+    /*
     // assign img height
     let screenshot = this.webcam.current.getScreenshot();
     this.image.current.src = screenshot;
@@ -146,6 +150,7 @@ class VideoFeed extends Component {
         img.height,
       ];
     };
+    */
 
     while (this.isActive) {
       let poses = await detector.estimatePoses(this.webcam.current.video);
