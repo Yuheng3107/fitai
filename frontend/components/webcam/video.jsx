@@ -83,38 +83,10 @@ class VideoFeed extends Component {
     const detector = this.detector;
 
     // get from backend
-    let evalposes = [new Float32Array([0, 0, 0, 0, 1.0, 0, 0, 0, 0.7, 0, 0])];
+    let evalposes = [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])];
     let angleweights = new Float32Array([0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0]);
-    let anglethresholds = [
-      [
-        new Float32Array(2),
-        new Float32Array(2),
-        new Float32Array(2),
-        new Float32Array(2),
-        new Float32Array([0.14, 0.13]),
-        new Float32Array(2),
-        new Float32Array(2),
-        new Float32Array(2),
-        new Float32Array([0.15, 0]),
-        new Float32Array(2),
-        new Float32Array(2),
-      ],
-    ];
-    let glossaryy = [
-      [
-        ["", ""],
-        ["", ""],
-        ["", ""],
-        ["", ""],
-        ["Squat not low enough", "Squat too low"],
-        ["", ""],
-        ["", ""],
-        ["", ""],
-        ["Leaning forward too much", ""],
-        ["", ""],
-        ["", ""],
-      ],
-    ];
+    let anglethresholds = [[new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array([0.14, 0.13]),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array([0.15, 0]),new Float32Array(2),new Float32Array(2),],];
+    let glossaryy = [[["", ""],["", ""],["", ""],["", ""],["Squat not low enough", "Squat too low"],["", ""],["", ""],["", ""],["Leaning forward too much", ""],["", ""],["", ""],],];
 
     formCorrection.init(
       evalposes,
