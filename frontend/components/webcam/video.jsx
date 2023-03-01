@@ -24,7 +24,6 @@ class VideoFeed extends Component {
   constructor(props) {
     super(props);
     this.webcam = React.createRef();
-
     // formCorrection
     this.feedback = new Array();
     this.repFeedback = React.createRef();
@@ -76,6 +75,7 @@ class VideoFeed extends Component {
   start = async () => {
     console.log("start");
     this.isActive = true;
+    this.flippedImage = false;
     this.frameCount = 0;
     this.feedback = ["", ""];
     this.repFeedback.current.changeText("");
@@ -127,6 +127,31 @@ class VideoFeed extends Component {
     );
 
     while (this.isActive) {
+      if (!this.flippedImage) {
+        let screenshot = this.webcam.current.getScreenshot();
+        let img = new Image();
+        img.src = screenshot;
+        this.flippedImage = true;
+        img.onload = () => {
+          // window.alert(`Width is ${img.width}, Height is ${img.height}`);
+          // Changes height and width of video in Webcam component
+          if (isMobile && (isFirefox || isSafari)) {
+            // Firefox and Safari has issues which cause the images to have wrong aspect ratio,
+            // so we need to correct them
+            [
+              this.webcam.current.video.width,
+              this.webcam.current.video.height,
+            ] = [img.height, img.width];
+          } else {
+            // set explicit width and height for video
+            [
+              this.webcam.current.video.width,
+              this.webcam.current.video.height,
+            ] = [img.height, img.width];
+          }
+        };
+      }
+
       let poses = await detector.estimatePoses(this.webcam.current.video);
       await delay(1);
       // process raw data
