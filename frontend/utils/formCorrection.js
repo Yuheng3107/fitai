@@ -503,7 +503,7 @@ function checkScore (score, curPose) {
     // Currently in key pose
     if (poseStatus == 1) {
       switchPoseCount += 1;
-      if (switchPoseCount >= 5) {
+      if (switchPoseCount >= 7) {
         // End of rep
         switchPoseCount = 0;
         poseStatus = 0;
