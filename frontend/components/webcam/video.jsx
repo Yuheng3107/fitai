@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { isMobile } from "react-device-detect";
+import Webcam from "react-webcam";
 
 //components
 import Button from "../ui/Button";
@@ -22,16 +23,7 @@ async function delay(ms) {
 class VideoFeed extends Component {
   constructor(props) {
     super(props);
-    this.videoRef = React.createRef();
-    this.state = {
-      stream: null,
-      constraints: {
-        video: {
-          facingMode: "user",
-          // tries to get camera that faces user
-        },
-      },
-    };
+    this.webcam = React.createRef();
 
     // formCorrection
     this.feedback = new Array();
@@ -42,25 +34,6 @@ class VideoFeed extends Component {
   }
 
   componentDidMount = async () => {
-    if (
-      "mediaDevices" in navigator &&
-      "getUserMedia" in navigator.mediaDevices
-    ) {
-      navigator.mediaDevices
-        .getUserMedia(this.state.constraints)
-        .then((stream) => {
-          this.setState({ stream });
-          this.videoRef.current.srcObject = stream;
-          return new Promise((resolve) => {
-            this.videoRef.onloadedmetadata = () => {
-              this.videoRef.play();
-              resolve(this.videoRef);
-            };
-          });
-        })
-        .catch((error) => console.error(error));
-    }
-
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
@@ -73,7 +46,7 @@ class VideoFeed extends Component {
   render = () => {
     return (
       <React.Fragment>
-        <video className="pt-4 pb-3" ref={this.videoRef} autoPlay></video>
+        <Webcam videoConstraints={{facingMode: "user"}} ref={this.webcam}/>
         <div>
           <Button
             onClick={() => this.start()}
@@ -120,7 +93,7 @@ class VideoFeed extends Component {
     formCorrection.init(evalposes,0.7,0.02,angleweights,anglethresholds,2000,glossaryy);
 
     while (this.isActive) {
-      let poses = await detector.estimatePoses(this.videoRef.current);
+      let poses = await detector.estimatePoses(this.webcam.current.video);
       await delay(1);
       // process raw data
       let feedback = formCorrection.run(poses);
