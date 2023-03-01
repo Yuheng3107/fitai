@@ -24,6 +24,7 @@ class VideoFeed extends Component {
   constructor(props) {
     super(props);
     this.webcam = React.createRef();
+    this.image = React.createRef();
     // formCorrection
     this.feedback = new Array();
     this.repFeedback = React.createRef();
@@ -46,6 +47,7 @@ class VideoFeed extends Component {
     return (
       <React.Fragment>
         <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
+        <img src="" alt="" ref={this.image} />
         <div>
           <Button
             onClick={() => this.start()}
@@ -87,8 +89,36 @@ class VideoFeed extends Component {
     // get from backend
     let evalposes = [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])];
     let angleweights = new Float32Array([0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0]);
-    let anglethresholds = [[new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array([0.14, 0.13]),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array([0.15, 0]),new Float32Array(2),new Float32Array(2),],];
-    let glossaryy = [[["", ""],["", ""],["", ""],["", ""],["Squat not low enough", "Squat too low"],["", ""],["", ""],["", ""],["Leaning forward too much", ""],["", ""],["", ""],],];
+    let anglethresholds = [
+      [
+        new Float32Array(2),
+        new Float32Array(2),
+        new Float32Array(2),
+        new Float32Array(2),
+        new Float32Array([0.14, 0.13]),
+        new Float32Array(2),
+        new Float32Array(2),
+        new Float32Array(2),
+        new Float32Array([0.15, 0]),
+        new Float32Array(2),
+        new Float32Array(2),
+      ],
+    ];
+    let glossaryy = [
+      [
+        ["", ""],
+        ["", ""],
+        ["", ""],
+        ["", ""],
+        ["Squat not low enough", "Squat too low"],
+        ["", ""],
+        ["", ""],
+        ["", ""],
+        ["Leaning forward too much", ""],
+        ["", ""],
+        ["", ""],
+      ],
+    ];
 
     // initialise form correction
     formCorrection.init(
@@ -103,6 +133,7 @@ class VideoFeed extends Component {
 
     // assign img height
     let screenshot = this.webcam.current.getScreenshot();
+    this.image.current.src = screenshot;
     let img = new Image();
     img.src = screenshot;
     img.onload = () => {
@@ -110,12 +141,13 @@ class VideoFeed extends Component {
       // Changes height and width of video in Webcam component
 
       // set explicit width and height for video
-      [this.webcam.current.video.width, this.webcam.current.video.height] =
-        [img.width, img.height];
+      [this.webcam.current.video.width, this.webcam.current.video.height] = [
+        img.width,
+        img.height,
+      ];
     };
 
     while (this.isActive) {
-
       let poses = await detector.estimatePoses(this.webcam.current.video);
       await delay(1);
       // process raw data
