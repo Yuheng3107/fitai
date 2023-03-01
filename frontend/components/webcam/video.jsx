@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { isMobile } from "react-device-detect";
+import { isMobile, isSafari, isFirefox } from "react-device-detect";
 import Webcam from "react-webcam";
 
 //components
@@ -24,7 +24,6 @@ class VideoFeed extends Component {
   constructor(props) {
     super(props);
     this.webcam = React.createRef();
-
     // formCorrection
     this.feedback = new Array();
     this.repFeedback = React.createRef();
@@ -46,7 +45,7 @@ class VideoFeed extends Component {
   render = () => {
     return (
       <React.Fragment>
-        <Webcam videoConstraints={{facingMode: "user"}} ref={this.webcam}/>
+        <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
         <div>
           <Button
             onClick={() => this.start()}
@@ -55,14 +54,17 @@ class VideoFeed extends Component {
           >
             Start
           </Button>
-          <Button onClick={() => this.end()} className="bg-amber-200 w-16 mx-2 text-zinc-900 
-          dark:bg-yellow-600 dark:hover:bg-amber-500 dark:text-zinc-100 ">
+          <Button
+            onClick={() => this.end()}
+            className="bg-amber-200 w-16 mx-2 text-zinc-900 
+          dark:bg-yellow-600 dark:hover:bg-amber-500 dark:text-zinc-100 "
+          >
             End
           </Button>
         </div>
         <div>
-          <TextBox ref={this.repFeedback}/>
-          <TextBox ref={this.generalFeedback}/>
+          <TextBox ref={this.repFeedback} />
+          <TextBox ref={this.generalFeedback} />
         </div>
       </React.Fragment>
     );
@@ -73,32 +75,62 @@ class VideoFeed extends Component {
   start = async () => {
     console.log("start");
     this.isActive = true;
+    this.flippedImage = false;
     this.frameCount = 0;
-    this.feedback = ["",""];
+    this.feedback = ["", ""];
     this.repFeedback.current.changeText("");
     this.generalFeedback.current.changeText("Loading...");
     const detector = this.detector;
 
     // get from backend
-    let evalposes = [new Float32Array([0.,0.,0.,0.,1.05,0.,0.,0.,0.7,0.,0.])];
-    let angleweights = new Float32Array([0.,0.,0.,0.,1.,0.,0.,0.,-1.,0.,0.]);
-    let anglethresholds = [[new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.14,0.13]), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array([0.15,0]),new Float32Array(2), new Float32Array(2)]]; 
-    let glossaryy = [[['',''],['',''],['',''],['',''],
-    ['Squat not low enough','Squat too low'],
-    ['',''],['',''],['',''],
-    ['Leaning forward too much',''],
-    ['',''],['','']]];
+    let evalposes = [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])];
+    let angleweights = new Float32Array([0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0]);
+    let anglethresholds = [[new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array([0.14, 0.13]),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array([0.15, 0]),new Float32Array(2),new Float32Array(2),],];
+    let glossaryy = [[["", ""],["", ""],["", ""],["", ""],["Squat not low enough", "Squat too low"],["", ""],["", ""],["", ""],["Leaning forward too much", ""],["", ""],["", ""],],];
 
-    
-    formCorrection.init(evalposes,0.7,0.02,angleweights,anglethresholds,2000,glossaryy);
+    formCorrection.init(
+      evalposes,
+      0.7,
+      0.02,
+      angleweights,
+      anglethresholds,
+      2000,
+      glossaryy
+    );
 
     while (this.isActive) {
+      if (!this.flippedImage) {
+        let screenshot = this.webcam.current.getScreenshot();
+        let img = new Image();
+        img.src = screenshot;
+        this.flippedImage = true;
+        img.onload = () => {
+          // window.alert(`Width is ${img.width}, Height is ${img.height}`);
+          // Changes height and width of video in Webcam component
+          if (isMobile && (isFirefox || isSafari)) {
+            // Firefox and Safari has issues which cause the images to have wrong aspect ratio,
+            // so we need to correct them
+            [
+              this.webcam.current.video.width,
+              this.webcam.current.video.height,
+            ] = [img.height, img.width];
+          } else {
+            // set explicit width and height for video
+            [
+              this.webcam.current.video.width,
+              this.webcam.current.video.height,
+            ] = [img.height, img.width];
+          }
+        };
+      }
+
       let poses = await detector.estimatePoses(this.webcam.current.video);
       await delay(1);
       // process raw data
       let feedback = formCorrection.run(poses);
       if (feedback[0] != "") this.repFeedback.current.changeText(feedback[0]);
-      if (feedback[1] != this.feedback[1])  this.generalFeedback.current.changeText(feedback[1]);
+      if (feedback[1] != this.feedback[1])
+        this.generalFeedback.current.changeText(feedback[1]);
       this.feedback = feedback;
       this.frameCount += 1;
 
