@@ -6,6 +6,7 @@ FRAME VARIABLES
  * Minimum confidence for keypose to count
  */
 const poseThreshold = 0.4;
+
 /**
  * Storage for frames
  * @type {Array(n,x)}
@@ -315,7 +316,7 @@ function finishRep() {
   }
 
   if (feedback == "") {
-    feedback += "Perfect!";
+    feedback += "Perfect! ";
     perfectReps += 1;
   }
   let finalFeedback = "Rep " + repCount.toString() + ": " + feedback;

@@ -9,7 +9,7 @@ import expandIcon from "../../public/assets/svg/expand-icon.svg";
 
 function Main() {
   return (
-    <main className='flex flex-col items-center'>
+    <main className='flex flex-col items-center' style={{background:"black"}}>
       <VideoFeed />
       <div id="rep-info-group">
         <span id="rep-count"></span>
