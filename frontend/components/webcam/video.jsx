@@ -74,13 +74,15 @@ class VideoFeed extends Component {
   // TF movenet
   start = async () => {
     console.log("start");
+
+    const detector = this.detector;
+
+    // reset local variables
     this.isActive = true;
-    this.flippedImage = false;
     this.frameCount = 0;
     this.feedback = ["", ""];
     this.repFeedback.current.changeText("");
     this.generalFeedback.current.changeText("Loading...");
-    const detector = this.detector;
 
     // get from backend
     let evalposes = [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])];
@@ -88,6 +90,7 @@ class VideoFeed extends Component {
     let anglethresholds = [[new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array([0.14, 0.13]),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array([0.15, 0]),new Float32Array(2),new Float32Array(2),],];
     let glossaryy = [[["", ""],["", ""],["", ""],["", ""],["Squat not low enough", "Squat too low"],["", ""],["", ""],["", ""],["Leaning forward too much", ""],["", ""],["", ""],],];
 
+    // initialise form correction
     formCorrection.init(
       evalposes,
       0.7,
@@ -98,21 +101,20 @@ class VideoFeed extends Component {
       glossaryy
     );
 
-    while (this.isActive) {
-      if (!this.flippedImage) {
-        let screenshot = this.webcam.current.getScreenshot();
-        let img = new Image();
-        img.src = screenshot;
-        this.flippedImage = true;
-        img.onload = () => {
-          window.alert(`Width is ${img.width}, Height is ${img.height}`);
-          // Changes height and width of video in Webcam component
+    // assign img height
+    let screenshot = this.webcam.current.getScreenshot();
+    let img = new Image();
+    img.src = screenshot;
+    img.onload = () => {
+      window.alert(`Width is ${img.width}, Height is ${img.height}`);
+      // Changes height and width of video in Webcam component
 
-          // set explicit width and height for video
-          [this.webcam.current.video.width, this.webcam.current.video.height] =
-            [img.width, img.height];
-        };
-      }
+      // set explicit width and height for video
+      [this.webcam.current.video.width, this.webcam.current.video.height] =
+        [img.width, img.height];
+    };
+
+    while (this.isActive) {
 
       let poses = await detector.estimatePoses(this.webcam.current.video);
       await delay(1);
