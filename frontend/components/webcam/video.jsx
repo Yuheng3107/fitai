@@ -105,7 +105,7 @@ class VideoFeed extends Component {
         img.src = screenshot;
         this.flippedImage = true;
         img.onload = () => {
-          // window.alert(`Width is ${img.width}, Height is ${img.height}`);
+          window.alert(`Width is ${img.width}, Height is ${img.height}`);
           // Changes height and width of video in Webcam component
           if (isMobile && (isFirefox || isSafari)) {
             // Firefox and Safari has issues which cause the images to have wrong aspect ratio,
