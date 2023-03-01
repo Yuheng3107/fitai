@@ -107,20 +107,10 @@ class VideoFeed extends Component {
         img.onload = () => {
           window.alert(`Width is ${img.width}, Height is ${img.height}`);
           // Changes height and width of video in Webcam component
-          if (isMobile && (isFirefox || isSafari)) {
-            // Firefox and Safari has issues which cause the images to have wrong aspect ratio,
-            // so we need to correct them
-            [
-              this.webcam.current.video.width,
-              this.webcam.current.video.height,
-            ] = [img.height, img.width];
-          } else {
-            // set explicit width and height for video
-            [
-              this.webcam.current.video.width,
-              this.webcam.current.video.height,
-            ] = [img.height, img.width];
-          }
+
+          // set explicit width and height for video
+          [this.webcam.current.video.width, this.webcam.current.video.height] =
+            [img.width, img.height];
         };
       }
 
