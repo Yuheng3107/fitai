@@ -5,6 +5,7 @@ import Webcam from "react-webcam";
 //components
 import Button from "../ui/Button";
 import TextBox from "../ui/TextBox";
+import Select from "../ui/Select";
 
 //MoveNet
 import * as poseDetection from "@tensorflow-models/pose-detection";
@@ -47,7 +48,6 @@ class VideoFeed extends Component {
     return (
       <React.Fragment>
         <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
-        <img src="" alt="" ref={this.image} />
         <div>
           <Button
             onClick={() => this.start()}
@@ -64,10 +64,26 @@ class VideoFeed extends Component {
             End
           </Button>
         </div>
+        <form className="flex-row mt-3" id="changeExercise">
+          <Select className="form-select" 
+          name="exerciseId" id="changeExercise">
+            <option selected value="0">
+              Squat (Right Side)
+            </option>
+            <option value="1">Squat (Front)</option>
+            <option value="2">Push-Up (Right Side)</option>
+          </Select>
+          <input
+            className="ms-2 btn btn-outline-info d-inline"
+            type="submit"
+            value="Start Exercise"
+          />
+        </form>
         <div>
           <TextBox ref={this.repFeedback} />
           <TextBox ref={this.generalFeedback} />
         </div>
+        <img src="" alt="" ref={this.image} />
       </React.Fragment>
     );
   };
@@ -76,10 +92,10 @@ class VideoFeed extends Component {
   // TF movenet
   start = async () => {
     console.log("start");
-    if (this.detector == undefined) {
-      window.alert('Loading!');
-      return;
-    }
+
+    // assign img height
+    this.assignImgHeight();
+
     const detector = this.detector;
 
     // reset local variables
@@ -133,24 +149,6 @@ class VideoFeed extends Component {
       2000,
       glossary
     );
-    
-    /*
-    // assign img height
-    let screenshot = this.webcam.current.getScreenshot();
-    this.image.current.src = screenshot;
-    let img = new Image();
-    img.src = screenshot;
-    img.onload = () => {
-      window.alert(`Width is ${img.width}, Height is ${img.height}`);
-      // Changes height and width of video in Webcam component
-
-      // set explicit width and height for video
-      [this.webcam.current.video.width, this.webcam.current.video.height] = [
-        img.width,
-        img.height,
-      ];
-    };
-    */
 
     while (this.isActive) {
       let poses = await detector.estimatePoses(this.webcam.current.video);
@@ -185,6 +183,26 @@ class VideoFeed extends Component {
     this.repFeedback.current.changeText(formCorrection.endExercise());
     this.generalFeedback.current.changeText(this.frameCount);
   };
+
+  /*--------------------
+  HELPER FUNCTIONS
+  --------------------*/
+  assignImgHeight = () => {
+    let screenshot = this.webcam.current.getScreenshot();
+    this.image.current.src = screenshot;
+    let img = new Image();
+    img.src = screenshot;
+    img.onload = () => {
+      window.alert(`Width is ${img.width}, Height is ${img.height}`);
+      // Changes height and width of video in Webcam component
+
+      // set explicit width and height for video
+      [this.webcam.current.video.width, this.webcam.current.video.height] = [
+        img.width,
+        img.height,
+      ];
+    };
+  }
 }
 
 export default VideoFeed;
