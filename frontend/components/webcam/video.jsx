@@ -118,13 +118,19 @@ class VideoFeed extends Component {
       exercise.minRepTime,
       exercise.glossary
     );
+    
+    // wait 3s before starting exercise
+    await delay(3000);
 
     while (this.isActive) {
       let poses = await detector.estimatePoses(this.webcam.current.video);
       await delay(1);
       // process raw data
       let feedback = formCorrection.run(poses);
-      if (feedback[0] != "") this.repFeedback.current.changeText(feedback[0]);
+      if (feedback[0] != "") {
+        this.repFeedback.current.changeText(feedback[0]);
+        // narrator reads feedback[0].back();
+      }
       if (feedback[1] != this.feedback[1])
         this.generalFeedback.current.changeText(feedback[1]);
       this.feedback = feedback;
