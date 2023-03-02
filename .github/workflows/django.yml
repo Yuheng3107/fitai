@@ -8,20 +8,21 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.7, 3.8, 3.9, 3.10]
-
+    
     steps:
     - uses: actions/checkout@v3
-    - name: Pipenv for Github Actions
-      uses: VaultVulp/action-pipenv@v2.0.1
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
       with:
-        command: install -d # Install all dependencies, including development ones
-        
+        python-version: '3.10'
+    - name: Install Pipenv
+      run: |
+        pip3 install pipenv
+    - name: Install Dependencies
+      run: |
+        pipenv install 
     - name: Run Tests
       run: |
-        python manage.py test
+        cd ./backend
+        pipenv run python manage.py test
