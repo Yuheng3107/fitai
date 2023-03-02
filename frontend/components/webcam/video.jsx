@@ -144,7 +144,7 @@ class VideoFeed extends Component {
       let feedback = formCorrection.run(poses);
       if (feedback[0] != "") {
         this.repFeedback.current.changeText(feedback[0]);
-        // narrator reads feedback[0].back();
+        this.read(feedback[0][feedback[0].length-1]);
       }
       if (feedback[1] != this.feedback[1])
         this.generalFeedback.current.changeText(feedback[1]);
