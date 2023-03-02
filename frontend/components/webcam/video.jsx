@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { isMobile, isSafari, isFirefox } from "react-device-detect";
 import Webcam from "react-webcam";
 
@@ -28,6 +28,22 @@ class VideoFeed extends Component {
     this.isActive = false;
     this.frameCount = 0;
   }
+
+  read = (content) => {
+    if (this.textToSpeech()) {
+      let speech = new SpeechSynthesisUtterance(content);
+      this.synth.speak(speech);
+    }
+    // can enable error to pop up if no text to speech
+  };
+
+  textToSpeech = () => {
+    if ("speechSynthesis" in window) {
+      this.synth = window.speechSynthesis;
+      return true;
+    }
+    return false;
+  };
 
   componentDidMount = async () => {
     const detectorConfig = {
@@ -60,8 +76,7 @@ class VideoFeed extends Component {
           </Button>
         </div>
         <form className="flex-row mt-3" id="changeExercise">
-          <Select className="form-select" 
-          name="exerciseId" id="changeExercise">
+          <Select className="form-select" name="exerciseId" id="changeExercise">
             <option selected value="0">
               Squat (Right Side)
             </option>
@@ -118,7 +133,7 @@ class VideoFeed extends Component {
       exercise.minRepTime,
       exercise.glossary
     );
-    
+
     // wait 3s before starting exercise
     await delay(3000);
 
@@ -163,7 +178,7 @@ class VideoFeed extends Component {
     this.generalFeedback.current.changeText(this.frameCount);
   };
 
-/*--------------------
+  /*--------------------
 HELPER FUNCTIONS
 --------------------*/
   assignImgHeight = () => {
@@ -181,7 +196,7 @@ HELPER FUNCTIONS
         img.height,
       ];
     };
-  }
+  };
 }
 
 async function delay(ms) {
@@ -190,84 +205,127 @@ async function delay(ms) {
 }
 
 /**
- * To be replaced with request to backend. 
- * @param {Object} x 
+ * To be replaced with request to backend.
+ * @param {Object} x
  * @returns Exercise Parameters
  */
 function getExercise(x) {
-  if (x == 0) return {
-    evalPoses: [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])],
-    scoreThreshold: 0.7,
-    scoreDeviation: 0.02,
-    angleWeights: new Float32Array([0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0]),
-    angleThresholds: [
-      [
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0.14, 0.13]),
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0.15, 0]),
-        new Float32Array(2),new Float32Array(2)
-      ]
-    ],
-    minRepTime: 2000,
-    glossary: [
-      [
-        ["", ""],["", ""],["", ""],["", ""],
-        ["Squat not low enough", "Squat too low"],
-        ["", ""],["", ""],["", ""],
-        ["Leaning forward too much", ""],
-        ["", ""],["", ""],
+  if (x == 0)
+    return {
+      evalPoses: [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])],
+      scoreThreshold: 0.7,
+      scoreDeviation: 0.02,
+      angleWeights: new Float32Array([0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0]),
+      angleThresholds: [
+        [
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array([0.14, 0.13]),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array([0.15, 0]),
+          new Float32Array(2),
+          new Float32Array(2),
+        ],
       ],
-    ]
-  }
-  if (x == 1) return {
-    evalPoses: [new Float32Array([0.,0.,0.,0.,0.,2.375,0.,2.25,0.,0.,0.],)],
-    scoreThreshold: 0.7,
-    scoreDeviation: 0.02,
-    angleWeights: new Float32Array([0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0]),
-    angleThresholds: [
-      [
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0.26, 0.]),
-        new Float32Array(2),
-        new Float32Array([0.3, 0.2]),
-        new Float32Array(2),new Float32Array(2),new Float32Array(2)
-      ]
-    ],
-    minRepTime: 2000,
-    glossary: [
-      [
-        ['',''],['',''],['',''],['',''],['',''],
-        ['Knees collapse inwards',''],
-        ['',''],
-        ['Squat not low enough','Squat too low'],
-        ['',''],['',''],['',''],
+      minRepTime: 2000,
+      glossary: [
+        [
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["Squat not low enough", "Squat too low"],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["Leaning forward too much", ""],
+          ["", ""],
+          ["", ""],
+        ],
       ],
-    ]
-  }
-  if (x == 2) return {
-    evalPoses: [new Float32Array([0.,0.,0.,0.,2.825,0.,2.832,0.,1.583,0.,1.7],)],
-    scoreThreshold: 0.7,
-    scoreDeviation: 0.02,
-    angleWeights: new Float32Array([0.,0.,0.,0.,0.,0.,0.,0.,-1.,0.,10.]),
-    angleThresholds: [
-      [
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0., 0.23]),
-        new Float32Array(2),
-        new Float32Array([0.3, 0])
-      ]
-    ],
-    minRepTime: 1500,
-    glossary: [
-      [
-        ['',''],['',''],['',''],['',''],['',''],['',''],['',''],['',''],
-        ['','Sagging back'],
-        ['',''],
-        ['Not going low enough','']
+    };
+  if (x == 1)
+    return {
+      evalPoses: [new Float32Array([0, 0, 0, 0, 0, 2.375, 0, 2.25, 0, 0, 0])],
+      scoreThreshold: 0.7,
+      scoreDeviation: 0.02,
+      angleWeights: new Float32Array([0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0]),
+      angleThresholds: [
+        [
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array([0.26, 0]),
+          new Float32Array(2),
+          new Float32Array([0.3, 0.2]),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+        ],
       ],
-    ]
-  }
-} 
+      minRepTime: 2000,
+      glossary: [
+        [
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["Knees collapse inwards", ""],
+          ["", ""],
+          ["Squat not low enough", "Squat too low"],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+        ],
+      ],
+    };
+  if (x == 2)
+    return {
+      evalPoses: [
+        new Float32Array([0, 0, 0, 0, 2.825, 0, 2.832, 0, 1.583, 0, 1.7]),
+      ],
+      scoreThreshold: 0.7,
+      scoreDeviation: 0.02,
+      angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 10]),
+      angleThresholds: [
+        [
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array([0, 0.23]),
+          new Float32Array(2),
+          new Float32Array([0.3, 0]),
+        ],
+      ],
+      minRepTime: 1500,
+      glossary: [
+        [
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", "Sagging back"],
+          ["", ""],
+          ["Not going low enough", ""],
+        ],
+      ],
+    };
+}
 
 export default VideoFeed;
