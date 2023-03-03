@@ -25,4 +25,5 @@ jobs:
     - name: Run Tests
       run: |
         cd ./backend
+        pipenv run python manage.py check
         pipenv run python manage.py test
