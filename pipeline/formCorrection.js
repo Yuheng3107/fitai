@@ -292,7 +292,9 @@ function finishRep() {
 
   // keypose
   let midExerciseFrames = splitFrames(minFrame);
-  console.log("exerciseFrames: ");
+  console.log("frameScores:");
+  console.log(frameScores);
+  console.log("midExerciseFrames: ");
   console.log(midExerciseFrames);
   console.log("min frame: %f %d", minScore, minFrame);
 
@@ -337,14 +339,14 @@ function splitFrames(centre) {
   for (;i<frameCount;i++) {
     if (Math.abs(frameScores[i] - frameScores[centre]) > scoreDeviation) break;
   }
-  if (i >= frameCount) i = frameCount-1;
+  i--;
 
   let j = centre-1;
   if (j < 0) j = 0;
   for (;j>=0;j--) {
     if (Math.abs(frameScores[j] - frameScores[centre]) > scoreDeviation) break;
   }
-  if (j < 0) j = 0;
+  j++;
 
   return new Uint8Array([j,i]);
 }
@@ -410,14 +412,16 @@ function compareAngles (range, evalPose, angleThreshold) {
     }
   }
   console.log("frames selected: %d", range[1]-range[0]+1);
+  console.log("differences:");
   for (let i=0;i<n;i++) {
-    
     // average frames
     differences[i] /= (range[1]-range[0]+1);
     // finding difference
-    differences[i] -= evalPose[i];    
+    differences[i] -= evalPose[i];
+    console.log(differences[i]);    
   }
-  console.log(differences);
+  console.log("differences.");
+  
   for (let i=0;i<n;i++) {
     // 0 if +ve, 1 if -ve
     let x = 0;
