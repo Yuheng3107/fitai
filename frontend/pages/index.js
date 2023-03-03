@@ -1,7 +1,6 @@
 import Image from "next/image";
 
 import React from "react";
-import ReactDom from 'react-dom/client';
 import App from "./App";
 import reportWebVitals from "../utils/reportWebVitals";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
