@@ -9,8 +9,9 @@ import expandIcon from "../../public/assets/svg/expand-icon.svg";
 
 function Main() {
   return (
-    <main className='flex flex-col items-center'>
+    <main className='flex flex-col items-center bg-slate-800 text-white'>
       <VideoFeed />
+      {/*
       <div id="rep-info-group">
         <span id="rep-count"></span>
         <p id="rep-feedback"></p>
@@ -59,6 +60,7 @@ function Main() {
         End Exercise
       </Button>
       <div id="alerter"></div>
+      */}
     </main>
   );
 }

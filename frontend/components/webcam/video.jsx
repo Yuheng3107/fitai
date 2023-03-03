@@ -1,54 +1,51 @@
-import React, { Component } from "react";
-import { isMobile } from "react-device-detect";
+import React, { Component, useEffect } from "react";
+import { isMobile, isSafari, isFirefox } from "react-device-detect";
+import Webcam from "react-webcam";
+
+//components
+import Button from "../ui/Button";
+import TextBox from "../ui/TextBox";
+import Select from "../ui/Select";
+
+//MoveNet
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as tf from "@tensorflow/tfjs-core";
-// Register one of the TF.js backends.
 import "@tensorflow/tfjs-backend-webgl";
 // import '@tensorflow/tfjs-backend-wasm';
 
-import Button from "../ui/Button";
-
-async function delay(ms) {
-  // return await for better async stack trace support in case of errors.
-  return await new Promise((resolve) => setTimeout(resolve, ms));
-}
+//formCorrection
+import * as formCorrection from "../../utils/formCorrection.js";
 
 class VideoFeed extends Component {
   constructor(props) {
     super(props);
+    this.webcam = React.createRef();
+    this.image = React.createRef();
+    // formCorrection
+    this.feedback = new Array();
+    this.repFeedback = React.createRef();
+    this.generalFeedback = React.createRef();
     this.isActive = false;
-
-    this.videoRef = React.createRef();
-    this.state = {
-      stream: null,
-      constraints: {
-        video: {
-          facingMode: "user",
-          // tries to get camera that faces user
-        },
-      },
-    };
+    this.frameCount = 0;
   }
 
-  componentDidMount = async () => {
-    if (
-      "mediaDevices" in navigator &&
-      "getUserMedia" in navigator.mediaDevices
-    ) {
-      navigator.mediaDevices
-        .getUserMedia(this.state.constraints)
-        .then((stream) => {
-          this.setState({ stream });
-          this.videoRef.current.srcObject = stream;
-          return new Promise((resolve) => {
-            this.videoRef.onloadedmetadata = () => {
-              this.videoRef.play();
-              resolve(this.videoRef);
-            };
-          });
-        })
-        .catch((error) => console.error(error));
+  read = (content) => {
+    if (this.textToSpeech()) {
+      let speech = new SpeechSynthesisUtterance(content);
+      this.synth.speak(speech);
     }
+    // can enable error to pop up if no text to speech
+  };
+
+  textToSpeech = () => {
+    if ("speechSynthesis" in window) {
+      this.synth = window.speechSynthesis;
+      return true;
+    }
+    return false;
+  };
+
+  componentDidMount = async () => {
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
@@ -61,7 +58,7 @@ class VideoFeed extends Component {
   render = () => {
     return (
       <React.Fragment>
-        <video className="pt-4 pb-3" ref={this.videoRef} autoPlay></video>
+        <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
         <div>
           <Button
             onClick={() => this.start()}
@@ -70,24 +67,91 @@ class VideoFeed extends Component {
           >
             Start
           </Button>
-          <Button onClick={() => this.end()} className="bg-amber-200 w-16 mx-2 text-zinc-900 
-          dark:bg-yellow-600 dark:hover:bg-amber-500 dark:text-zinc-100 ">
+          <Button
+            onClick={() => this.end()}
+            className="bg-amber-200 w-16 mx-2 text-zinc-900 
+          dark:bg-yellow-600 dark:hover:bg-amber-500 dark:text-zinc-100 "
+          >
             End
           </Button>
         </div>
+        <form className="flex-row mt-3" id="changeExercise">
+          <Select className="form-select" name="exerciseId" id="changeExercise">
+            <option selected value="0">
+              Squat (Right Side)
+            </option>
+            <option value="1">Squat (Front)</option>
+            <option value="2">Push-Up (Right Side)</option>
+          </Select>
+          <input
+            className="ms-2 btn btn-outline-info d-inline"
+            type="submit"
+            value="Start Exercise"
+          />
+        </form>
+        <div>
+          <TextBox ref={this.repFeedback} />
+          <TextBox ref={this.generalFeedback} />
+        </div>
+        <img src="" alt="" ref={this.image} />
       </React.Fragment>
     );
   };
 
-  ////////
-  // TF movenet
+  /*--------------------
+  MOVENET METHODS
+  --------------------*/
+
+  /**
+   * Starts Exercise
+   */
   start = async () => {
     console.log("start");
-    this.isActive = true;
+
+    // assign img height
+    this.assignImgHeight();
+
     const detector = this.detector;
+
+    // reset local variables
+    this.isActive = true;
+    this.frameCount = 0;
+    this.feedback = ["", ""];
+    this.repFeedback.current.changeText("");
+    this.generalFeedback.current.changeText("Loading...");
+
+    // get from backend
+    let exercise = getExercise(0);
+
+    // initialise form correction
+    formCorrection.init(
+      exercise.evalPoses,
+      exercise.scoreThreshold,
+      exercise.scoreDeviation,
+      exercise.angleWeights,
+      exercise.angleThresholds,
+      exercise.minRepTime,
+      exercise.glossary
+    );
+
+    // wait 3s before starting exercise
+    await delay(3000);
+
     while (this.isActive) {
-      let poses = await detector.estimatePoses(this.videoRef.current);
-      console.log(poses[0]);
+      let poses = await detector.estimatePoses(this.webcam.current.video);
+      await delay(1);
+      // process raw data
+      let feedback = formCorrection.run(poses);
+      if (feedback[0] != "") {
+        this.repFeedback.current.changeText(feedback[0]);
+        this.read(feedback[0][feedback[0].length-1]);
+      }
+      if (feedback[1] != this.feedback[1])
+        this.generalFeedback.current.changeText(feedback[1]);
+      this.feedback = feedback;
+      this.frameCount += 1;
+
+      /*
       fetch("http://localhost:8000/live_exercise/handle_key_points/", {
         method: "POST",
         credentials: "include", // include cookies in the request
@@ -100,13 +164,168 @@ class VideoFeed extends Component {
         .then((response) => response.json())
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
-      await delay(1);
+      */
     }
   };
+
+  /**
+   * Ends Exercise
+   */
   end = () => {
     this.isActive = false;
     console.log("End");
+    this.repFeedback.current.changeText(formCorrection.endExercise());
+    this.generalFeedback.current.changeText(this.frameCount);
   };
+
+  /*--------------------
+HELPER FUNCTIONS
+--------------------*/
+  assignImgHeight = () => {
+    let screenshot = this.webcam.current.getScreenshot();
+    this.image.current.src = screenshot;
+    let img = new Image();
+    img.src = screenshot;
+    img.onload = () => {
+      // window.alert(`Width is ${img.width}, Height is ${img.height}`);
+      // Changes height and width of video in Webcam component
+
+      // set explicit width and height for video
+      [this.webcam.current.video.width, this.webcam.current.video.height] = [
+        img.width,
+        img.height,
+      ];
+    };
+  };
+}
+
+async function delay(ms) {
+  // return await for better async stack trace support in case of errors.
+  return await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * To be replaced with request to backend.
+ * @param {Object} x
+ * @returns Exercise Parameters
+ */
+function getExercise(x) {
+  if (x == 0)
+    return {
+      evalPoses: [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])],
+      scoreThreshold: 0.7,
+      scoreDeviation: 0.02,
+      angleWeights: new Float32Array([0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0]),
+      angleThresholds: [
+        [
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array([0.14, 0.13]),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array([0.15, 0]),
+          new Float32Array(2),
+          new Float32Array(2),
+        ],
+      ],
+      minRepTime: 2000,
+      glossary: [
+        [
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["Squat not low enough", "Squat too low"],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["Leaning forward too much", ""],
+          ["", ""],
+          ["", ""],
+        ],
+      ],
+    };
+  if (x == 1)
+    return {
+      evalPoses: [new Float32Array([0, 0, 0, 0, 0, 2.375, 0, 2.25, 0, 0, 0])],
+      scoreThreshold: 0.7,
+      scoreDeviation: 0.02,
+      angleWeights: new Float32Array([0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0]),
+      angleThresholds: [
+        [
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array([0.26, 0]),
+          new Float32Array(2),
+          new Float32Array([0.3, 0.2]),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+        ],
+      ],
+      minRepTime: 2000,
+      glossary: [
+        [
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["Knees collapse inwards", ""],
+          ["", ""],
+          ["Squat not low enough", "Squat too low"],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+        ],
+      ],
+    };
+  if (x == 2)
+    return {
+      evalPoses: [
+        new Float32Array([0, 0, 0, 0, 2.825, 0, 2.832, 0, 1.583, 0, 1.7]),
+      ],
+      scoreThreshold: 0.7,
+      scoreDeviation: 0.02,
+      angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 10]),
+      angleThresholds: [
+        [
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array(2),
+          new Float32Array([0, 0.23]),
+          new Float32Array(2),
+          new Float32Array([0.3, 0]),
+        ],
+      ],
+      minRepTime: 1500,
+      glossary: [
+        [
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", ""],
+          ["", "Sagging back"],
+          ["", ""],
+          ["Not going low enough", ""],
+        ],
+      ],
+    };
 }
 
 export default VideoFeed;
