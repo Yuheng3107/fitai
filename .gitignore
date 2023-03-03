@@ -3,3 +3,4 @@ venv/*
 myenv/*
 node_modules
 .next
+.mp4
