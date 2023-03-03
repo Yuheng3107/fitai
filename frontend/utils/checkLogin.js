@@ -1,3 +1,5 @@
+import { backend } from "../pages/App";
+
 function checkLoginStatus() {
 
 
@@ -15,3 +17,5 @@ function checkLoginStatus() {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
 }
+
+export default checkLoginStatus;

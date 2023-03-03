@@ -27,15 +27,13 @@ function getLoginData() {
 
 function App() {
 
-
-  const [loginStatus, setLoginStatus] = useState(false);
-
   return (
     <div className="h-screen dark:bg-zinc-900 dark:text-zinc-50">
-      <Navbar checkLoginStatus={checkLoginStatus} loginStatus={loginStatus} />
+      <Navbar />
       <Main />
     </div>
   );
 }
 
 export default App;
+export {backend}

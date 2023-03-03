@@ -27,7 +27,7 @@ function Main() {
         About Errors
       </a>
       <p id="emotion-feedback"></p>
-      <button id="show-log-button">
+      <button className="flex flex-row" id="show-log-button">
         <span>Show Feedback Log</span>
         <Image src={expandIcon} alt="expand icon" />
       </button>

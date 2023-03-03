@@ -12,20 +12,23 @@ import Button from "../ui/Button";
 
 import googleIcon from "../../public/assets/svg/google-icon.svg";
 
-function Login() {
+function Login(props) {
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
   let csrftoken = null;
 
-  useGoogleOneTapLogin({
-    onSuccess: (credentialResponse) => {
-      console.log(credentialResponse);
-      setUser(credentialResponse);
-    },
-    onError: () => {
-      console.log("Login Failed");
-    },
-  });
+  // useGoogleOneTapLogin({
+  //   onSuccess: (credentialResponse) => {
+  //     console.log(credentialResponse);
+  //     setUser(credentialResponse);
+  //   },
+  //   onError: () => {
+  //     console.log("Login Failed");
+  //   },
+  // });
+
+
+
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
       console.log(codeResponse);
@@ -76,6 +79,7 @@ function Login() {
           }).then((response) => {
             // do something with response
             console.log(response);
+            props.setLoginStatus(true);
           });
           // To use fetch API to send POST request to backend here
         })
@@ -89,16 +93,11 @@ function Login() {
   };
 
   return (
-    <div>
+    <div >
       {Object.keys(profile).length ? (
-        <div>
-          <img src={profile.picture} alt="user image" />
-          <h3>User Logged in</h3>
-          <p>Name: {profile.name}</p>
-          <p>Email Address: {profile.email}</p>
-          <br />
-          <br />
-          <button onClick={() => logOut()}>Log out</button>
+        <div className="flex flex-col items-center">
+          <img className="rounded-full" src={profile.picture} alt="user image" />
+          <Button className="dark:border-zinc-100 dark:border dark:text-zinc-50" onClick={() => logOut()}>Log out</Button>
         </div>
       ) : (
         <Button className="flex flex-row items-center dark:text-zinc-100 dark:border-zinc-100 text-base border border-gray-800 border-1" onClick={() => login()}>
