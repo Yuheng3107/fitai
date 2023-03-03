@@ -16,40 +16,29 @@ import "@tensorflow/tfjs-backend-webgl";
 //formCorrection
 import * as formCorrection from "../../utils/formCorrection.js";
 
+let feedback = new Array();
+let isActive = false;
+let frameCount = 0;
+let detector;
+let synth;
+
 class VideoFeed extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      repFeedback: 0,
+      generalFeedback: 0
+    };
+
     this.webcam = React.createRef();
     this.image = React.createRef();
-    // formCorrection
-    this.feedback = new Array();
-    this.repFeedback = React.createRef();
-    this.generalFeedback = React.createRef();
-    this.isActive = false;
-    this.frameCount = 0;
   }
-
-  read = (content) => {
-    if (this.textToSpeech()) {
-      let speech = new SpeechSynthesisUtterance(content);
-      this.synth.speak(speech);
-    }
-    // can enable error to pop up if no text to speech
-  };
-
-  textToSpeech = () => {
-    if ("speechSynthesis" in window) {
-      this.synth = window.speechSynthesis;
-      return true;
-    }
-    return false;
-  };
 
   componentDidMount = async () => {
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
-    this.detector = await poseDetection.createDetector(
+    detector = await poseDetection.createDetector(
       poseDetection.SupportedModels.MoveNet,
       detectorConfig
     );
@@ -90,8 +79,8 @@ class VideoFeed extends Component {
           />
         </form>
         <div>
-          <TextBox ref={this.repFeedback} />
-          <TextBox ref={this.generalFeedback} />
+          <TextBox text={this.state.repFeedback} />
+          <TextBox text={this.state.generalFeedback} />
         </div>
         <img src="" alt="" ref={this.image} />
       </React.Fragment>
@@ -111,14 +100,14 @@ class VideoFeed extends Component {
     // assign img height
     this.assignImgHeight();
 
-    const detector = this.detector;
-
     // reset local variables
-    this.isActive = true;
-    this.frameCount = 0;
-    this.feedback = ["", ""];
-    this.repFeedback.current.changeText("");
-    this.generalFeedback.current.changeText("Loading...");
+    isActive = true;
+    frameCount = 0;
+    feedback = ["", ""];
+    this.setState({
+      repFeedback: "",
+      generalFeedback: "Loading..."
+    });
 
     // get from backend
     let exercise = getExercise(0);
@@ -137,19 +126,19 @@ class VideoFeed extends Component {
     // wait 3s before starting exercise
     await delay(3000);
 
-    while (this.isActive) {
+    while (isActive) {
       let poses = await detector.estimatePoses(this.webcam.current.video);
       await delay(1);
       // process raw data
-      let feedback = formCorrection.run(poses);
-      if (feedback[0] != "") {
-        this.repFeedback.current.changeText(feedback[0]);
-        this.read(feedback[0][feedback[0].length-1]);
+      let newFeedback = formCorrection.run(poses);
+      if (newFeedback[0] != "") {
+        this.setState({repFeedback: newFeedback[0]});
+        read(newFeedback[0][newFeedback[0].length-1]);
       }
-      if (feedback[1] != this.feedback[1])
-        this.generalFeedback.current.changeText(feedback[1]);
-      this.feedback = feedback;
-      this.frameCount += 1;
+      if (newFeedback[1] != feedback[1])
+        this.setState({generalFeedback: newFeedback[1]});
+      feedback = newFeedback;
+      frameCount += 1;
 
       /*
       fetch("http://localhost:8000/live_exercise/handle_key_points/", {
@@ -172,15 +161,15 @@ class VideoFeed extends Component {
    * Ends Exercise
    */
   end = () => {
-    this.isActive = false;
+    isActive = false;
     console.log("End");
-    this.repFeedback.current.changeText(formCorrection.endExercise());
-    this.generalFeedback.current.changeText(this.frameCount);
+    let feedback = formCorrection.endExercise();
+    this.setState({
+      repFeedback: feedback,
+      generalFeedback: frameCount
+    })
   };
 
-  /*--------------------
-HELPER FUNCTIONS
---------------------*/
   assignImgHeight = () => {
     let screenshot = this.webcam.current.getScreenshot();
     this.image.current.src = screenshot;
@@ -199,10 +188,29 @@ HELPER FUNCTIONS
   };
 }
 
+/*--------------------
+HELPER FUNCTIONS
+--------------------*/
 async function delay(ms) {
   // return await for better async stack trace support in case of errors.
   return await new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+const read = (content) => {
+  if (textToSpeech()) {
+    let speech = new SpeechSynthesisUtterance(content);
+    synth.speak(speech);
+  }
+  // can enable error to pop up if no text to speech
+};
+
+const textToSpeech = () => {
+  if ("speechSynthesis" in window) {
+    synth = window.speechSynthesis;
+    return true;
+  }
+  return false;
+};
 
 /**
  * To be replaced with request to backend.
