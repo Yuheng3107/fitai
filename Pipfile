@@ -13,6 +13,8 @@ dj-rest-auth = "*"
 waitress = "*"
 whitenoise = "*"
 channels = {extras = ["daphne"], version = "*"}
+channels-redis = "*"
+selenium = "*"
 
 [dev-packages]
 autopep8 = "*"
