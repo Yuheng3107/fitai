@@ -12,6 +12,7 @@ google-api-python-client = "*"
 dj-rest-auth = "*"
 waitress = "*"
 whitenoise = "*"
+channels = {extras = ["daphne"], version = "*"}
 
 [dev-packages]
 
