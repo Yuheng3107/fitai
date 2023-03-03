@@ -13,7 +13,6 @@ dj-rest-auth = "*"
 waitress = "*"
 whitenoise = "*"
 channels = {extras = ["daphne"], version = "*"}
-pylint = "*"
 
 [dev-packages]
 autopep8 = "*"

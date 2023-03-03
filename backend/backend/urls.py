@@ -21,8 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('homepage.urls')),
     path('live_exercise/', include('live_exercise.urls')),
-
-
-    path("chat/", include("chat.urls")),
-
+    path('chat/', include('chat.urls')),
 ]
