@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'exercise_planner.apps.ExercisePlannerConfig',
     'live_exercise.apps.LiveExerciseConfig',
     'chat.apps.ChatConfig',
+    'feed.apps.FeedConfig',
 ]
 
 MIDDLEWARE = [
@@ -166,3 +167,6 @@ AUTH_USER_MODEL = 'homepage.AppUser'
 
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# MEDIA ROOT
+MEDIA_ROOT = BASE_DIR / 'static/'

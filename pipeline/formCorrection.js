@@ -412,16 +412,15 @@ function compareAngles (range, evalPose, angleThreshold) {
     }
   }
   console.log("frames selected: %d", range[1]-range[0]+1);
-  console.log("differences:");
+  
   for (let i=0;i<n;i++) {
     // average frames
     differences[i] /= (range[1]-range[0]+1);
     // finding difference
-    differences[i] -= evalPose[i];
-    console.log(differences[i]);    
+    differences[i] -= evalPose[i];    
   }
-  console.log("differences.");
   
+  console.log("differences: [");
   for (let i=0;i<n;i++) {
     // 0 if +ve, 1 if -ve
     let x = 0;
@@ -431,12 +430,13 @@ function compareAngles (range, evalPose, angleThreshold) {
       differences[i] = 0;
       continue;
     }
-    
+    console.log(differences[i]);
     // check threshold
     if (Math.abs(differences[i]) < angleThreshold[i][x]) {
       differences[i] = 0;
     }
   }
+  console.log("];");
   return differences;
 }
 
@@ -452,9 +452,6 @@ function compareTime (evalTime, repStartTime) {
   if (curTime - repStartTime < evalTime) return 1;
   return 0;
 }
-
-
-
 
 
 /*--------------------

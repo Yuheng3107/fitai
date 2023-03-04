@@ -95,7 +95,18 @@ class VideoFeed extends Component {
    * Starts Exercise
    */
   start = async () => {
+    if (detector == undefined) {
+      window.alert("loading!");
+      return;
+    }
     console.log("start");
+    this.setState({
+      repFeedback: "",
+      generalFeedback: "Loading..."
+    });
+
+    //allow the feedback to update to loading
+    await delay(1);
 
     // assign img height
     this.assignImgHeight();
@@ -104,10 +115,6 @@ class VideoFeed extends Component {
     isActive = true;
     frameCount = 0;
     feedback = ["", ""];
-    this.setState({
-      repFeedback: "",
-      generalFeedback: "Loading..."
-    });
 
     // get from backend
     let exercise = getExercise(0);
@@ -220,7 +227,7 @@ const textToSpeech = () => {
 function getExercise(x) {
   if (x == 0)
     return {
-      evalPoses: [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])],
+      evalPoses: [new Float32Array([0, 0, 0, 0, 1.0, 0, 0, 0, 0.75, 0, 0])],
       scoreThreshold: 0.7,
       scoreDeviation: 0.02,
       angleWeights: new Float32Array([0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0]),

@@ -35,7 +35,7 @@ function getExercise(x) {
         evalPoses: [new Float32Array([0, 0, 0, 0, 1.05, 0, 0, 0, 0.7, 0, 0])],
         scoreThreshold: 0.7,
         scoreDeviation: 0.02,
-        angleWeights: new Float32Array([0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0]),
+        angleWeights: new Float32Array([0, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0]),
         angleThresholds: [[
             new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
             new Float32Array([0.14, 0.13]),
