@@ -28,7 +28,7 @@ function Main() {
         About Errors
       </a>
       <p id="emotion-feedback"></p>
-      <button id="show-log-button">
+      <button className="flex flex-row" id="show-log-button">
         <span>Show Feedback Log</span>
         <Image src={expandIcon} alt="expand icon" />
       </button>
@@ -43,9 +43,8 @@ function Main() {
       </div>
 
       <form className="flex-row mt-3" id="changeExercise">
-        <Select className="form-select" 
-        name="exerciseId" id="changeExercise">
-          <option selected value="0">
+        <Select defaultValue="0" className="form-select" name="exerciseId" id="changeExercise">
+          <option  value="0">
             Squat (Right Side)
           </option>
           <option value="1">Squat (Front)</option>

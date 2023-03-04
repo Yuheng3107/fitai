@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Login from "../login/Login";
 
+import checkLoginStatus from "../../utils/checkLogin";
+
+
 function Navbar() {
 
-  const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+  const [loginStatus, setLoginStatus] = useState(false);
+
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [loginStatus])
 
   function showMobileMenu() {
     setMobileMenuVisible((prevState) => {
       return !prevState;
     });
   }
+
+
 
 
   return (
@@ -90,7 +101,7 @@ function Navbar() {
               </a>
             </li>
             <li>
-              <Login />
+              <Login setLoginStatus={setLoginStatus} />
             </li>
           </ul>
 
