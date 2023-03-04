@@ -52,6 +52,12 @@ let minScore;
 */
 let minFrame;
 
+/**
+ * Last score recorded, used for anomaly detection
+ * @type {Number}
+ */
+ let prevScore;
+
 /*--------------------
 Pose Variables
 --------------------*/
@@ -419,7 +425,7 @@ function compareAngles (range, evalPose, angleThreshold) {
   differences[i] -= evalPose[i];    
 }
 
-console.log("differences: [");
+console.log("differences: ");
 for (let i=0;i<n;i++) {
   // 0 if +ve, 1 if -ve
   let x = 0;
@@ -436,7 +442,6 @@ for (let i=0;i<n;i++) {
     differences[i] = 0;
   }
 }
-console.log("];");
 return differences;
 }
 
@@ -467,12 +472,20 @@ These methods are called once per frame.
 * @called every frame
 * @param {Number} score score returned by comparePoses
 * @param {Float32Array}  curPose angle data of the current pose
-* @variable scoreThreshold, poseStatus, switchPoseCount, minScore, minFrame
+* @variable scoreThreshold, poseStatus, switchPoseCount, minScore, minFrame, prevScore
 * @returns {Boolean} false: nothing, true: end of rep
 */
 function checkScore (score, curPose) {
   if (score == -1) return false;
-  if (score < minScore) {
+
+  // check for anomalous frame with massive score jump
+  if (Math.abs(score-prevScore) > 0.07) {
+    prevScore = score;
+    return false;
+  }
+  prevScore = score;
+
+  if (score < minScore  && poseStatus == 1) {
     minScore = score;
     minFrame = frameCount;
   }
@@ -679,6 +692,7 @@ function resetFrames () {
   switchPoseCount = 0;
   poseStatus = 0;
   repStartTime = new Date().getTime();
+  prevScore = scoreThreshold;
 }
 
 /**
