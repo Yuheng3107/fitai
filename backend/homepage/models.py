@@ -26,8 +26,8 @@ class AppUser(AbstractUser):
     achievements = models.ManyToManyField(Achievement)
     # Makes email the unique identifier of a entry, it is now the "username" which means unique identifier
     USERNAME_FIELD = 'email'
-    # Makes email required
-    REQUIRED_FIELDS = []
+    # Makes username required when making superuser
+    REQUIRED_FIELDS = ['username']
 
     objects = AppUserManager()
 
