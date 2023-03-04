@@ -26,8 +26,9 @@ class VideoFeed extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      repFeedback: 0,
-      generalFeedback: 0
+      repFeedback: "",
+      repFeedbackLog: "",
+      generalFeedback: ""
     };
 
     this.webcam = React.createRef();
@@ -43,6 +44,7 @@ class VideoFeed extends Component {
       detectorConfig
     );
   };
+
 
   render = () => {
     return (
@@ -64,7 +66,7 @@ class VideoFeed extends Component {
             End
           </Button>
         </div>
-        <form className="flex flex-row items-center justify-center mt-3 " id="changeExercise">
+        {/* <form className="flex flex-row items-center justify-center mt-3 " id="changeExercise">
           <Select className="form-select" name="exerciseId" id="changeExercise">
             <option selected value="0">
               Squat (Right Side)
@@ -77,10 +79,12 @@ class VideoFeed extends Component {
             value="Start Exercise">
             Start Exercise
           </Button>
-        </form>
+        </form> */}
         <div className="exercise-feedback flex flex-col p-5">
-          <TextBox className="rounded-md bg-zinc-500 p-3">{this.state.repFeedback}</TextBox>
-          <span className="rounded-md bg-zinc-500 p-3 mt-3">{this.state.generalFeedback}</span>
+          <div>{this.state.repFeedback}</div>
+          <TextBox className="bg-zinc-500 p-3">{this.state.repFeedback}</TextBox>
+          <TextBox className="bg-zinc-500 p-3">{this.state.repFeedbackLog}</TextBox>
+          <TextBox className="bg-zinc-500 p-3 mt-3">{this.state.generalFeedback}</TextBox>
         </div>
         <img src="" alt="" ref={this.image} />
       </React.Fragment>
@@ -138,9 +142,11 @@ class VideoFeed extends Component {
       await delay(1);
       // process raw data
       let newFeedback = formCorrection.run(poses);
-      if (newFeedback[0] != "") {
-        this.setState({ repFeedback: newFeedback[0] });
-        read(newFeedback[0][newFeedback[0].length - 1]);
+      if (newFeedback[0] !== "") {
+        console.log(newFeedback);
+        this.setState({ repFeedback: newFeedback[0].slice(-1) });
+        this.setState({ repFeedbackLog: newFeedback[0] });
+        read(newFeedback[0][newFeedback[0].slice(-1)]);
       }
       if (newFeedback[1] != feedback[1])
         this.setState({ generalFeedback: newFeedback[1] });
