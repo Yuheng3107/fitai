@@ -124,7 +124,7 @@ class VideoFeed extends Component {
     );
 
     // wait 3s before starting exercise
-    await delay(3000);
+    // await delay(3000);
 
     while (isActive) {
       let poses = await detector.estimatePoses(this.webcam.current.video);
