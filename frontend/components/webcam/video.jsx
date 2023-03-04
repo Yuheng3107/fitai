@@ -26,8 +26,9 @@ class VideoFeed extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      repFeedback: 0,
-      generalFeedback: 0
+      repFeedback: "",
+      repFeedbackLog: "",
+      generalFeedback: ""
     };
 
     this.webcam = React.createRef();
@@ -44,11 +45,12 @@ class VideoFeed extends Component {
     );
   };
 
+
   render = () => {
     return (
       <React.Fragment>
         <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
-        <div>
+        <div className="mt-5">
           <Button
             onClick={() => this.start()}
             className="bg-green-300 w-16 mx-2 text-zinc-900 
@@ -64,7 +66,7 @@ class VideoFeed extends Component {
             End
           </Button>
         </div>
-        <form className="flex-row mt-3" id="changeExercise">
+        {/* <form className="flex flex-row items-center justify-center mt-3 " id="changeExercise">
           <Select className="form-select" name="exerciseId" id="changeExercise">
             <option selected value="0">
               Squat (Right Side)
@@ -72,15 +74,17 @@ class VideoFeed extends Component {
             <option value="1">Squat (Front)</option>
             <option value="2">Push-Up (Right Side)</option>
           </Select>
-          <input
-            className="ms-2 btn btn-outline-info d-inline"
+          <Button className=" dark:border dark:border-zinc-100"
             type="submit"
-            value="Start Exercise"
-          />
-        </form>
-        <div>
-          <TextBox text={this.state.repFeedback} />
-          <TextBox text={this.state.generalFeedback} />
+            value="Start Exercise">
+            Start Exercise
+          </Button>
+        </form> */}
+        <div className="exercise-feedback flex flex-col p-5">
+          <div>{this.state.repFeedback}</div>
+          <TextBox className="bg-zinc-500 p-3">{this.state.repFeedback}</TextBox>
+          <TextBox className="bg-zinc-500 p-3">{this.state.repFeedbackLog}</TextBox>
+          <TextBox className="bg-zinc-500 p-3 mt-3">{this.state.generalFeedback}</TextBox>
         </div>
         <img src="" alt="" ref={this.image} />
       </React.Fragment>
@@ -138,12 +142,14 @@ class VideoFeed extends Component {
       await delay(1);
       // process raw data
       let newFeedback = formCorrection.run(poses);
-      if (newFeedback[0] != "") {
-        this.setState({repFeedback: newFeedback[0]});
-        read(newFeedback[0][newFeedback[0].length-1]);
+      if (newFeedback[0] !== "") {
+        console.log(newFeedback);
+        this.setState({ repFeedback: newFeedback[0].slice(-1) });
+        this.setState({ repFeedbackLog: newFeedback[0] });
+        read(newFeedback[0][newFeedback[0].slice(-1)]);
       }
       if (newFeedback[1] != feedback[1])
-        this.setState({generalFeedback: newFeedback[1]});
+        this.setState({ generalFeedback: newFeedback[1] });
       feedback = newFeedback;
       frameCount += 1;
 
