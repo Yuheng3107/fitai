@@ -16,6 +16,7 @@ channels = {extras = ["daphne"], version = "*"}
 channels-redis = "*"
 selenium = "*"
 pillow = "*"
+daphne = "*"
 
 [dev-packages]
 autopep8 = "*"
