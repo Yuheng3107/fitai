@@ -55,13 +55,15 @@ class AchievementsTest(TestCase):
         self.assertEqual(achievement.name, "Test Achievement")
         self.assertEqual(achievement.description, "A test achievement.")
         self.assertIsNotNone(achievement.image)
+        self.assertEqual(achievement.image.name, image.name)
         achievement.save()
         database_achievement = Achievement.objects.get(name="Test Achievement")
         self.assertEqual(database_achievement.name, "Test Achievement")
         self.assertEqual(database_achievement.description,
                          "A test achievement.")
         self.assertIsNotNone(database_achievement.image)
-        self.assertEqual
+        self.assertEqual(database_achievement.image.name, image.name)
+
         # Clean up .gif file produced
         dir_path = os.getcwd()
         files = os.listdir(dir_path)
