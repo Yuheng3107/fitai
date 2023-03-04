@@ -66,6 +66,7 @@ class AchievementsTest(TestCase):
 
         # Clean up .gif file produced
         dir_path = os.getcwd()
+        dir_path = os.path.join(dir_path, 'static')
         files = os.listdir(dir_path)
         for file in files:
             if file.endswith('.gif'):
