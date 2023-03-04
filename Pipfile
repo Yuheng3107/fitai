@@ -15,6 +15,7 @@ whitenoise = "*"
 channels = {extras = ["daphne"], version = "*"}
 channels-redis = "*"
 selenium = "*"
+pillow = "*"
 
 [dev-packages]
 autopep8 = "*"

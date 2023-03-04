@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from .models import Achievement
-import unittest.mock as mock
-from django.core.files import File
+from django.core.files.uploadedfile import SimpleUploadedFile
+import os
 
 
 class UsersManagersTests(TestCase):
@@ -41,10 +41,30 @@ class UsersManagersTests(TestCase):
 
 
 class AchievementsTest(TestCase):
-    def create_achievement(self):
-        mock_file = mock.MagicMock(spec=File, name='test.jpg')
+    def test_create_achievement(self):
+        """Creates a gif in memory to act as a file for testing purposes"""
+        small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
+            b'\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
+            b'\x02\x4c\x01\x00\x3b'
+        )
+        image = SimpleUploadedFile(
+            'small.gif', small_gif, content_type='image/gif')
         achievement = Achievement.objects.create(
-            name="Test Achievement", image=mock_file, description="A test achievement.")
+            name="Test Achievement", image=image, description="A test achievement.")
         self.assertEqual(achievement.name, "Test Achievement")
         self.assertEqual(achievement.description, "A test achievement.")
-        self.assertEqual(achievement.image, mock_file)
+        self.assertIsNotNone(achievement.image)
+        achievement.save()
+        database_achievement = Achievement.objects.get(name="Test Achievement")
+        self.assertEqual(database_achievement.name, "Test Achievement")
+        self.assertEqual(database_achievement.description,
+                         "A test achievement.")
+        self.assertIsNotNone(database_achievement.image)
+        self.assertEqual
+        # Clean up .gif file produced
+        dir_path = os.getcwd()
+        files = os.listdir(dir_path)
+        for file in files:
+            if file.endswith('.gif'):
+                os.remove(os.path.join(dir_path, file))
