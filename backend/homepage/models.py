@@ -32,4 +32,5 @@ class AppUser(AbstractUser):
     objects = AppUserManager()
 
     def __str__(self):
-        return self.email
+        # Returns username if got username
+        return self.username or self.email
