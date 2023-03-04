@@ -31,7 +31,6 @@ ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1']
 
 INSTALLED_APPS = [
     'daphne',
-    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +46,8 @@ INSTALLED_APPS = [
     'homepage.apps.HomepageConfig',
     'exercise_planner.apps.ExercisePlannerConfig',
     'live_exercise.apps.LiveExerciseConfig',
+    'chat.apps.ChatConfig',
+    'feed.apps.FeedConfig',
 ]
 
 MIDDLEWARE = [
@@ -87,14 +88,21 @@ REST_FRAMEWORK = {
 }
 WSGI_APPLICATION = 'backend.wsgi.application'
 ASGI_APPLICATION = 'backend.asgi.application'
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -159,3 +167,6 @@ AUTH_USER_MODEL = 'homepage.AppUser'
 
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# MEDIA ROOT
+MEDIA_ROOT = BASE_DIR / 'static/'
