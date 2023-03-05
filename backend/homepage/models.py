@@ -21,7 +21,7 @@ class AppUser(AbstractUser):
     username = models.CharField(max_length=50, blank=True)
     # Removes need to put password as auth is done using Social Login
     email = models.EmailField(_('email address'), max_length=100, unique=True)
-
+    profile_photo = models.ImageField(blank=True, null=True)
     # Many to Many relationship with Achievement
     achievements = models.ManyToManyField(Achievement)
     # Makes email the unique identifier of a entry, it is now the "username" which means unique identifier

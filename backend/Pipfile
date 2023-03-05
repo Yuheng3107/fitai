@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+django-cors-headers = "*"
+django-allauth = "*"
+google-api-python-client = "*"
+dj-rest-auth = "*"
+waitress = "*"
+whitenoise = "*"
+channels = {extras = ["daphne"], version = "*"}
+channels-redis = "*"
+selenium = "*"
+pillow = "*"
+daphne = "*"
+coverage = "*"
+model-mommy = "*"
+
+[dev-packages]
+autopep8 = "*"
+
+[requires]
+python_version = "3.10"
