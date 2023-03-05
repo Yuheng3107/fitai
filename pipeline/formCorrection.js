@@ -52,6 +52,12 @@ let minScore;
  */
 let minFrame;
 
+/**
+ * Last score recorded, used for anomaly detection
+ * @type {Number}
+ */
+let prevScore;
+
 /*--------------------
 Pose Variables
 --------------------*/
@@ -425,11 +431,12 @@ function compareAngles (range, evalPose, angleThreshold) {
     let x = 0;
     if (differences[i]<0) x = 1;
     // skip if no angleThreshold
-    if (angleThreshold[i][x] == 0) {
+    if (angleThreshold[i][0] == 0 && angleThreshold[i][1] == 0) {
       differences[i] = 0;
       continue;
     }
-    text[text.length-1] += "," + differences[i];
+
+    text[text.length-1] += "," + differences[i].toString();
     // check threshold
     if (Math.abs(differences[i]) < angleThreshold[i][x]) {
       differences[i] = 0;
@@ -462,12 +469,20 @@ These methods are called once per frame.
  * @called every frame
  * @param {Number} score score returned by comparePoses
  * @param {Float32Array}  curPose angle data of the current pose
- * @variable scoreThreshold, poseStatus, switchPoseCount, minScore, minFrame
+ * @variable scoreThreshold, poseStatus, switchPoseCount, minScore, minFrame, prevScore
  * @returns {Boolean} false: nothing, true: end of rep
  */
 function checkScore (score, curPose) {
   if (score == -1) return false;
-  if (score < minScore) {
+
+  // check for anomalous frame with massive score jump
+  if (Math.abs(score-prevScore) > 0.07) {
+    prevScore = score;
+    return false;
+  }
+  prevScore = score;
+
+  if (score < minScore && poseStatus == 1) {
     minScore = score;
     minFrame = frameCount;
   }
@@ -675,6 +690,7 @@ They help do things
   switchPoseCount = 0;
   poseStatus = 0;
   repStartTime = new Date().getTime();
+  prevScore = scoreThreshold;
 }
 
 /**
