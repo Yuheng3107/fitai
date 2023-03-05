@@ -18,12 +18,16 @@ jobs:
         python-version: '3.10'
     - name: Install Pipenv
       run: |
+        pwd
         pip3 install pipenv
     - name: Install Dependencies
       run: |
+        pwd
         cd ./backend
+        pwd
         pipenv install 
     - name: Run Tests
       run: |
+        pwd
         pipenv run python manage.py check
         pipenv run python manage.py test
