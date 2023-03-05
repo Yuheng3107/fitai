@@ -43,6 +43,22 @@ class PostTestCase(TestCase):
             if file.endswith('.gif'):
                 os.remove(os.path.join(dir_path, file))
 
+    def test_delete_post(self):
+        """Test that post can be deleted properly"""
+        post = mommy.make(Post)
+        Post.objects.get(pk=post.id).delete()
+        with self.assertRaises(Post.DoesNotExist):
+            Post.objects.get(pk=post.id)
+
+    def test_update_post(self):
+        """Test that post can be updated"""
+        post = mommy.make(Post)
+        updated_content = "New Post Content"
+        post.content = updated_content
+        post.save()
+        updated_post = Post.objects.get(pk=post.id)
+        self.assertEqual(updated_post.content, updated_content)
+
 
 class CommentTestCase(TestCase):
     User = get_user_model()
