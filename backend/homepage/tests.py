@@ -7,6 +7,9 @@ from model_mommy import mommy
 
 
 class UsersManagersTests(TestCase):
+    def setUp(self):
+        self.User = get_user_model()
+
     def test_create_user(self):
         User = get_user_model()
         user = User.objects.create_user(
@@ -39,6 +42,20 @@ class UsersManagersTests(TestCase):
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
                 email="test@superuser.com", password="Password", is_superuser=False)
+
+    def test_update_user(self):
+        user = mommy.make(self.User)
+        updated_username = "newusername"
+        user.username = updated_username
+        user.save()
+        updated_user = self.User.objects.get(pk=user.id)
+        self.assertEqual(updated_user.username, updated_username)
+
+    def test_delete_user(self):
+        user = mommy.make(self.User)
+        self.User.objects.get(pk=user.id).delete()
+        with self.assertRaises(self.User.DoesNotExist):
+            self.User.objects.get(pk=user.id)
 
 
 class AchievementsTest(TestCase):
@@ -81,3 +98,9 @@ class AchievementsTest(TestCase):
         achievement.save()
         new_achievement = Achievement.objects.get(pk=achievement.id)
         self.assertEqual(new_achievement.description, updated_description)
+
+    def test_delete_achievement(self):
+        achievement = mommy.make(Achievement)
+        Achievement.objects.get(pk=achievement.id).delete()
+        with self.assertRaises(Achievement.DoesNotExist):
+            Achievement.objects.get(pk=achievement.id)
