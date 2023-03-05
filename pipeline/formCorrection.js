@@ -52,6 +52,12 @@ let minScore;
  */
 let minFrame;
 
+/**
+ * Last score recorded, used for anomaly detection
+ * @type {Number}
+ */
+let prevScore;
+
 /*--------------------
 Pose Variables
 --------------------*/
@@ -153,15 +159,15 @@ let perfectReps;
  * Array of feedback for each rep
  * @type {Array(string)}
  */
- let repFeedback;
+let repFeedback;
 
- /**
+/**
  * Number of completed reps
  * @type {Number}
  */
- let repCount;
+let repCount;
 
-
+let text = new Array();
 
 
 
@@ -279,6 +285,7 @@ These methods are called once per rep.
  * @returns {String} feedback
  */
 function finishRep() {
+  text.push("");
   repCount += 1;
   if (frameArray.length == 0) return "No Frames Detected";
   let feedback = "";
@@ -294,8 +301,7 @@ function finishRep() {
   let midExerciseFrames = splitFrames(minFrame);
   console.log("frameScores:");
   console.log(frameScores);
-  console.log("midExerciseFrames: ");
-  console.log(midExerciseFrames);
+  text[text.length-1] += repCount.toString() + "," + minScore.toString() + "," + midExerciseFrames[0].toString() + "," + (midExerciseFrames[1]-midExerciseFrames[0]+1).toString() + "," + (frameCount-midExerciseFrames[1]-1).toString();
   console.log("min frame: %f %d", minScore, minFrame);
 
   let angleDifferences = compareAngles(midExerciseFrames, evalPoses[0], angleThresholds[0]);
@@ -324,6 +330,7 @@ function finishRep() {
 
   resetFrames();
   console.log(finalFeedback);
+  console.log(text);
   return finalFeedback;
 }
 
@@ -411,7 +418,6 @@ function compareAngles (range, evalPose, angleThreshold) {
       differences[j] += frameArray[i][j];
     }
   }
-  console.log("frames selected: %d", range[1]-range[0]+1);
   
   for (let i=0;i<n;i++) {
     // average frames
@@ -419,24 +425,23 @@ function compareAngles (range, evalPose, angleThreshold) {
     // finding difference
     differences[i] -= evalPose[i];    
   }
-  
-  console.log("differences: [");
+
   for (let i=0;i<n;i++) {
     // 0 if +ve, 1 if -ve
     let x = 0;
     if (differences[i]<0) x = 1;
     // skip if no angleThreshold
-    if (angleThreshold[i][x] == 0) {
+    if (angleThreshold[i][0] == 0 && angleThreshold[i][1] == 0) {
       differences[i] = 0;
       continue;
     }
-    console.log(differences[i]);
+
+    text[text.length-1] += "," + differences[i].toString();
     // check threshold
     if (Math.abs(differences[i]) < angleThreshold[i][x]) {
       differences[i] = 0;
     }
   }
-  console.log("];");
   return differences;
 }
 
@@ -464,12 +469,20 @@ These methods are called once per frame.
  * @called every frame
  * @param {Number} score score returned by comparePoses
  * @param {Float32Array}  curPose angle data of the current pose
- * @variable scoreThreshold, poseStatus, switchPoseCount, minScore, minFrame
+ * @variable scoreThreshold, poseStatus, switchPoseCount, minScore, minFrame, prevScore
  * @returns {Boolean} false: nothing, true: end of rep
  */
 function checkScore (score, curPose) {
   if (score == -1) return false;
-  if (score < minScore) {
+
+  // check for anomalous frame with massive score jump
+  if (Math.abs(score-prevScore) > 0.07) {
+    prevScore = score;
+    return false;
+  }
+  prevScore = score;
+
+  if (score < minScore && poseStatus == 1) {
     minScore = score;
     minFrame = frameCount;
   }
@@ -677,6 +690,7 @@ They help do things
   switchPoseCount = 0;
   poseStatus = 0;
   repStartTime = new Date().getTime();
+  prevScore = scoreThreshold;
 }
 
 /**

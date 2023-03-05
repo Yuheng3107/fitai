@@ -17,6 +17,7 @@ channels-redis = "*"
 selenium = "*"
 pillow = "*"
 daphne = "*"
+coverage = "*"
 
 [dev-packages]
 autopep8 = "*"
