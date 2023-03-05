@@ -3,6 +3,7 @@ import os
 from .models import Post, Comment
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from model_mommy import mommy
 # Create your tests here.
 
 
@@ -47,19 +48,11 @@ class CommentTestCase(TestCase):
     User = get_user_model()
 
     def test_create_comment(self):
-        small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
-            b'\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
-            b'\x02\x4c\x01\x00\x3b'
-        )
-        content = "Test Post Content"
-        likes = 69
-        image = SimpleUploadedFile(
-            'small.gif', small_gif, content_type='image/gif')
+        post = mommy.make(Post)
+        # Check that post was created
+        self.assertIsInstance(post, Post)
         user = self.User.objects.create_user(
             email='testuser@gmail.com', password='12345')
-        post = Post.objects.create(
-            poster=user, likes=likes, content=content, image=image)
         content = "Test Comment Content"
         likes = 69
         comment = Comment.objects.create(
@@ -68,14 +61,28 @@ class CommentTestCase(TestCase):
         self.assertEqual(comment.post, post)
         self.assertEqual(comment.commenter, user)
         self.assertEqual(comment.likes, likes)
-        # Clean up .gif file produced
-        dir_path = os.getcwd()
-        dir_path = os.path.join(dir_path, 'static')
-        files = os.listdir(dir_path)
-        for file in files:
-            if file.endswith('.gif'):
-                os.remove(os.path.join(dir_path, file))
 
     def test_delete_commenter(self):
         """To test whether comment is deleted after commenter is deleted"""
-        pass
+        user = mommy.make(self.User)
+        comment = mommy.make(Comment, commenter=user)
+        self.assertIsInstance(comment, Comment)
+        self.User.objects.get(pk=user.id).delete()
+        with self.assertRaises(Comment.DoesNotExist):
+            Comment.objects.get(pk=comment.id)
+
+    def test_delete_comment(self):
+        """Test that we cannot retrieve comment once deleted"""
+        comment = mommy.make(Comment)
+        Comment.objects.get(pk=comment.id).delete()
+        with self.assertRaises(Comment.DoesNotExist):
+            Comment.objects.get(pk=comment.id)
+
+    def test_update_comment(self):
+        """Test that comment is updated"""
+        comment = mommy.make(Comment)
+        updated_content = "Updated Comment Content"
+        comment.content = updated_content
+        comment.save()
+        new_comment = Comment.objects.get(pk=comment.id)
+        self.assertEqual(new_comment.content, updated_content)

@@ -56,6 +56,7 @@ class AchievementsTest(TestCase):
         self.assertEqual(achievement.description, "A test achievement.")
         self.assertIsNotNone(achievement.image)
         self.assertEqual(achievement.image.name, image.name)
+        """Test Read Operation"""
         achievement.save()
         database_achievement = Achievement.objects.get(name="Test Achievement")
         self.assertEqual(database_achievement.name, "Test Achievement")
