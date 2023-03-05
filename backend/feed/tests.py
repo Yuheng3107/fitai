@@ -37,7 +37,7 @@ class PostTestCase(TestCase):
         self.assertEqual(saved_post.image.name, image.name)
         # Clean up .gif file produced
         dir_path = os.getcwd()
-        dir_path = os.path.join(dir_path, 'static')
+        dir_path = os.path.join(dir_path, 'static/media')
         files = os.listdir(dir_path)
         for file in files:
             if file.endswith('.gif'):

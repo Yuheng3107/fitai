@@ -5,10 +5,17 @@ from .models import AppUser, Achievement
 from .forms import AppUserCreationForm, AppUserChangeForm
 
 
+class UserAchievementsInlineAdmin(admin.TabularInline):
+    model = Achievement
+    fk_name = "achievement"
+
+
 class AppUserAdmin(UserAdmin):
     add_form = AppUserCreationForm
     form = AppUserChangeForm
     model = AppUser
+
+    inlines = [UserAchievementsInlineAdmin]
     list_display = ("email", "is_staff", "is_active",)
     list_filter = ("email", "is_staff", "is_active",)
     fieldsets = (
@@ -27,6 +34,13 @@ class AppUserAdmin(UserAdmin):
     )
     search_fields = ("email",)
     ordering = ("email",)
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).prefetch_related("user_achievements")
+
+    @admin.display(description='Courses')
+    def teacher_courses(self, user):
+        return [c.name for c in user.user_achievements.all()]
 
 
 admin.site.register(AppUser, UserAdmin)

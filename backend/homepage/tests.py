@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from .models import Achievement
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
+from model_mommy import mommy
 
 
 class UsersManagersTests(TestCase):
@@ -67,8 +68,16 @@ class AchievementsTest(TestCase):
 
         # Clean up .gif file produced
         dir_path = os.getcwd()
-        dir_path = os.path.join(dir_path, 'static')
+        dir_path = os.path.join(dir_path, 'static/media')
         files = os.listdir(dir_path)
         for file in files:
             if file.endswith('.gif'):
                 os.remove(os.path.join(dir_path, file))
+
+    def test_update_achievement(self):
+        achievement = mommy.make(Achievement)
+        updated_description = "New Description"
+        achievement.description = updated_description
+        achievement.save()
+        new_achievement = Achievement.objects.get(pk=achievement.id)
+        self.assertEqual(new_achievement.description, updated_description)
