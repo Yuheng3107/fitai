@@ -81,7 +81,7 @@ class VideoFeed extends Component {
           </Button>
         </form> */}
         <div className="exercise-feedback flex flex-col p-5">
-          <div>{this.state.repFeedback}</div>
+          <div>{this.state.repFeedback.match(/\d+/)}</div>
           <TextBox className="bg-zinc-500 p-3">{this.state.repFeedback}</TextBox>
           <TextBox className="bg-zinc-500 p-3">{this.state.repFeedbackLog}</TextBox>
           <TextBox className="bg-zinc-500 p-3 mt-3">{this.state.generalFeedback}</TextBox>
