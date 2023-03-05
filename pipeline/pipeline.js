@@ -9,7 +9,7 @@ window.onload = async () => {
     const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
     const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
     // get from backend
-    let exercise = getExercise(1);
+    let exercise = getExercise(2);
 
     // initialise form correction
     init(
@@ -85,16 +85,16 @@ function getExercise(x) {
       };
     if (x == 2) return {
         evalPoses: [
-            new Float32Array([0, 0, 0, 0, 2.825, 0, 2.832, 0, 1.583, 0, 1.7]),
+            new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 1.702, 0, 1.650]),
         ],
-        scoreThreshold: 0.7,
-        scoreDeviation: 0.02,
+        scoreThreshold: 0.6,
+        scoreDeviation: 0.005,
         angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 10]),
         angleThresholds: [[
             new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-            new Float32Array([0, 0.23]),
+            new Float32Array([0, 0.1]),
             new Float32Array(2),
-            new Float32Array([0.3, 0]),
+            new Float32Array([0.1, 0]),
         ],],
         minRepTime: 1500,
         glossary: [
