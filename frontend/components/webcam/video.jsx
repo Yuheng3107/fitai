@@ -231,7 +231,7 @@ const textToSpeech = () => {
  * @returns Exercise Parameters
  */
 function getExercise(x) {
-if (x == 0) return {
+  if (x == 0) return {
     evalPoses: [new Float32Array([0, 0, 0, 0, 1.378, 0, 0, 0, 0.639, 0, 0])],
     scoreThreshold: 0.7,
     scoreDeviation: 0.02,
@@ -252,7 +252,7 @@ if (x == 0) return {
         ["", ""],["", ""],
     ]]
   };
-if (x == 1) return {
+  if (x == 1) return {
     evalPoses: [new Float32Array([0, 0, 0, 0, 0, 2.466, 0, 2.430, 0, 0, 0]),new Float32Array(2),new Float32Array([0, 0, 0, 0, 0, 2.639, 0, 0, 0, 0, 0])],
     scoreThreshold: 0.9,
     scoreDeviation: 0.02,
@@ -263,12 +263,12 @@ if (x == 1) return {
         new Float32Array(2),
         new Float32Array([0.25, 0.25]),
         new Float32Array(2),new Float32Array(2),new Float32Array(2),
-    ],[],[
+      ],[],[
         new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
         new Float32Array([0, 0.1]),
         new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-    ]
-],
+      ]
+    ],
     minRepTime: 2000,
     glossary: [[
         ["", ""],["", ""],["", ""],["", ""],["", ""],
@@ -280,21 +280,21 @@ if (x == 1) return {
         ["", ""],["", ""],["", ""],["", ""],["", ""],
         ["", "Knees collapse inwards"],
         ["", ""],["", ""],["", ""],["", ""],["", ""],
-    ]
-],
-  };
-if (x == 2) return {
-    evalPoses: [
-        new Float32Array([0, 0, 0, 0, 2.825, 0, 2.832, 0, 1.583, 0, 1.7]),
+      ]
     ],
-    scoreThreshold: 0.7,
-    scoreDeviation: 0.02,
+  };
+  if (x == 2) return {
+    evalPoses: [
+      new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 1.702, 0, 1.650]),
+    ],
+    scoreThreshold: 0.6,
+    scoreDeviation: 0.005,
     angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 10]),
     angleThresholds: [[
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0, 0.23]),
-        new Float32Array(2),
-        new Float32Array([0.3, 0]),
+      new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
+      new Float32Array([0, 0.1]),
+      new Float32Array(2),
+      new Float32Array([0.1, 0]),
     ],],
     minRepTime: 1500,
     glossary: [
