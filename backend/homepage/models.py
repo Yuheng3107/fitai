@@ -7,6 +7,7 @@ from .managers import AppUserManager
 
 
 class Achievement(models.Model):
+
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
     image = models.ImageField()

@@ -43,5 +43,9 @@ class AppUserAdmin(UserAdmin):
         return [c.name for c in user.user_achievements.all()]
 
 
+class AchievementAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description', 'image')
+
+
 admin.site.register(AppUser, UserAdmin)
-admin.site.register(Achievement)
+admin.site.register(Achievement, AchievementAdmin)
