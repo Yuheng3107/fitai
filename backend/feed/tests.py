@@ -1,6 +1,6 @@
 from django.test import TestCase
 import os
-from .models import UserPost, UserPostComment, CommunityPostComment
+from .models import UserPost, UserPostComment, CommunityPostComment, CommunityPost
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from model_mommy import mommy
@@ -104,3 +104,35 @@ class UserCommentTestCase(TestCase):
         self.assertEqual(new_comment.content, updated_content)
 
 """Write more test cases for Community Posts and Comments"""
+
+class CommunityPostTestCase(TestCase):
+    def test_create_community_post(self):
+        post = mommy.make(CommunityPost)
+        self.assertIsInstance(post, CommunityPost)
+    
+    def test_read_community_post(self):
+        post = mommy.make(CommunityPost)
+        content = post.content 
+        likes = post.likes 
+        read_post = CommunityPost.objects.get(pk=post.id)
+        self.assertEqual(content, read_post.content)
+        self.assertEqual(likes, read_post.likes)
+        
+    def test_update_community_post(self):
+        post = mommy.make(CommunityPost)
+        updated_content = "Updated Content"
+        updated_likes = 69
+        post.content = updated_content
+        post.likes = updated_likes
+        post.save()
+        updated_post = CommunityPost.objects.get(pk=post.id)
+        self.assertEqual(updated_post.content, updated_content)
+        self.assertEqual(updated_post.likes, updated_likes)
+        
+    def test_delete_community_post(self):
+        post = mommy.make(CommunityPost)
+        CommunityPost.objects.get(pk=post.id).delete()
+        with self.assertRaises(CommunityPost.DoesNotExist):
+            CommunityPost.objects.get(pk=post.id)
+            
+    
