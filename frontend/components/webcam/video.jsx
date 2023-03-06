@@ -1,11 +1,15 @@
 import React, { Component, useEffect } from "react";
 import { isMobile, isSafari, isFirefox } from "react-device-detect";
 import Webcam from "react-webcam";
+import NextImage from 'next/future/image';
 
 //components
 import Button from "../ui/Button";
 import TextBox from "../ui/TextBox";
 import Select from "../ui/Select";
+
+//assets
+import expandIcon from "../../public/assets/svg/expand-icon.svg";
 
 //MoveNet
 import * as poseDetection from "@tensorflow-models/pose-detection";
@@ -29,11 +33,13 @@ class VideoFeed extends Component {
       repCount: 0,
       repFeedback: "sample feedback for Rep 1",
       repFeedbackLog: "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
-      generalFeedback: "some stuff general feedback sample"
+      generalFeedback: "some stuff general feedback sample",
+      feedbackLogShowing: false
     };
 
     this.webcam = React.createRef();
     this.image = React.createRef();
+    this.toggleFeedbackLog = this.toggleFeedbackLog.bind(this);
   }
 
   componentDidMount = async () => {
@@ -45,6 +51,13 @@ class VideoFeed extends Component {
       detectorConfig
     );
   };
+
+  toggleFeedbackLog() {
+    this.setState((prevState) => {
+      console.log(prevState.feedbackLogShowing);
+      return { feedbackLogShowing: !prevState.feedbackLogShowing }
+    });
+  }
 
 
   render = () => {
@@ -86,8 +99,13 @@ class VideoFeed extends Component {
           aspect-square w-1/2 border-8 border-sky-700 rounded-full">
             {this.state.repCount}
           </span>
-          <TextBox className="bg-zinc-500 p-3 w-4/5 mt-3">{this.state.repFeedback}</TextBox>
-          <TextBox className="bg-zinc-700 p-3 w-4/5 mt-1">{this.state.repFeedbackLog}</TextBox>
+          <TextBox className="bg-zinc-500 p-3 w-4/5 mt-3">{this.state.feedbackLogShowing}{this.state.repFeedback}</TextBox>
+
+          <button onClick={this.toggleFeedbackLog} className="flex flex-row items-center justify-center" id="show-log-button">
+            <span>Show Feedback Log</span>
+            <NextImage className={`${this.state.feedbackLogShowing && "rotate-180"}`} src={expandIcon} alt="expand icon" height="24" width="24" />
+          </button>
+          {this.state.feedbackLogShowing && <TextBox className="bg-zinc-700 p-3 w-4/5 mt-1">{this.state.repFeedbackLog}</TextBox>}
           <TextBox className="bg-zinc-500 p-3 w-4/5 mt-3">{this.state.generalFeedback}</TextBox>
         </div>
         <img src="" alt="" ref={this.image} />
