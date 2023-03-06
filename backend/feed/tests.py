@@ -135,4 +135,29 @@ class CommunityPostTestCase(TestCase):
         with self.assertRaises(CommunityPost.DoesNotExist):
             CommunityPost.objects.get(pk=post.id)
             
+
+class CommunityPostCommentTestCase(TestCase):
+    def test_create_community_post_comment(self):
+        comment = mommy.make(CommunityPostComment)
+        self.assertIsInstance(comment, CommunityPostComment)
     
+    def test_read_community_post_comment(self):
+        comment = mommy.make(CommunityPostComment)
+        read_comment = CommunityPostComment.objects.get(pk=comment.id)
+        self.assertEqual(comment.content, read_comment.content)
+        self.assertEqual(comment, read_comment)
+        
+    def test_update_community_post_content(self):
+        comment = mommy.make(CommunityPostComment)
+        updated_content = "Updated Content"
+        comment.content = updated_content
+        comment.save()
+        updated_comment = CommunityPostComment.objects.get(pk=comment.id)
+        self.assertEqual(updated_comment.content, updated_content)
+        
+    def test_delete_community_post(self):
+        comment = mommy.make(CommunityPostComment)
+        CommunityPostComment.objects.get(pk=comment.id).delete()
+        with self.assertRaises(CommunityPostComment.DoesNotExist):
+            CommunityPostComment.objects.get(pk=comment.id)
+            

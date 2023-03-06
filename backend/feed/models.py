@@ -49,4 +49,4 @@ class UserPostComment(Comment):
     post = models.ForeignKey(UserPost, on_delete=models.CASCADE)
     
 class CommunityPostComment(Comment):
-    post = post = models.ForeignKey(CommunityPost, on_delete=models.CASCADE)
+    post = models.ForeignKey(CommunityPost, on_delete=models.CASCADE)
