@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     # Applications
     'homepage.apps.HomepageConfig',
-    'exercise_planner.apps.ExercisePlannerConfig',
-    'live_exercise.apps.LiveExerciseConfig',
+    'exercises.apps.ExercisesConfig',
     'chat.apps.ChatConfig',
     'feed.apps.FeedConfig',
 ]
