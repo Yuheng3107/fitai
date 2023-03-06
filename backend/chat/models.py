@@ -9,7 +9,7 @@ class ChatGroup(models.Model):
 
 
 class ChatMessage(models.Model):
-    sent_at = models.DateTimeField(auto_now=True)
+    sent_at = models.DateTimeField(auto_now_add=True)
     # Delete all messages user sent if user is deleted
     sender = models.ForeignKey(
         get_user_model(), on_delete=models.SET_DEFAULT, default="Deleted User")
