@@ -26,9 +26,10 @@ class VideoFeed extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      repFeedback: "",
-      repFeedbackLog: "",
-      generalFeedback: ""
+      repCount: 0,
+      repFeedback: "sample feedback for Rep 1",
+      repFeedbackLog: "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
+      generalFeedback: "some stuff general feedback sample"
     };
 
     this.webcam = React.createRef();
@@ -80,11 +81,14 @@ class VideoFeed extends Component {
             Start Exercise
           </Button>
         </form> */}
-        <div className="exercise-feedback flex flex-col p-5">
-          <div>{this.state.repFeedback.match(/\d+/)}</div>
-          <TextBox className="bg-zinc-500 p-3">{this.state.repFeedback}</TextBox>
-          <TextBox className="bg-zinc-500 p-3">{this.state.repFeedbackLog}</TextBox>
-          <TextBox className="bg-zinc-500 p-3 mt-3">{this.state.generalFeedback}</TextBox>
+        <div className="exercise-feedback flex flex-col items-center p-5">
+          <span className="flex flex-col justify-center items-center text-7xl pb-2 text-zinc-100 
+          aspect-square w-1/2 border-8 border-sky-700 rounded-full">
+            {this.state.repCount}
+          </span>
+          <TextBox className="bg-zinc-500 p-3 w-4/5 mt-3">{this.state.repFeedback}</TextBox>
+          <TextBox className="bg-zinc-700 p-3 w-4/5 mt-1">{this.state.repFeedbackLog}</TextBox>
+          <TextBox className="bg-zinc-500 p-3 w-4/5 mt-3">{this.state.generalFeedback}</TextBox>
         </div>
         <img src="" alt="" ref={this.image} />
       </React.Fragment>
@@ -143,7 +147,8 @@ class VideoFeed extends Component {
       // process raw data
       let newFeedback = formCorrection.run(poses);
       if (newFeedback[0] !== "") {
-        console.log(newFeedback);
+        console.log(newFeedback[0][0]);
+        this.setState({ repCount: newFeedback[0].slice(-1)[0].match(/\d+/)[0] });
         this.setState({ repFeedback: newFeedback[0].slice(-1) });
         this.setState({ repFeedbackLog: newFeedback[0] });
         read(newFeedback[0][newFeedback[0].slice(-1)]);
@@ -237,50 +242,50 @@ function getExercise(x) {
     scoreDeviation: 0.02,
     angleWeights: new Float32Array([0, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0]),
     angleThresholds: [[
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0.15, 0.15]),
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0.15, 0]),
-        new Float32Array(2),new Float32Array(2),
+      new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2),
+      new Float32Array([0.15, 0.15]),
+      new Float32Array(2), new Float32Array(2), new Float32Array(2),
+      new Float32Array([0.15, 0]),
+      new Float32Array(2), new Float32Array(2),
     ]],
     minRepTime: 2000,
     glossary: [[
-        ["", ""],["", ""],["", ""],["", ""],
-        ["Squat not low enough", "Squat too low"],
-        ["", ""],["", ""],["", ""],
-        ["Leaning forward too much", ""],
-        ["", ""],["", ""],
+      ["", ""], ["", ""], ["", ""], ["", ""],
+      ["Squat not low enough", "Squat too low"],
+      ["", ""], ["", ""], ["", ""],
+      ["Leaning forward too much", ""],
+      ["", ""], ["", ""],
     ]]
   };
   if (x == 1) return {
-    evalPoses: [new Float32Array([0, 0, 0, 0, 0, 2.466, 0, 2.430, 0, 0, 0]),new Float32Array(2),new Float32Array([0, 0, 0, 0, 0, 2.639, 0, 0, 0, 0, 0])],
+    evalPoses: [new Float32Array([0, 0, 0, 0, 0, 2.466, 0, 2.430, 0, 0, 0]), new Float32Array(2), new Float32Array([0, 0, 0, 0, 0, 2.639, 0, 0, 0, 0, 0])],
     scoreThreshold: 0.9,
     scoreDeviation: 0.02,
     angleWeights: new Float32Array([0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0]),
     angleThresholds: [[
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0.2, 0]),
-        new Float32Array(2),
-        new Float32Array([0.25, 0.25]),
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),
-      ],[],[
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-        new Float32Array([0, 0.1]),
-        new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-      ]
+      new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2),
+      new Float32Array([0.2, 0]),
+      new Float32Array(2),
+      new Float32Array([0.25, 0.25]),
+      new Float32Array(2), new Float32Array(2), new Float32Array(2),
+    ], [], [
+      new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2),
+      new Float32Array([0, 0.1]),
+      new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2),
+    ]
     ],
     minRepTime: 2000,
     glossary: [[
-        ["", ""],["", ""],["", ""],["", ""],["", ""],
-        ["Knees collapse inwards but its mid rep", ""],
-        ["", ""],
-        ["Squat not low enough", "Squat too low"],
-        ["", ""],["", ""],["", ""],
-    ],[],[
-        ["", ""],["", ""],["", ""],["", ""],["", ""],
-        ["", "Knees collapse inwards"],
-        ["", ""],["", ""],["", ""],["", ""],["", ""],
-      ]
+      ["", ""], ["", ""], ["", ""], ["", ""], ["", ""],
+      ["Knees collapse inwards but its mid rep", ""],
+      ["", ""],
+      ["Squat not low enough", "Squat too low"],
+      ["", ""], ["", ""], ["", ""],
+    ], [], [
+      ["", ""], ["", ""], ["", ""], ["", ""], ["", ""],
+      ["", "Knees collapse inwards"],
+      ["", ""], ["", ""], ["", ""], ["", ""], ["", ""],
+    ]
     ],
   };
   if (x == 2) return {
@@ -291,7 +296,7 @@ function getExercise(x) {
     scoreDeviation: 0.005,
     angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 10]),
     angleThresholds: [[
-      new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
+      new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2), new Float32Array(2),
       new Float32Array([0, 0.1]),
       new Float32Array(2),
       new Float32Array([0.1, 0]),
@@ -299,11 +304,11 @@ function getExercise(x) {
     minRepTime: 1500,
     glossary: [
       [
-        ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
+        ["", ""], ["", ""], ["", ""], ["", ""], ["", ""], ["", ""], ["", ""], ["", ""],
         ["", "Sagging back"],
         ["", ""],
         ["Not going low enough", ""],
-    ]],
+      ]],
   };
 }
 

@@ -1,6 +1,5 @@
 import React from "react";
 import Webcam from "react-webcam";
-import Image from "next/future/image";
 
 import VideoFeed from "../webcam/video";
 import Button from "../ui/Button";
@@ -28,10 +27,6 @@ function Main() {
         About Errors
       </a>
       <p id="emotion-feedback"></p>
-      <button className="flex flex-row" id="show-log-button">
-        <span>Show Feedback Log</span>
-        <Image src={expandIcon} alt="expand icon" />
-      </button>
       <ul id="feedback-list"></ul>
       <div id="start-button-group" className="flex">
         <button id="start-button" className="btn btn-success mt-3">
