@@ -25,7 +25,7 @@ class Post(models.Model):
         abstract = True
 
 class UserPost(Post):
-    privacy_level = models.SmallIntegerField()
+    privacy_level = models.SmallIntegerField(default=0)
     
 class CommunityPost(Post):
     # If community is deleted, all posts in community are deleted

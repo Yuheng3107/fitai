@@ -28,7 +28,7 @@ class UserPostTestCase(TestCase):
         self.assertEqual(post.likes, likes)
         self.assertEqual(post.content, content)
         self.assertEqual(post.image.name, image.name)
-        UserPost.save()
+        post.save()
         """Test whether UserPost can be retrieved and whether fields are the same"""
         saved_user_post = UserPost.objects.get()
         self.assertEqual(saved_user_post.poster, user)
@@ -54,8 +54,8 @@ class UserPostTestCase(TestCase):
         """Test that UserPost can be updated"""
         post = mommy.make(UserPost)
         updated_content = "New Post Content"
-        UserPost.content = updated_content
-        UserPost.save()
+        post.content = updated_content
+        post.save()
         updated_post = UserPost.objects.get(pk=post.id)
         self.assertEqual(updated_post.content, updated_content)
 
@@ -102,3 +102,5 @@ class UserCommentTestCase(TestCase):
         comment.save()
         new_comment = UserPostComment.objects.get(pk=comment.id)
         self.assertEqual(new_comment.content, updated_content)
+
+"""Write more test cases for Community Posts and Comments"""
