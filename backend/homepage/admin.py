@@ -1,38 +1,16 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 from .models import AppUser, Achievement
 
-from .forms import AppUserCreationForm, AppUserChangeForm
 
-
-class AppUserAdmin(UserAdmin):
-    add_form = AppUserCreationForm
-    form = AppUserChangeForm
-    model = AppUser
-
-    list_display = ("email", "is_staff", "is_active",)
-    list_filter = ("email", "is_staff", "is_active",)
-    fieldsets = (
-        (None, {"fields": ("email", "password")}),
-        ("Permissions", {"fields": ("is_staff",
-         "is_active", "groups", "user_permissions")}),
-    )
-    add_fieldsets = (
-        (None, {
-            "classes": ("wide",),
-            "fields": (
-                "email", "password1", "password2", "is_staff",
-                "is_active", "groups", "user_permissions"
-            )}
-         ),
-    )
-    search_fields = ("email",)
-    ordering = ("email",)
+class AppUserAdmin(admin.ModelAdmin):
+    
+    list_display = ("username", "email", "profile_photo")
+    fields = ("username", "email", "profile_photo", "achievements")
+    
 
 
 class AchievementAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'image')
 
-
-admin.site.register(AppUser, UserAdmin)
+admin.site.register(AppUser, AppUserAdmin)
 admin.site.register(Achievement, AchievementAdmin)
