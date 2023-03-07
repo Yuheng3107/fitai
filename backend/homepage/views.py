@@ -51,7 +51,7 @@ class CheckLoginStatus(APIView):
         return Response(request.user.is_authenticated)
 
 class AchievementView(APIView):
-    def get(self, request):
+    def put(self, request):
         data = request.data 
         achievement_list = data["achievement_list"]
         qs = Achievement.objects.filter(pk__in=achievement_list)
