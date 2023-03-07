@@ -8,7 +8,7 @@ from .serializer import UserSerializer
 from rest_framework.renderers import JSONRenderer
 import json
 
-class SaveLoginData(APIView):
+class LoginDataView(APIView):
     def post(self, request):
         user_data = request.data
         # Need to serialize data
@@ -47,5 +47,4 @@ class SaveLoginData(APIView):
         
 class CheckLoginStatus(APIView):
     def get(self, request):
-        return Response(json.dumps({"true": request.user.is_authenticated}))
-        
+        return Response({"true": request.user.is_authenticated})
