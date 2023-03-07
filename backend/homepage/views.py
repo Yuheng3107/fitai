@@ -1,5 +1,5 @@
-from django.shortcuts import render
 
+from rest_framework import status
 from rest_framework.views import APIView, Response
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
@@ -42,7 +42,7 @@ class LoginDataView(APIView):
             json = JSONRenderer().render(serializer.data)
             return Response(json)
         else:
-            return Response("User is not authenticated")
+            return Response(False, status=status.HTTP_401_UNAUTHORIZED)
 
         
 class CheckLoginStatus(APIView):
