@@ -94,7 +94,7 @@ class VideoFeed extends Component {
             Start Exercise
           </Button>
         </form> */}
-        <div className="exercise-feedback flex flex-col items-center p-5">
+        <div className="exercise-feedback flex flex-col items-center p-5 w-full">
           <span className="flex flex-col justify-center items-center text-7xl pb-2 text-zinc-100 
           aspect-square w-1/2 border-8 border-sky-700 rounded-full">
             {this.state.repCount}
