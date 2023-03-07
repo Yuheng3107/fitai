@@ -4,9 +4,10 @@ from rest_framework.views import APIView, Response
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
 from django.middleware.csrf import get_token
-from .serializer import UserSerializer
+from .serializer import UserSerializer, AchievementSerializer
 from rest_framework.renderers import JSONRenderer
 import json
+from .models import Achievement
 
 class LoginDataView(APIView):
     def post(self, request):
@@ -48,3 +49,11 @@ class LoginDataView(APIView):
 class CheckLoginStatus(APIView):
     def get(self, request):
         return Response(request.user.is_authenticated)
+
+class AchievementView(APIView):
+    def get(self, request):
+        data = request.data 
+        achievement_list = data["achievement_list"]
+        qs = Achievement.objects.filter(pk__in=achievement_list)
+        serializer = AchievementSerializer(qs, many=True)
+        return Response(JSONRenderer().render(serializer.data))
