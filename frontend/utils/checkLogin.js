@@ -1,6 +1,6 @@
 import { backend } from "../pages/App";
 
-function checkLoginStatus() {
+function checkLoginStatus(currentLoginState, updateLoginState) {
 
 
     // modify to return boolean
@@ -14,7 +14,12 @@ function checkLoginStatus() {
         body: JSON.stringify(),
     })
         .then((response) => response.json())
-        .then((data) => console.log(data))
+        .then((data) => {
+            if (data !== currentLoginState) {
+                updateLoginState(data);
+                console.log(data);
+            }
+        })
         .catch((error) => console.error(error));
 }
 

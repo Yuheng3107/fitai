@@ -12,8 +12,9 @@ function Navbar() {
 
 
   useEffect(() => {
-    checkLoginStatus();
-  }, [loginStatus])
+    console.log(`the current loginStatus is ${loginStatus}`)
+    checkLoginStatus(loginStatus, setLoginStatus);
+  }, [loginStatus, setLoginStatus, checkLoginStatus])
 
   function showMobileMenu() {
     setMobileMenuVisible((prevState) => {
@@ -100,9 +101,11 @@ function Navbar() {
                 About
               </a>
             </li>
-            <li>
+            {!loginStatus ? <li>
               <Login setLoginStatus={setLoginStatus} />
-            </li>
+            </li>: 
+            <span>you are logged in</span>}
+
           </ul>
 
         </div>
