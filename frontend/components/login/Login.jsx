@@ -65,7 +65,7 @@ function Login(props) {
           let first_name = res.data.given_name;
           let email = res.data.email;
 
-          fetch("http://localhost:8000/save_login_data", {
+          fetch("http://localhost:8000/login_data", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

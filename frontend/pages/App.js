@@ -8,23 +8,6 @@ const backend = "http://localhost:8000";
 
 
 
-function getLoginData() {
-  fetch(`${backend}/get_login_data`, {
-    method: "GET",
-    credentials: "include", // include cookies in the request
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
-    },
-    body: JSON.stringify(),
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error(error));
-}
-
-
-
 function App() {
 
   return (

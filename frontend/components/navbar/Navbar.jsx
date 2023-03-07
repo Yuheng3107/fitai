@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from "react";
 
+//components
 import Login from "../login/Login";
 
+//login utils
 import checkLoginStatus from "../../utils/checkLogin";
+import getProfileData from '../../utils/getProfileData.js';
 
 
 function Navbar() {
 
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
   const [loginStatus, setLoginStatus] = useState(false);
+  const [profileData, setProfileData] = useState({});
 
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`)
+    console.log(`the current profileData is ${profileData}`)
     checkLoginStatus(loginStatus, setLoginStatus);
-  }, [loginStatus, setLoginStatus, checkLoginStatus])
+    if (loginStatus) {
+      getProfileData(setProfileData);
+    }
+  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileData])
 
   function showMobileMenu() {
     setMobileMenuVisible((prevState) => {
@@ -103,8 +111,8 @@ function Navbar() {
             </li>
             {!loginStatus ? <li>
               <Login setLoginStatus={setLoginStatus} />
-            </li>: 
-            <span>you are logged in</span>}
+            </li> :
+              <li>Hi, {profileData.username}</li>}
 
           </ul>
 
