@@ -5,8 +5,7 @@ import App from "./App";
 import reportWebVitals from "../utils/reportWebVitals";
 
 function Home() {
-    return
-    <React.StrictMode>
+    return <React.StrictMode>
         <App />
     </React.StrictMode>
 }
