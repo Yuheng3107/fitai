@@ -25,7 +25,7 @@ class AppUser(AbstractUser):
     profile_photo = models.ImageField(blank=True, null=True)
     # Many to Many relationship with Achievement
     achievements = models.ManyToManyField(
-        Achievement, related_name='user_achievements')
+        Achievement, related_name='users')
     # Makes email the unique identifier of a entry, it is now the "username" which means unique identifier
     USERNAME_FIELD = 'email'
     # Makes username required when making superuser

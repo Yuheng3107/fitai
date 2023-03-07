@@ -15,4 +15,4 @@ class ChatMessage(models.Model):
         get_user_model(), on_delete=models.SET_DEFAULT, default="Deleted User")
     content = models.CharField(max_length=1000)
     # Delete all messages if the group is deleted
-    group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
+    group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, related_name="chat_messages")

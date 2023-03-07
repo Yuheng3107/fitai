@@ -34,12 +34,8 @@ class SaveLoginData(APIView):
             print(request.user)
         # Session not saved throughout views
         return response
-
-class GetLoginData(APIView):
+    
     def get(self, request):
-        # For Debugging
-        print(request.user)
-        # To retrieve data such as first and last name and email from user
         if (request.user.is_authenticated):
             serializer = UserSerializer(request.user)
             print(serializer.data)
@@ -47,6 +43,7 @@ class GetLoginData(APIView):
             return Response(json)
         else:
             return Response("User is not authenticated")
+
         
 class CheckLoginStatus(APIView):
     def get(self, request):
