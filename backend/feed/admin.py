@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import CommunityPost, UserPost, UserPostComment, CommunityPostComment
+from .models import CommunityPost, UserPost, Comment
 # Register your models here.
 
 admin.site.register(UserPost)
 admin.site.register(CommunityPost)
-admin.site.register(UserPostComment)
-admin.site.register(CommunityPostComment)
+admin.site.register(Comment)

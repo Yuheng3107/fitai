@@ -46,9 +46,9 @@ INSTALLED_APPS = [
     'exercises.apps.ExercisesConfig',
     'chat.apps.ChatConfig',
     'feed.apps.FeedConfig',
-    'community.apps.CommunityConfig',
     'users.apps.UsersConfig',
     'achievements.apps.AchievementsConfig',
+    'community.apps.CommunityConfig',
 ]
 
 MIDDLEWARE = [
