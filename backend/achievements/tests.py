@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from django.test import TestCase
+
+# Create your tests here.
+=======
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 from model_mommy import mommy
@@ -51,3 +56,4 @@ class AchievementsTest(TestCase):
         Achievement.objects.get(pk=achievement.id).delete()
         with self.assertRaises(Achievement.DoesNotExist):
             Achievement.objects.get(pk=achievement.id)
+>>>>>>> a92f66c257841abf52bdcc4b10f42ab9e78ae86b
