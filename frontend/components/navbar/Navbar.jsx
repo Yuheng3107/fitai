@@ -18,9 +18,10 @@ function Navbar() {
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`)
-    console.log(`the current profileData is ${typeof profileData}`)
+    console.log(`the current profileData is ${profileData}`)
     checkLoginStatus(loginStatus, setLoginStatus);
-    if (loginStatus) {
+
+    if (loginStatus && !Object.keys(profileData).length) {
       getProfileData(setProfileData);
     }
   }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileData, setProfileData, profileData])

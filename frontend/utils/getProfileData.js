@@ -15,7 +15,7 @@ function getProfileData(updateFunction) {
             return res.json();
         })
         .then((data) => {
-            updateFunction(JSON.parse(data));
+            updateFunction(data);
             console.log(data);
         })
         .catch((err) => console.log(err));
