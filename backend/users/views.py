@@ -16,13 +16,11 @@ class LoginDataView(APIView):
         email = user_data["email"]
         username = f"{first_name} {last_name}"
         User = get_user_model()
-        print(request.user)
         response = HttpResponse()
         csrf_token = get_token(request)
         try:
             user = User.objects.get(email=email)
             login(request, user)
-            print(request.user)
             response.write("User already in database")
             return response
         except User.DoesNotExist:
@@ -30,7 +28,6 @@ class LoginDataView(APIView):
             user.save()
             login(request, user)
             response.write("User Successfully Registered")
-            print(request.user)
         # Session not saved throughout views
         return response
     

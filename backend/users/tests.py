@@ -78,6 +78,5 @@ class LoginDataViewTests(APITestCase):
         user = User.objects.create_user(email=email)
         self.client.force_authenticate(user=user)
         response = self.client.get(url, format='json')
-        print(response.data["email"])
-        self.assertEqual(response["email"], email)
+        self.assertEqual(response.data.get("email", None), email)
         
