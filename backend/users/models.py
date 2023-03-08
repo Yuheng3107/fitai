@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import AppUserManager
-from achievements.models import Achievement #type: ignore
+
 # Create your models here.
 class AppUser(AbstractUser):
 
@@ -12,13 +12,30 @@ class AppUser(AbstractUser):
     # Removes need to put password as auth is done using Social Login
     email = models.EmailField(_('email address'), max_length=100, unique=True)
     profile_photo = models.ImageField(blank=True, null=True)
-    # Many to Many relationship with Achievement
-    achievements = models.ManyToManyField(
-        Achievement, related_name='users', blank=True)
+    date_created = models.DateField(auto_now_add=True)
+    privacy_level = models.SmallIntegerField(default=0)
     # Makes email the unique identifier of a entry, it is now the "username" which means unique identifier
     USERNAME_FIELD = 'email'
     # Makes username required when making superuser
     REQUIRED_FIELDS = ['username']
+
+    ########
+    # Retations
+
+    # Many to Many Achievements
+    achievements = models.ManyToManyField(
+        'achievements.Achievement', related_name='users', blank=True)
+    # Many to Many friends
+    friends = models.ManyToManyField('self')
+    # Many to Many communities
+    communities = models.ManyToManyField('community.Community')
+    # Many to Many exercises, with stats included
+    exercises = models.ManyToManyField('exercises.Exercise', through='exercises.ExerciseStatistics')
+    # Many to Many exercise regimes, with stats included
+    exercise_regimes = models.ManyToManyField('exercises.ExerciseRegime', through='exercises.ExerciseRegimeStatistics')
+    # Many to Many chats
+    chat_groups = models.ManyToManyField('chat.ChatGroup')
+    
 
     objects = AppUserManager()
 
