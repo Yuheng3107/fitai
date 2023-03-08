@@ -43,16 +43,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     # Applications
-    'homepage.apps.HomepageConfig',
     'exercises.apps.ExercisesConfig',
     'chat.apps.ChatConfig',
     'feed.apps.FeedConfig',
-<<<<<<< HEAD
-    'user.apps.UserConfig',
+    'users.apps.UsersConfig',
     'achievements.apps.AchievementsConfig',
-=======
-    'community.apps.CommunityConfig',
->>>>>>> adcc60f5e41228acab0bd9142023f35b234910cb
 ]
 
 MIDDLEWARE = [
@@ -168,7 +163,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://localhost:8000']
 
 # Custom User Model
-AUTH_USER_MODEL = 'homepage.AppUser'
+AUTH_USER_MODEL = 'users.AppUser'
 
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'

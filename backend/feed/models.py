@@ -3,7 +3,19 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 
+<<<<<<< HEAD
 User = get_user_model()
+=======
+# Create your models here.
+from users.models import AppUser  # type: ignore
+
+class Community(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(max_length=1000)
+    banner = models.ImageField()
+    created_at = models.DateField(auto_now_add=True)
+    private = models.BooleanField(default=False)
+>>>>>>> a92f66c257841abf52bdcc4b10f42ab9e78ae86b
 
 # Create your models here.
 
