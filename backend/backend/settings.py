@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'feed.apps.FeedConfig',
     'users.apps.UsersConfig',
     'achievements.apps.AchievementsConfig',
+    'community.apps.CommunityConfig',
 ]
 
 MIDDLEWARE = [
