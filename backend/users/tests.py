@@ -1,8 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from .models import Achievement
 import os
-from model_mommy import mommy
+from model_bakery import baker
 
 # Create your tests here.
 class UsersManagersTests(TestCase):
@@ -10,9 +9,9 @@ class UsersManagersTests(TestCase):
         self.User = get_user_model()
 
     def test_create_user(self):
-        User = get_user_model()
-        user = User.objects.create_user(
-            email="test@user.com", first_name="Test", last_name="Person", username="test_username")
+        user = self.User.objects.create_user(
+            email='test@user.com',first_name="Test", last_name="Person", username="test_username",
+        )
         self.assertEqual(user.email, "test@user.com")
         self.assertEqual(user.first_name, "Test")
         self.assertEqual(user.last_name, "Person")
@@ -21,14 +20,15 @@ class UsersManagersTests(TestCase):
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
 
+        # test for no data
         with self.assertRaises(TypeError):
-            User.objects.create_user()
+            self.User.objects.create_user()
+        # test for no email
         with self.assertRaises(ValueError):
-            User.objects.create_user(email="")
+            self.User.objects.create_user(email="")
 
     def test_create_super_user(self):
-        User = get_user_model()
-        admin_user = User.objects.create_superuser(
+        admin_user = self.User.objects.create_superuser(
             email="test@superuser.com", password="Password")
         self.assertEqual(admin_user.email, "test@superuser.com")
         self.assertTrue(admin_user.is_active)
@@ -39,11 +39,11 @@ class UsersManagersTests(TestCase):
         except AttributeError:
             pass
         with self.assertRaises(ValueError):
-            User.objects.create_superuser(
+            self.User.objects.create_superuser(
                 email="test@superuser.com", password="Password", is_superuser=False)
 
     def test_update_user(self):
-        user = mommy.make(self.User)
+        user = baker.make(self.User)
         updated_username = "newusername"
         user.username = updated_username
         user.save()
@@ -51,7 +51,7 @@ class UsersManagersTests(TestCase):
         self.assertEqual(updated_user.username, updated_username)
 
     def test_delete_user(self):
-        user = mommy.make(self.User)
+        user = baker.make(self.User)
         self.User.objects.get(pk=user.id).delete()
         with self.assertRaises(self.User.DoesNotExist):
             self.User.objects.get(pk=user.id)

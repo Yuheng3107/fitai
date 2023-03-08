@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 
@@ -12,6 +12,7 @@ class Post(models.Model):
     posted_at = models.DateTimeField(auto_now_add=True)
     #likes
     likers = models.ManyToManyField(User, related_name='%(class)s_likers')
+    comments = GenericRelation('feed.Comment')
 
     class Meta:
         abstract = True
@@ -50,16 +51,16 @@ class Comment(Post):
     text = models.CharField(max_length=2000)
 
     # Generic Foreign Key
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True, default=None)
     # Target Table must have a key that is a positive integer
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    parent_id = models.PositiveIntegerField()
+    parent_object = GenericForeignKey('parent_type', 'parent_id')
     class Meta:
         indexes = [
-            models.Index(fields=["content_type", "object_id"]),
+            models.Index(fields=["parent_type", "parent_id"]),
         ]
     def __str__(self):
-        return f"Comment by {self.poster.username} at {self.posted_at}"
+        return f"Comment by {self.poster.username} at {self.parent_object}"
     
 
 class Tags(models.Model):
