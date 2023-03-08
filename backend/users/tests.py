@@ -1,9 +1,9 @@
 from django.test import TestCase
+from django.urls import reverse
 from django.contrib.auth import get_user_model
-from .models import Achievement
 import os
 from model_mommy import mommy
-
+from rest_framework.test import APITestCase
 # Create your tests here.
 class UsersManagersTests(TestCase):
     def setUp(self):
@@ -56,4 +56,16 @@ class UsersManagersTests(TestCase):
         with self.assertRaises(self.User.DoesNotExist):
             self.User.objects.get(pk=user.id)
 
-
+class LoginDataViewTests(APITestCase):
+    def test_create_user(self):
+        """Ensure we can create a new user"""
+        url = reverse('login_data')
+        data = {
+            "first_name": "User",
+            "last_name": "Test",
+            "email": "testuser@gmail.com"
+        }
+        response = self.client.post(url, data, format='json')
+        User = get_user_model()
+        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.get(first_name="User").email, data["email"])
