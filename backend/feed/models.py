@@ -4,17 +4,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-<<<<<<< HEAD
-
-class Community(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(max_length=1000)
-    banner = models.ImageField()
-    created_at = models.DateField(auto_now_add=True)
-    private = models.BooleanField(default=False)
-=======
->>>>>>> e1e0362e481e8738e2099dc9b6979a3a250416af
-
 # Create your models here.
 
 class Post(models.Model):
