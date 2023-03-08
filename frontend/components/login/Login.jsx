@@ -6,12 +6,12 @@ import {
 } from "@react-oauth/google";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import Image from 'next/future/image';
+import Image from "next/future/image";
 
 import Button from "../ui/Button";
 
 import googleIcon from "../../public/assets/svg/google-icon.svg";
-
+import { backend } from "../../pages/App";
 function Login(props) {
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
@@ -26,8 +26,6 @@ function Login(props) {
   //     console.log("Login Failed");
   //   },
   // });
-
-
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
@@ -65,7 +63,7 @@ function Login(props) {
           let first_name = res.data.given_name;
           let email = res.data.email;
 
-          fetch("http://localhost:8000/login_data", {
+          fetch(`${backend}/users/data`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -93,15 +91,34 @@ function Login(props) {
   };
 
   return (
-    <div >
+    <div>
       {Object.keys(profile).length ? (
         <div className="flex flex-col items-center">
-          <img className="rounded-full" src={profile.picture} alt="user image" />
-          <Button className="dark:border-zinc-100 dark:border dark:text-zinc-50" onClick={() => logOut()}>Log out</Button>
+          <img
+            className="rounded-full"
+            src={profile.picture}
+            alt="user image"
+          />
+          <Button
+            className="dark:border-zinc-100 dark:border dark:text-zinc-50"
+            onClick={() => logOut()}
+          >
+            Log out
+          </Button>
         </div>
       ) : (
-        <Button className="flex flex-row items-center dark:text-zinc-100 dark:border-zinc-100 text-base border border-gray-800 border-1" onClick={() => login()}>
-          Sign in with Google <Image className="ml-2" src={googleIcon} alt="Google icon" width="20" height={20} ></Image>
+        <Button
+          className="flex flex-row items-center dark:text-zinc-100 dark:border-zinc-100 text-base border border-gray-800 border-1"
+          onClick={() => login()}
+        >
+          Sign in with Google{" "}
+          <Image
+            className="ml-2"
+            src={googleIcon}
+            alt="Google icon"
+            width="20"
+            height={20}
+          ></Image>
         </Button>
       )}
     </div>
