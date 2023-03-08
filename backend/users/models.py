@@ -12,7 +12,7 @@ class AppUser(AbstractUser):
     # Removes need to put password as auth is done using Social Login
     email = models.EmailField(_('email address'), max_length=100, unique=True)
     profile_photo = models.ImageField(blank=True, null=True)
-    date_created = models.DateField(auto_now_add=True)
+    date_created = models.DateField(auto_now_add=True, null=True)
     privacy_level = models.SmallIntegerField(default=0)
     # Makes email the unique identifier of a entry, it is now the "username" which means unique identifier
     USERNAME_FIELD = 'email'
