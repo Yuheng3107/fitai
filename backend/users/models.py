@@ -1,21 +1,10 @@
 from django.db import models
+from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import AppUserManager
-
+from achievements.models import Achievement #type: ignore
 # Create your models here.
-
-
-class Achievement(models.Model):
-
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-    image = models.ImageField()
-
-    def __str__(self):
-        return self.name
-
-
 class AppUser(AbstractUser):
 
     # Sets username to anything the user sets to be, blank=True makes username optional in forms
