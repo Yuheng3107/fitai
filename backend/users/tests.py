@@ -69,3 +69,15 @@ class LoginDataViewTests(APITestCase):
         User = get_user_model()
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(User.objects.get(first_name="User").email, data["email"])
+        
+    def test_retrieve_user(self):
+        "Ensure we can retrieve user from db"
+        url = reverse('login_data')
+        User = get_user_model()
+        email = "testuser@gmail.com"
+        user = User.objects.create_user(email=email)
+        self.client.force_authenticate(user=user)
+        response = self.client.get(url, format='json')
+        print(response.data["email"])
+        self.assertEqual(response["email"], email)
+        

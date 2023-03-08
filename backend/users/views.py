@@ -37,9 +37,7 @@ class LoginDataView(APIView):
     def get(self, request):
         if (request.user.is_authenticated):
             serializer = UserSerializer(request.user)
-            print(serializer.data)
-            json = JSONRenderer().render(serializer.data)
-            return Response(json)
+            return Response(serializer.data)
         else:
             return Response(False, status=status.HTTP_401_UNAUTHORIZED)
 
