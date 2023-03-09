@@ -6,19 +6,20 @@ name: React CI using Cypress
 on: [push]
 
 jobs:
-  install:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [12]
-    name: E2E on Node v${{ matrix.node }}
+        node-version: [12.X]
+        
     steps:
+      - name: Checkout Repo
+      - uses: actions/checkout@v3
       - name: Set Up Node
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
-      - name: Checkout Repo
-      - uses: actions/checkout@v3
+          node-version: ${{ matrix.node-version}}
+      
       - name: Run Tests Using Cypress
       - uses: cypress-io/github-action@v5
         with:
