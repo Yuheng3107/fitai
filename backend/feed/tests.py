@@ -5,14 +5,11 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.contenttypes.models import ContentType
 from model_bakery import baker
 
-from .models import User, UserPost, CommunityPost, Comment
+from .models import UserPost, CommunityPost, Comment
 # Create your tests here.
 
 
 class UserPostTestCase(TestCase):
-    def setUp(self):
-        self.User = get_user_model()
-
     def test_create_user_post(self):
         user = baker.make('users.AppUser')
         small_gif = (
@@ -47,18 +44,14 @@ class UserPostTestCase(TestCase):
 
     def test_delete_user_post(self):
         """Test that UserPost can be deleted properly"""
-        user = baker.make('users.AppUser')
-        post = baker.make(UserPost, poster=user)
-        post.save()
+        post = baker.make(UserPost)
         UserPost.objects.get(pk=post.id).delete()
         with self.assertRaises(UserPost.DoesNotExist):
             UserPost.objects.get(pk=post.id)
 
     def test_update_user_post(self):
         """Test that UserPost can be updated"""
-        user = baker.make('users.AppUser')
-        post = baker.make(UserPost, poster=user)
-        print(post.poster)
+        post = baker.make(UserPost)
         post.save()
         updated_content = "New Post Content"
         post.text = updated_content
@@ -70,14 +63,15 @@ class UserCommentTestCase(TestCase):
     User = get_user_model()
 
     def test_create_user_comment(self):
+        User = get_user_model()
         post = baker.make(UserPost)
         # Check that UserPost was created
         self.assertIsInstance(post, UserPost)
-        user = self.User.objects.create_user(
+        user = User.objects.create_user(
             email='testuser@gmail.com', password='12345')
         content = "Test UserPost Comment Content"
         ct = ContentType.objects.get_for_model(UserPost)
-        comment = post.comments.objects.create(
+        comment = post.comments.create(
             text=content, poster=user)
         self.assertEqual(comment.text, content)
         self.assertEqual(comment.poster, user)
@@ -86,12 +80,15 @@ class UserCommentTestCase(TestCase):
 
     def test_delete_commenter(self):
         """To test whether comment is deleted after commenter is deleted"""
+        User = get_user_model()
         user = baker.make('users.AppUser')
         comment = baker.make(Comment)
         self.assertIsInstance(comment, Comment)
-        self.User.objects.get(pk=user.id).delete()
-        with self.assertRaises(Comment.DoesNotExist):
-            Comment.objects.get(pk=comment.id)
+        comment_id = comment.id
+        User.objects.get(pk=user.id).delete()
+        updated_comment =  Comment.objects.get(pk=comment.id)
+        self.assertEqual(updated_comment.id, comment_id)
+        self.assertEqual(updated_comment.poster, None)
 
     def test_delete_comment(self):
         """Test that we cannot retrieve comment once deleted"""
@@ -113,13 +110,11 @@ class UserCommentTestCase(TestCase):
 
 class CommunityPostTestCase(TestCase):
     def test_create_community_post(self):
-        user = baker.make('users.AppUser')
-        post = baker.make(CommunityPost, poster=user)
+        post = baker.make(CommunityPost)
         self.assertIsInstance(post, CommunityPost)
     
     def test_read_community_post(self):
-        user = baker.make('users.AppUser')
-        post = baker.make(CommunityPost, poster=user)
+        post = baker.make(CommunityPost)
         content = post.text 
         # likes = post.likes 
         read_post = CommunityPost.objects.get(pk=post.id)
@@ -127,8 +122,7 @@ class CommunityPostTestCase(TestCase):
         # self.assertEqual(likes, read_post.likes)
         
     def test_update_community_post(self):
-        user = baker.make('users.AppUser')
-        post = baker.make(CommunityPost, poster=user)
+        post = baker.make(CommunityPost)
         updated_content = "Updated Content"
         # updated_likes = 69
         post.text = updated_content
@@ -139,8 +133,7 @@ class CommunityPostTestCase(TestCase):
         # self.assertEqual(updated_post.likes, updated_likes)
         
     def test_delete_community_post(self):
-        user = baker.make('users.AppUser')
-        post = baker.make(CommunityPost, poster=user)
+        post = baker.make(CommunityPost)
         CommunityPost.objects.get(pk=post.id).delete()
         with self.assertRaises(CommunityPost.DoesNotExist):
             CommunityPost.objects.get(pk=post.id)
@@ -148,14 +141,15 @@ class CommunityPostTestCase(TestCase):
 
 class CommunityPostCommentTestCase(TestCase):
     def test_create_community_post_comment(self):
+        User = get_user_model()
         user = baker.make('users.AppUser')
         post = baker.make(CommunityPost, poster=user)
-
-        ct = ContentType.objects.get_for_model(CommunityPost)
-        user = self.User.objects.create_user(
+        
+        user = User.objects.create_user(
             email='testuser@gmail.com', password='12345')
         content = "Test CommunityPost Comment Content"
-        comment = post.comment.create(poster=user, text=content)
+        comment = post.comments.create(poster=user, text=content)
+        ct = ContentType.objects.get_for_model(CommunityPost)
         self.assertIsInstance(comment, Comment)
         self.assertEqual(comment.text, content)
         self.assertEqual(comment.poster, user)

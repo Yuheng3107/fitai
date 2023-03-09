@@ -12,7 +12,7 @@ class Post(models.Model):
     posted_at = models.DateTimeField(auto_now_add=True)
     #likes
     likers = models.ManyToManyField(User, related_name='%(class)s_likers')
-    comments = GenericRelation('feed.Comment')
+    comments = GenericRelation('feed.Comment', content_type_field='parent_type', object_id_field='parent_id')
 
     class Meta:
         abstract = True
@@ -23,15 +23,15 @@ class FeedPost(Post):
     tags = models.ManyToManyField('Tags')
 
     # Generic Foreign Key
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    shared_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, default=None, blank=True, null=True)
     # Target Table must have a key that is a positive integer
-    object_id = models.PositiveIntegerField(blank=True, null=True, default=None)
-    content_object = GenericForeignKey('content_type', 'object_id')
+    shared_id = models.PositiveIntegerField(blank=True, null=True, default=None)
+    shared_object = GenericForeignKey('shared_type', 'shared_id')
 
     class Meta:
         abstract = True
         indexes = [
-            models.Index(fields=["content_type", "object_id"]),
+            models.Index(fields=["shared_type", "shared_id"]),
         ]
 
 ########
@@ -54,7 +54,7 @@ class Comment(Post):
     # Generic Foreign Key
     parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True, default=None)
     # Target Table must have a key that is a positive integer
-    parent_id = models.PositiveIntegerField()
+    parent_id = models.PositiveIntegerField(blank=True, null=True, default=None)
     parent_object = GenericForeignKey('parent_type', 'parent_id')
     class Meta:
         indexes = [
