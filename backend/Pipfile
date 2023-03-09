@@ -18,7 +18,7 @@ selenium = "*"
 pillow = "*"
 daphne = "*"
 coverage = "*"
-model-mommy = "*"
+model-bakery = "*"
 
 [dev-packages]
 autopep8 = "*"
