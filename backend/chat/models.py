@@ -15,7 +15,7 @@ class ChatMessage(models.Model):
     sent_at = models.DateTimeField(auto_now_add=True)
     # Delete all messages user sent if user is deleted
     sender = models.ForeignKey(
-        User, on_delete=models.SET_DEFAULT, default=None, null=True)
+        User, on_delete=models.SET_DEFAULT, default=None, null=True, blank=True)
     content = models.CharField(max_length=1000)
     # Delete all messages if the group is deleted
     group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, related_name="chat_messages")
