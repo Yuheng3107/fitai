@@ -1,3 +1,4 @@
+from charset_normalizer import models
 from django.test import TestCase
 import os
 from django.contrib.auth import get_user_model
@@ -101,6 +102,17 @@ class UserCommentTestCase(TestCase):
         self.assertEqual(updated_comment.id, comment_id)
         self.assertEqual(updated_comment.poster, None)
 
+    def test_delete_post_deletes_comment(self):
+        """Test that deleting Post deletes its comments"""
+        user = baker.make('users.AppUser')
+        post = baker.make(UserPost)
+        
+        comment = post.comments.create(poster=user, text='content')
+        self.assertIsInstance(comment, Comment)
+        post.delete()
+        with self.assertRaises(Comment.DoesNotExist):
+            Comment.objects.get(pk=comment.id)
+
     def test_delete_comment(self):
         """Test that we cannot retrieve comment once deleted"""
         comment = baker.make(Comment)
@@ -121,8 +133,18 @@ class UserCommentTestCase(TestCase):
 
 class CommunityPostTestCase(TestCase):
     def test_create_community_post(self):
-        post = baker.make(CommunityPost)
+        community = baker.make('community.Community')
+        post = baker.make(CommunityPost,community=community)
         self.assertIsInstance(post, CommunityPost)
+    
+    def test_delete_community_deletes_posts(self):
+        """Test that deleting Community deletes its posts"""
+        community = baker.make('community.Community')
+        post = baker.make(CommunityPost,community=community)
+        self.assertIsInstance(post, CommunityPost)
+        community.delete()
+        with self.assertRaises(CommunityPost.DoesNotExist):
+            CommunityPost.objects.get(pk=post.id)
     
     def test_read_community_post(self):
         post = baker.make(CommunityPost)

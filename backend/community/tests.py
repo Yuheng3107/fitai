@@ -48,7 +48,7 @@ class CommunityTestCase(TestCase):
         Community.objects.get(pk=community.id).delete()
         with self.assertRaises(Community.DoesNotExist):
             Community.objects.get(pk=community.id)
-    
+
     def test_delete_founder(self):
         """To test whether community is not deleted after founder is deleted"""
         User = get_user_model()
