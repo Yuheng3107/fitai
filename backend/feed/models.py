@@ -8,7 +8,7 @@ User = get_user_model()
 # Create your models here.
 
 class Post(models.Model):
-    poster = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default="", related_name='%(class)s_poster')
+    poster = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, null=True, blank=True, related_name='%(class)s_poster')
     posted_at = models.DateTimeField(auto_now_add=True)
     #likes
     likers = models.ManyToManyField(User, related_name='%(class)s_likers')
@@ -18,8 +18,9 @@ class Post(models.Model):
         abstract = True
 
 class FeedPost(Post):
-    tags = models.ManyToManyField('Tags')
     text = models.CharField(max_length=10000, null=True)
+    media = models.FileField(blank=True, null=True)
+    tags = models.ManyToManyField('Tags')
 
     # Generic Foreign Key
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True, default=None)
