@@ -3,14 +3,18 @@
 
 name: React CI using Cypress
 
-on: [push]
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.X]
+        node-version: [12.x]
         
     steps:
       - uses: actions/checkout@v3
