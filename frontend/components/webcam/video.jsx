@@ -176,20 +176,7 @@ class VideoFeed extends Component {
       feedback = newFeedback;
       frameCount += 1;
 
-      /*
-      fetch("http://localhost:8000/live_exercise/handle_key_points/", {
-        method: "POST",
-        credentials: "include", // include cookies in the request
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
-        },
-        body: JSON.stringify(),
-      })
-        .then((response) => response.json())
-        .then((data) => console.log(data))
-        .catch((error) => console.error(error));
-      */
+    
     }
   };
 
