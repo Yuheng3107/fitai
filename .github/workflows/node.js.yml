@@ -27,8 +27,7 @@ jobs:
         cd ./frontend
         npm ci
         npm run build
-        npm start & wait-on http://localhost:3000
-        pwd
+        npm start
     - run: |
         cd ./frontend
         npm run test
