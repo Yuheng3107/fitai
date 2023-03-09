@@ -8,15 +8,23 @@ on: [push]
 jobs:
   install:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12]
+    name: E2E on Node v${{ matrix.node }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cypress run
-        uses: cypress-io/github-action@v3
+      - name: Set Up Node
+      - uses: actions/setup-node@v3
         with:
-          project: ./frontend
-          browser: chrome
-          build: npm build
-          start: npm start
-          wait-on: "http://localhost:3000"
+          node-version: ${{ matrix.node }}
+      - name: Checkout Repo
+      - uses: actions/checkout@v3
+      - name: Run Tests Using Cypress
+      - uses: cypress-io/github-action@v5
+        with:
+            project: ./frontend
+            browser: chrome
+            build: npm build
+            start: npm start
+            wait-on: "http://localhost:3000"
+        
