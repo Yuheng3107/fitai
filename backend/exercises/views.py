@@ -33,6 +33,7 @@ class ExerciseStatisticsView(APIView):
         exercise_statistics = ExerciseStatistics.objects.filter(user=user_id).filter(exercise=exercise_id)
         if not exercise_statistics.exists():
             return Response("Entry does not exist.", status=status.HTTP_400_BAD_REQUEST)
+        exercise_statistics = exercise_statistics[0]
         exercise_statistics.perfect_reps += perfect_reps
         exercise_statistics.save()
         return Response()
