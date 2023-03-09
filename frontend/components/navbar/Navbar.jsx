@@ -6,6 +6,7 @@ import Login from "../login/Login";
 //login utils
 import checkLoginStatus from "../../utils/checkLogin";
 import getProfileData from '../../utils/getProfileData.js';
+import { profile } from "@tensorflow/tfjs-core";
 
 
 function Navbar() {
@@ -19,10 +20,11 @@ function Navbar() {
     console.log(`the current loginStatus is ${loginStatus}`)
     console.log(`the current profileData is ${profileData}`)
     checkLoginStatus(loginStatus, setLoginStatus);
-    if (loginStatus) {
+
+    if (loginStatus && !Object.keys(profileData).length) {
       getProfileData(setProfileData);
     }
-  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileData])
+  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileData, setProfileData, profileData])
 
   function showMobileMenu() {
     setMobileMenuVisible((prevState) => {
@@ -32,9 +34,8 @@ function Navbar() {
 
 
 
-
   return (
-    <nav className="text-2xl bg-white text-zinc-900 border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
+    <nav data-testid="navbar" className="text-2xl bg-white text-zinc-900 border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
       <div className="container flex flex-wrap flex-row items-center justify-between mx-auto">
         <a href="#" className="flex items-center">
           <span className="self-center text-2xl font-semibold whitespace-nowrap text-zinc-900 dark:text-white">
@@ -112,7 +113,7 @@ function Navbar() {
             {!loginStatus ? <li>
               <Login setLoginStatus={setLoginStatus} />
             </li> :
-              <li>Hi, {profileData.username}</li>}
+              <li className="block py-2 pl-3 pr-4 text-zinc-50">Hi, {profileData.username}</li>}
 
           </ul>
 

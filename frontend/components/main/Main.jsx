@@ -7,8 +7,12 @@ import Select from "../ui/Select";
 import expandIcon from "../../public/assets/svg/expand-icon.svg";
 
 function Main() {
+  
+  const OAuthClientId = process.env.GOOGLE_OAUTH_ID;
+  console.log(OAuthClientId);
   return (
     <main className='flex flex-col items-center bg-slate-800 text-white'>
+      
       <VideoFeed />
       {/*
       <div id="rep-info-group">
