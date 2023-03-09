@@ -48,11 +48,22 @@ class UserPostTestCase(TestCase):
         UserPost.objects.get(pk=post.id).delete()
         with self.assertRaises(UserPost.DoesNotExist):
             UserPost.objects.get(pk=post.id)
+    
+    def test_delete_poster(self):
+        """To test whether post is not deleted after poster is deleted"""
+        User = get_user_model()
+        user = baker.make(User)
+        post = baker.make(UserPost,poster=user)
+        self.assertIsInstance(post, UserPost)
+        post_id = post.id
+        User.objects.get(pk=user.id).delete()
+        updated_post =  UserPost.objects.get(pk=post.id)
+        self.assertEqual(updated_post.id, post_id)
+        self.assertEqual(updated_post.poster, None)
 
     def test_update_user_post(self):
         """Test that UserPost can be updated"""
         post = baker.make(UserPost)
-        post.save()
         updated_content = "New Post Content"
         post.text = updated_content
         post.save()
@@ -79,10 +90,10 @@ class UserCommentTestCase(TestCase):
         self.assertEqual(comment.parent_id, post.id)
 
     def test_delete_commenter(self):
-        """To test whether comment is deleted after commenter is deleted"""
+        """To test whether comment is not deleted after commenter is deleted"""
         User = get_user_model()
-        user = baker.make('users.AppUser')
-        comment = baker.make(Comment)
+        user = baker.make(User)
+        comment = baker.make(Comment, poster=user)
         self.assertIsInstance(comment, Comment)
         comment_id = comment.id
         User.objects.get(pk=user.id).delete()
