@@ -12,5 +12,6 @@ class ExerciseView(APIView):
         if "perfect_reps" in data:
             exercise = Exercise.objects.get(pk=id)
             exercise.perfect_reps += data["perfect_reps"]
+            exercise.save()
         
         return Response()
