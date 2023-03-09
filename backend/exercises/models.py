@@ -1,5 +1,5 @@
 from django.db import models
-from feed.models import Post
+from feed.models import Post # type: ignore
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -9,6 +9,7 @@ User = get_user_model()
 class Exercise(models.Model):
     name = models.CharField(max_length=50)
     image = models.ImageField(blank=True, null=True)
+    # To gauge popularity
     perfect_reps = models.PositiveIntegerField(default=0)
 
     def __str__(self):

@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('chat/', include('chat.urls')),
     path('users/', include('users.urls')),
-    path('achievements', include('achievements.urls')),
+    path('achievements/', include('achievements.urls')),
+    path('exercises/', include('exercises.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
