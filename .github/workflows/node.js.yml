@@ -27,8 +27,6 @@ jobs:
         cd ./frontend
         npm ci
         npm run build
-        npm start
-    - run: |
-        cd ./frontend
-        npm run test
+        npm start & npm run test
+   
       
