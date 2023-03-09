@@ -1,6 +1,6 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
-from model_mommy import mommy
+from model_bakery import baker
 from .models import Achievement
 from django.test import TestCase
 
@@ -39,7 +39,7 @@ class AchievementsTest(TestCase):
                 os.remove(os.path.join(dir_path, file))
 
     def test_update_achievement(self):
-        achievement = mommy.make(Achievement)
+        achievement = baker.make(Achievement)
         updated_description = "New Description"
         achievement.description = updated_description
         achievement.save()
@@ -47,7 +47,7 @@ class AchievementsTest(TestCase):
         self.assertEqual(new_achievement.description, updated_description)
 
     def test_delete_achievement(self):
-        achievement = mommy.make(Achievement)
+        achievement = baker.make(Achievement)
         Achievement.objects.get(pk=achievement.id).delete()
         with self.assertRaises(Achievement.DoesNotExist):
             Achievement.objects.get(pk=achievement.id)

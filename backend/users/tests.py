@@ -2,13 +2,9 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 import os
-<<<<<<< HEAD
 from model_bakery import baker
-
-=======
-from model_mommy import mommy
 from rest_framework.test import APITestCase
->>>>>>> 5cde7d06ad880b2342cade8e219db673961fa7b4
+
 # Create your tests here.
 class UsersManagersTests(TestCase):
     def setUp(self):
