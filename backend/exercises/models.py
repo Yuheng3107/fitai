@@ -29,11 +29,21 @@ class ExerciseStatistics(models.Model):
 class ExerciseRegime(Post):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=10000)
-    exercises = models.ManyToManyField('Exercise')
+    exercises = models.ManyToManyField('Exercise',through='ExerciseDetails')
     times_completed = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
+
+class ExerciseDetails(models.Model):
+    """
+    through table for exercise and exercise regime, including exercise details.
+    """
+    exercise = models.ForeignKey('Exercise', on_delete=models.CASCADE)
+    exercise_regime = models.ForeignKey('ExerciseRegime', on_delete=models.CASCADE)
+    order = models.PositiveSmallIntegerField(default=0)
+    rep_count = models.PositiveSmallIntegerField(default=10)
+    set_count = models.PositiveSmallIntegerField(default=3)
 
 class ExerciseRegimeStatistics(models.Model):
     """
