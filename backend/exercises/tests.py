@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from .models import Exercise, ExerciseStatistics, ExerciseRegime
 from model_bakery import baker
+import json
 # Create your tests here.
 class ExerciseViewTests(APITestCase):
     def test_update_exercise_data(self):
@@ -109,4 +110,18 @@ class ExerciseRegimeViewTests(APITestCase):
         # Exercise works
         new_exercises = [exercise.id for exercise in created_regime.exercises.all()]
         self.assertEqual(exercises, new_exercises)
-        
+    
+    def test_get_exercise_regime(self):
+        exercise_regime = baker.make(ExerciseRegime)
+        url = reverse('exercise_regime', kwargs={"pk": exercise_regime.id})
+        response = self.client.get(url)
+        content = json.loads(response.content)
+        # Content is now a dict
+        self.assertEqual(content["id"], exercise_regime.id)
+        self.assertEqual(content["name"], exercise_regime.name)
+        self.assertEqual(content["description"], exercise_regime.description)
+        self.assertEqual(content["times_completed"], exercise_regime.times_completed)
+        self.assertEqual(content["poster"], exercise_regime.poster)
+        self.assertEqual(content["likers"], list(exercise_regime.likers.all()))
+        self.assertEqual(content["exercises"], list(exercise_regime.exercises.all()))
+    
