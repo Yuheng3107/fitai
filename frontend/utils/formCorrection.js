@@ -496,7 +496,7 @@ function checkScore (score, curPose) {
     // Currently in rest pose
     if (poseStatus == 0) {
       switchPoseCount += 1;
-      if (switchPoseCount >= 5) {
+      if (switchPoseCount >= 7) {
         // switch to key pose
         switchPoseCount = 0;
         poseStatus = 1;
@@ -521,7 +521,7 @@ function checkScore (score, curPose) {
     // Currently in key pose
     if (poseStatus == 1) {
       switchPoseCount += 1;
-      if (switchPoseCount >= 7) {
+      if (switchPoseCount >= 10) {
         // End of rep
         switchPoseCount = 0;
         poseStatus = 0;
