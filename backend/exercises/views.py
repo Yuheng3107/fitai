@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView, Response
-from .models import Exercise, ExerciseStatistics
+from .models import Exercise, ExerciseStatistics, ExerciseRegime
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -64,6 +64,34 @@ class ExerciseStatisticsView(APIView):
         request.user.exercises.add(exercise)
         return Response()
         
-        
+class ExerciseRegimeView(APIView):
+    def put(self, request):
+        """To update exercise regime"""
     
+    def post(self, request):
+        """To create new exercise regime, user needs to be authenticated"""
+        authentication_classes = [SessionAuthentication, BasicAuthentication]
+        permission_classes = [IsAuthenticated]
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        fields = ["name", "description"]
+        # Have to manually do for m2m fields
+        # Check that all the required data is in the post request
+        for field in fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+        if "exercises" not in request.data:
+            return Response("Please add exercises to the exercise regime", status=status.HTTP_400_BAD_REQUEST)
+        fields = {field: request.data[field] for field in fields}
+        # Unpack the dictionary and pass them as keyword arguments to create in Exercise Regime
+        regime = ExerciseRegime.objects.create(poster=request.user, **fields)
+        exercises_qs = Exercise.objects.filter(pk__in=request.data["exercises"])
+        try:
+            regime.exercises.add(*list(exercises_qs))
+        except ValueError:
+            return Response("Cannot add exercise that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_201_CREATED)
+    def get(self, request):
+        """To get details of an exercise regime"""
         
