@@ -40,7 +40,6 @@ class UsersManagersTests(TestCase):
         for x in user.communities.all():
             self.assertEqual(x,community)
         
-        
         for x in user.exercises.all():
             self.assertEqual(x,exercise)
 
@@ -53,7 +52,6 @@ class UsersManagersTests(TestCase):
         for x in user.friends.all():
             self.assertEqual(x,fren)
         
-
         # test for no data
         with self.assertRaises(TypeError):
             self.User.objects.create_user()
@@ -83,6 +81,36 @@ class UsersManagersTests(TestCase):
         user.save()
         updated_user = self.User.objects.get(pk=user.id)
         self.assertEqual(updated_user.username, updated_username)
+
+    def test_multiple_m2m_user(self):
+        user = baker.make(self.User)
+        achievement = baker.make('achievements.achievement')
+        user.achievements.add(achievement) 
+        achievement2 = baker.make('achievements.achievement')
+        user.achievements.add(achievement2) 
+        fren = baker.make(self.User)
+        user.friends.add(fren)
+        fren2 = baker.make(self.User)
+        user.friends.add(fren2)
+
+        # test for 2 frens and achievements
+        i = 0
+        for x in user.achievements.all():
+            i += 1
+        self.assertEqual(i,2)
+        i = 0
+        for x in user.friends.all():
+            i += 1
+        self.assertEqual(i,2)
+
+        user.friends.remove(fren)
+        user.achievements.remove(achievement)
+
+        # test for only 1 fren and achievement
+        for x in user.achievements.all():
+            self.assertEqual(x,achievement2)
+        for x in user.friends.all():
+            self.assertEqual(x,fren2)
 
     def test_delete_user(self):
         user = baker.make(self.User)
