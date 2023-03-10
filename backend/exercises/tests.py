@@ -1,10 +1,147 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import Exercise, ExerciseStatistics, ExerciseRegime
-from model_bakery import baker
 import json
+
+from django.test import TestCase
+from django.contrib.auth import get_user_model
+from model_bakery import baker
+from django.core.files.uploadedfile import SimpleUploadedFile
+import os
+
+from .models import Exercise, ExerciseStatistics, ExerciseRegime
+
 # Create your tests here.
+class ExerciseTestCase(TestCase):
+    def test_create_exercise(self):
+        User = get_user_model()
+        user = baker.make(User)
+        small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
+            b'\x01\x0a\x00\x01\x00\x2c\x00\x01\x00\x00\x01\x00\x01\x00\x00\x02'
+            b'\x02\x4c\x01\x00\x3b'
+        )
+        media = SimpleUploadedFile(
+            'small.gif', small_gif, content_type='image/gif')
+        content = 'Lorem Ipsum blablabla'
+        name = 'Test Exercise'
+        baker.make(
+            Exercise,
+            name = name,
+            text = content,
+            media = media,
+            poster = user,
+        )
+        exercise = Exercise.objects.get()
+        self.assertEqual(exercise.name, name)
+        self.assertEqual(exercise.text, content)
+        self.assertEqual(exercise.media.name, media.name)
+        self.assertEqual(exercise.poster, user)
+        # Clean up .gif file produced
+        dir_path = os.getcwd()
+        dir_path = os.path.join(dir_path, 'static/media')
+        files = os.listdir(dir_path)
+        for file in files:
+            if file.endswith('.gif'):
+                os.remove(os.path.join(dir_path, file))
+
+    def test_delete_exercise(self):
+        """Test that exercise can be deleted properly"""
+        exercise = baker.make(Exercise)
+        Exercise.objects.get(pk=exercise.id).delete()
+        with self.assertRaises(Exercise.DoesNotExist):
+            Exercise.objects.get(pk=exercise.id)
+
+    def test_delete_founder(self):
+        """To test whether exercise is not deleted after founder is deleted"""
+        User = get_user_model()
+        user = baker.make(User)
+        exercise = baker.make(Exercise,poster=user)
+        self.assertIsInstance(exercise, Exercise)
+        exercise_id = exercise.id
+        User.objects.get(pk=user.id).delete()
+        updated_exercise =  Exercise.objects.get(pk=exercise.id)
+        self.assertEqual(updated_exercise.id, exercise_id)
+        self.assertEqual(updated_exercise.poster, None)
+
+    def test_update_exercise(self):
+        """Test that exercise can be updated"""
+        exercise = baker.make(Exercise)
+        updated_content = "New Description Content"
+        exercise.text = updated_content
+        exercise.save()
+        updated_exercise = Exercise.objects.get(pk=exercise.id)
+        self.assertEqual(updated_exercise.text, updated_content)
+
+# Create your tests here.
+class ExerciseRegimeTestCase(TestCase):
+    def test_create_exercise_regime(self):
+        User = get_user_model()
+        user = baker.make(User)
+        small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
+            b'\x01\x0a\x00\x01\x00\x2c\x00\x01\x00\x00\x01\x00\x01\x00\x00\x02'
+            b'\x02\x4c\x01\x00\x3b'
+        )
+        media = SimpleUploadedFile(
+            'small2.gif', small_gif, content_type='image/gif')
+        content = 'Lorem Ipsum blablabla'
+        name = 'Test ExerciseRegime'
+        baker.make(
+            ExerciseRegime,
+            name = name,
+            text = content,
+            media = media,
+            poster = user,
+        )
+        exercise_regime = ExerciseRegime.objects.get()
+        self.assertEqual(exercise_regime.name, name)
+        self.assertEqual(exercise_regime.text, content)
+        self.assertEqual(exercise_regime.media.name, media.name)
+        self.assertEqual(exercise_regime.poster, user)
+
+        # many to many check
+        exercise = baker.make(Exercise)
+        exercise_regime.exercises.add(exercise)
+        for x in exercise_regime.exercises.all():
+            self.assertEqual(x,exercise)
+
+        # Clean up .gif file produced
+        dir_path = os.getcwd()
+        dir_path = os.path.join(dir_path, 'static/media')
+        files = os.listdir(dir_path)
+        for file in files:
+            if file.endswith('.gif'):
+                os.remove(os.path.join(dir_path, file))
+
+    def test_delete_exercise_regime(self):
+        """Test that exercise_regime can be deleted properly"""
+        exercise_regime = baker.make(ExerciseRegime)
+        ExerciseRegime.objects.get(pk=exercise_regime.id).delete()
+        with self.assertRaises(ExerciseRegime.DoesNotExist):
+            ExerciseRegime.objects.get(pk=exercise_regime.id)
+
+    def test_delete_founder(self):
+        """To test whether exercise_regime is not deleted after founder is deleted"""
+        User = get_user_model()
+        user = baker.make(User)
+        exercise_regime = baker.make(ExerciseRegime,poster=user)
+        self.assertIsInstance(exercise_regime, ExerciseRegime)
+        exercise_regime_id = exercise_regime.id
+        User.objects.get(pk=user.id).delete()
+        updated_exercise_regime =  ExerciseRegime.objects.get(pk=exercise_regime.id)
+        self.assertEqual(updated_exercise_regime.id, exercise_regime_id)
+        self.assertEqual(updated_exercise_regime.poster, None)
+
+    def test_update_exercise_regime(self):
+        """Test that exercise_regime can be updated"""
+        exercise_regime = baker.make(ExerciseRegime)
+        updated_content = "New Description Content"
+        exercise_regime.text = updated_content
+        exercise_regime.save()
+        updated_exercise_regime = ExerciseRegime.objects.get(pk=exercise_regime.id)
+        self.assertEqual(updated_exercise_regime.text, updated_content)
+
 class ExerciseViewTests(APITestCase):
     def test_update_exercise_data(self):
         """Ensure we can update data in Exercise Model"""

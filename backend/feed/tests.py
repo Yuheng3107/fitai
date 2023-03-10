@@ -1,4 +1,3 @@
-from charset_normalizer import models
 from django.test import TestCase
 import os
 from django.contrib.auth import get_user_model
@@ -6,35 +5,41 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.contenttypes.models import ContentType
 from model_bakery import baker
 
-from .models import UserPost, CommunityPost, Comment
+from .models import UserPost, CommunityPost, Comment, Tags
 # Create your tests here.
 
 
 class UserPostTestCase(TestCase):
     def test_create_user_post(self):
-        user = baker.make('users.AppUser')
+        User = get_user_model()
+        user = baker.make(User)
         small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
             b'\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
             b'\x02\x4c\x01\x00\x3b'
         )
         content = "Test User_Post Content"
-        # likes = 69
         media = SimpleUploadedFile(
             'small.gif', small_gif, content_type='image/gif')
-        post = UserPost.objects.create(
-            poster=user, text=content, media=media)
-        self.assertEqual(post.poster, user)
-        # self.assertEqual(post.likes, likes)
-        self.assertEqual(post.text, content)
-        self.assertEqual(post.media.name, media.name)
-        post.save()
-        """Test whether UserPost can be retrieved and whether fields are the same"""
+        user_post = UserPost.objects.create(
+            poster=user, text=content, media=media, like_count=1)
+        tags = baker.make(Tags, tag='Gay')
+        user_post.tags.add(tags)
+        lover = baker.make(User)
+        user_post.likers.add(lover)
+
         saved_user_post = UserPost.objects.get()
         self.assertEqual(saved_user_post.poster, user)
-        # self.assertEqual(saved_user_post.likes, likes)
+        self.assertEqual(saved_user_post.like_count, 1)
         self.assertEqual(saved_user_post.text, content)
         self.assertEqual(saved_user_post.media.name, media.name)
+
+        # many to many checks
+        for x in saved_user_post.tags.all():
+            self.assertEqual(x,tags)
+        for x in saved_user_post.likers.all():
+            self.assertEqual(x,lover)
+
         # Clean up .gif file produced
         dir_path = os.getcwd()
         dir_path = os.path.join(dir_path, 'static/media')
@@ -149,21 +154,22 @@ class CommunityPostTestCase(TestCase):
     def test_read_community_post(self):
         post = baker.make(CommunityPost)
         content = post.text 
-        # likes = post.likes 
+        likes = post.like_count 
         read_post = CommunityPost.objects.get(pk=post.id)
         self.assertEqual(content, read_post.text)
-        # self.assertEqual(likes, read_post.likes)
+        self.assertEqual(likes, read_post.like_count)
         
     def test_update_community_post(self):
         post = baker.make(CommunityPost)
         updated_content = "Updated Content"
-        # updated_likes = 69
+        updated_likes = 2
+
         post.text = updated_content
-        # post.likes = updated_likes
+        post.like_count = updated_likes
         post.save()
         updated_post = CommunityPost.objects.get(pk=post.id)
         self.assertEqual(updated_post.text, updated_content)
-        # self.assertEqual(updated_post.likes, updated_likes)
+        self.assertEqual(updated_post.like_count, updated_likes)
         
     def test_delete_community_post(self):
         post = baker.make(CommunityPost)

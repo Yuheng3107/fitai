@@ -21,7 +21,7 @@ class Post(models.Model):
 class FeedPost(Post):
     text = models.CharField(max_length=10000, null=True)
     media = models.FileField(blank=True, null=True)
-    tags = models.ManyToManyField('Tags')
+    tags = models.ManyToManyField('feed.Tags')
 
     # Generic Foreign Key
     shared_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, default=None, blank=True, null=True)

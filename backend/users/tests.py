@@ -11,9 +11,22 @@ class UsersManagersTests(TestCase):
         self.User = get_user_model()
 
     def test_create_user(self):
+        privacy_level = 1
         user = self.User.objects.create_user(
-            email='test@user.com',first_name="Test", last_name="Person", username="test_username",
+            email='test@user.com',first_name="Test", last_name="Person", username="test_username", privacy_level=privacy_level
         )
+        community = baker.make('community.community')
+        user.communities.add(community)
+        exercise = baker.make('exercises.exercise')
+        user.exercises.add(exercise)
+        chat_group = baker.make('chat.chatgroup')
+        user.chat_groups.add(chat_group)
+        achievement = baker.make('achievements.achievement')
+        user.achievements.add(achievement) 
+        fren = baker.make(self.User)
+        user.friends.add(fren)
+
+        user = self.User.objects.get(first_name='Test')
         self.assertEqual(user.email, "test@user.com")
         self.assertEqual(user.first_name, "Test")
         self.assertEqual(user.last_name, "Person")
@@ -21,6 +34,25 @@ class UsersManagersTests(TestCase):
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
+        self.assertEqual(user.privacy_level, privacy_level)
+
+        # many to many checks
+        for x in user.communities.all():
+            self.assertEqual(x,community)
+        
+        
+        for x in user.exercises.all():
+            self.assertEqual(x,exercise)
+
+        for x in user.chat_groups.all():
+            self.assertEqual(x,chat_group)
+
+        for x in user.achievements.all():
+            self.assertEqual(x,achievement)
+        
+        for x in user.friends.all():
+            self.assertEqual(x,fren)
+        
 
         # test for no data
         with self.assertRaises(TypeError):

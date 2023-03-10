@@ -29,6 +29,8 @@ class CommunityTestCase(TestCase):
             created_by = user,
             privacy_level = privacy_level,
         )
+
+        community = Community.objects.get()
         self.assertEqual(community.name, name)
         self.assertEqual(community.description, content)
         self.assertEqual(community.banner.name, media.name)
