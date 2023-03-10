@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView, Response
 from .models import Exercise, ExerciseStatistics, ExerciseRegime
+from .serializers import ExerciseRegimeSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -92,6 +93,12 @@ class ExerciseRegimeView(APIView):
         except ValueError:
             return Response("Cannot add exercise that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_201_CREATED)
-    def get(self, request):
+    
+    def get(self, request, pk):
         """To get details of an exercise regime"""
-        
+        try:
+            regime = ExerciseRegime.objects.get(pk=pk)
+            serializer = ExerciseRegimeSerializer(regime)
+            return Response(serializer.data)
+        except ExerciseRegime.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
