@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView, Response
 from .models import Comment, UserPost, CommunityPost
+from community.models import Community
 from .serializers import CommentSerializer, UserPostSerializer, CommunityPostSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -165,7 +166,7 @@ class CommunityPostView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
-        check_fields = ["text", "community"]
+        check_fields = ["text", "community_id"]
         # Check that all the required data is in the post request
         for field in check_fields:
             if field not in request.data:
@@ -173,7 +174,11 @@ class CommunityPostView(APIView):
         # if "media" in request.data:
             # Check for media type
             # if request.data["media"]
-        
+            
+        try:
+            community = Community.objects.get(pk=request.data["community_id"])
+        except Community.DoesNotExist:
+            return Response("Please put a valid community id", status=status.HTTP_400_BAD_REQUEST)
         create_fields = ["text", "media", "shared_type", "shared_id", "tags", "community"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
