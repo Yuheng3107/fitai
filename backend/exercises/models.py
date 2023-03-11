@@ -1,5 +1,5 @@
 from django.db import models
-from feed.models import FeedPost
+from feed.models import FeedPost #type: ignore
 from django.contrib.auth import get_user_model
 
 User = get_user_model()

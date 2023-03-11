@@ -8,9 +8,10 @@ from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 class ExerciseView(APIView):
-    def post(self, request):
+    def patch(self, request):
         data = request.data 
-        """JSON Post must contain exercise_id in id field"""
+        """To increment staistics to an exercise"""
+        """JSON must contain exercise_id in id field"""
         if "id" not in data:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         id = data["id"]
@@ -68,6 +69,16 @@ class ExerciseStatisticsView(APIView):
 class ExerciseRegimeView(APIView):
     def put(self, request):
         """To update exercise regime"""
+        authentication_classes = [SessionAuthentication, BasicAuthentication]
+        permission_classes = [IsAuthenticated]
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        if "id" in request.data:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        fields = ["name", "description", ""]
+        m2m_fields = ["exercises", ]
+        
+        fields = ["name", "description", "exercises"]
     
     def post(self, request):
         """To create new exercise regime, user needs to be authenticated"""
@@ -102,3 +113,5 @@ class ExerciseRegimeView(APIView):
             return Response(serializer.data)
         except ExerciseRegime.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    
