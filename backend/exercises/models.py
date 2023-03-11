@@ -27,7 +27,6 @@ class ExerciseStatistics(models.Model):
 
 class ExerciseRegime(FeedPost):
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=10000)
     exercises = models.ManyToManyField('Exercise',through='ExerciseDetails')
     times_completed = models.PositiveIntegerField(default=0)
 
