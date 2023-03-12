@@ -19,7 +19,7 @@ class Post(models.Model):
         abstract = True
 
 class FeedPost(Post):
-    text = models.CharField(max_length=10000, null=True)
+    text = models.CharField(max_length=10000, default="")
     media = models.FileField(blank=True, null=True)
     tags = models.ManyToManyField('feed.Tags')
 
@@ -50,7 +50,7 @@ class CommunityPost(FeedPost):
         return f"Community Post by {self.poster.username} posted at {self.posted_at}"
 
 class Comment(Post):
-    text = models.CharField(max_length=2000)
+    text = models.CharField(max_length=2000, default="")
 
     # Generic Foreign Key
     parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True, default=None)

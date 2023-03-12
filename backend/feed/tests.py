@@ -12,6 +12,7 @@ from rest_framework.test import APITestCase
 import json
 
 from .models import UserPost, CommunityPost, Comment, Tags
+from exercises.models import Exercise
 # Create your tests here.
 
 
@@ -39,6 +40,9 @@ class UserPostTestCase(TestCase):
         self.assertEqual(saved_user_post.likes, 1)
         self.assertEqual(saved_user_post.text, content)
         self.assertEqual(saved_user_post.media.name, media.name)
+        # many to many check
+        for x in saved_user_post.tags.all():
+            self.assertEqual(x,tags)
 
         # many to many checks
         for x in saved_user_post.tags.all():
@@ -200,7 +204,117 @@ class CommunityPostCommentTestCase(TestCase):
         self.assertEqual(comment.poster, user)
         self.assertEqual(comment.parent_type, ct)
         self.assertEqual(comment.parent_id, post.id)
-    
+
+class UserPostViewTests(APITestCase):
+    def test_create_user_post(self):
+        """Ensure we can create user_post in UserPost Model"""
+        url = reverse('user_post')
+        User = get_user_model()
+        post = baker.make(CommunityPost)
+        user = User.objects.create_user(
+            email='testuser@gmail.com', password='12345')
+        text = "Test UserPost Content"
+        ct = ContentType.objects.get_for_model(CommunityPost)
+        tags = []
+        for i in range(3):
+            tag = baker.make(Tags)
+            tags.append(tag.tag)
+        data = {
+            "text": text,
+            "shared_type": ct.id,
+            "shared_id": post.id,
+            "tags":  tags
+        }
+        # Check that data cannot be accessed if you are not logged in
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        # Check that user_post creates once user is autheticated
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        user_post = UserPost.objects.get()
+        self.assertEqual(user_post.text, text)
+        self.assertEqual(user_post.shared_object, post)
+        # Check no text
+        data = {
+            "shared_type": ct.id,
+            "shared_id": post.id,
+            "tags": tags
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check shared type
+        data = {
+            "text": text,
+            "shared_type": 696969,
+            "shared_id": post.id,
+            "tags": tags
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # check shared id
+        data = {
+            "text": text,
+            "shared_type": ct.id,
+            "shared_id": 696969,
+            "tags": tags
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_user_post(self):
+        """Ensure we can update data in UserPost Model"""
+        url = reverse('user_post')
+        User = get_user_model()
+        user = baker.make(User)
+        user_post = baker.make(UserPost, poster=user)
+        text = "actually im gay"
+        data = {
+            "id": user_post.id,
+            "text": text
+        }
+        # Check that data cannot be accessed if you are not logged in
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # check that data cannot be accessed if wrong user
+        user2 = baker.make(User)
+        self.client.force_authenticate(user=user2)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Check that user_post edits once user is autheticated
+        self.client.force_authenticate(user=user)
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(UserPost.objects.get(pk=user_post.id).text, text)
+        # Test that view will return status code 400 when id is not in data
+        data = {
+            "text": text
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Test that view will return status code 404 when id is wrong
+        data = {
+            "id": 696969,
+            "text": text
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        
+    def test_get_user_post(self):
+        user_post = baker.make(UserPost)
+        url = reverse('user_post', kwargs={"pk": user_post.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["likes"], user_post.likes)
+        self.assertEqual(data["text"], user_post.text)
+        self.assertEqual(data["poster"], user_post.poster)
+        url = reverse('user_post', kwargs={"pk": 69})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
 class CommentViewTests(APITestCase):
     def test_create_comment(self):
         """Ensure we can create comment in Comment Model"""
@@ -214,7 +328,7 @@ class CommentViewTests(APITestCase):
         data = {
             "text": text,
             "parent_type": ct.id,
-            "parent_id": user.id
+            "parent_id": post.id
         }
         # Check that data cannot be accessed if you are not logged in
         response = self.client.post(url, data, format='json')
@@ -230,7 +344,7 @@ class CommentViewTests(APITestCase):
         data = {
             "text": text,
             "parent_type": 696969,
-            "parent_id": user.id
+            "parent_id": post.id
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -295,3 +409,126 @@ class CommentViewTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
             
+class CommunityPostViewTests(APITestCase):
+    def test_create_community_post(self):
+        """Ensure we can create community_post in CommunityPost Model"""
+        url = reverse('community_post')
+        User = get_user_model()
+        exercise = baker.make(Exercise)
+        community = baker.make('community.Community')
+        user = User.objects.create_user(
+            email='testuser@gmail.com', password='12345')
+        text = "Test UserPost Content"
+        ct = ContentType.objects.get_for_model(Exercise)
+        tags = []
+        for i in range(3):
+            tag = baker.make(Tags)
+            tags.append(tag.tag)
+        data = {
+            "text": text,
+            "shared_type": ct.id,
+            "shared_id": exercise.id,
+            "tags":  tags,
+            "community_id": community.id
+        }
+        # Check that data cannot be accessed if you are not logged in
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        # Check that community_post creates once user is autheticated
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        community_post = CommunityPost.objects.get()
+        self.assertEqual(community_post.text, text)
+        self.assertEqual(community_post.shared_object, exercise)
+        # check no community
+        data = {
+            "text": text,
+            "shared_type": ct.id,
+            "shared_id": exercise.id,
+            "tags": tags,
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check shared type
+        data = {
+            "text": text,
+            "shared_type": 696969,
+            "shared_id": exercise.id,
+            "tags": tags,
+            "community_id": community.id
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # check shared id
+        data = {
+            "text": text,
+            "shared_type": ct.id,
+            "shared_id": 696969,
+            "tags": tags,
+            "community_id": community.id
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # check community id
+        data = {
+            "text": text,
+            "shared_type": ct.id,
+            "shared_id": exercise.id,
+            "tags": tags,
+            "community_id": 696969
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_community_post(self):
+        """Ensure we can update data in CommunityPost Model"""
+        url = reverse('community_post')
+        User = get_user_model()
+        user = baker.make(User)
+        community_post = baker.make(CommunityPost, poster=user)
+        text = "actually im gay"
+        data = {
+            "id": community_post.id,
+            "text": text,
+        }
+        # Check that data cannot be accessed if you are not logged in
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # check that data cannot be accessed if wrong user
+        user2 = baker.make(User)
+        self.client.force_authenticate(user=user2)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Check that community_post edits once user is autheticated
+        self.client.force_authenticate(user=user)
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(CommunityPost.objects.get(pk=community_post.id).text, text)
+        # Test that view will return status code 400 when id is not in data
+        data = {
+            "text": text
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Test that view will return status code 404 when id is wrong
+        data = {
+            "id": 696969,
+            "text": text
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        
+    def test_get_community_post(self):
+        community_post = baker.make(CommunityPost)
+        url = reverse('community_post', kwargs={"pk": community_post.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["likes"], community_post.likes)
+        self.assertEqual(data["text"], community_post.text)
+        self.assertEqual(data["poster"], community_post.poster)
+        url = reverse('community_post', kwargs={"pk": 69})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

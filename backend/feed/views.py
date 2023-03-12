@@ -5,12 +5,63 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.contenttypes.models import ContentType
 
-from .models import Comment, UserPost, CommunityPost
+from .models import Comment, Tags, UserPost, CommunityPost
 from community.models import Community #type: ignore
 from .serializers import CommentSerializer, UserPostSerializer, CommunityPostSerializer
 # Create your views here.
 
 class UserPostView(APIView):
+    def post(self, request):
+        """To create new user post"""
+        authentication_classes = [SessionAuthentication, BasicAuthentication]
+        permission_classes = [IsAuthenticated]
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        check_fields = ["text", "tags"]
+        # Have to manually do for m2m fields
+        # Check that all the required data is in the post request
+        for field in check_fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+
+        # Check for valid content type
+        ct = None
+        if "shared_type" in request.data:
+            try:
+                ct = ContentType.objects.get(pk=request.data["shared_type"])
+            except ContentType.DoesNotExist:
+                return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
+            
+            sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
+            if ct.model not in sharable_models:
+                return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                ct.get_object_for_this_type(pk=request.data["shared_id"])
+            except:
+                return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
+        if "shared_type" not in request.data and "shared_id" in request.data:
+            return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
+        # if "media" in request.data:
+            # Check for media type
+            # if request.data["media"]
+        
+        create_fields = ["text", "media", "shared_id"]
+        fields = {field: request.data[field] for field in create_fields if field in request.data}
+        # Unpack the dictionary and pass them as keyword arguments to create in UserPost
+        post = UserPost.objects.create(poster=request.user, shared_type=ct, **fields)
+
+        # Adding tags
+        tags_qs = Tags.objects.filter(pk__in=request.data["tags"])
+        try:
+            post.tags.add(*list(tags_qs))
+        except ValueError:
+            return Response("Cannot add tag that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
+            
+        return Response(status=status.HTTP_201_CREATED)
+
+
     def put(self, request):
         """To update user post"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -33,48 +84,37 @@ class UserPostView(APIView):
             return Response("Please put a valid UserPost id", status=status.HTTP_404_NOT_FOUND)
         # Check User
         if request.user != post.poster:
-            return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED) 
+            return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED) 
 
-        update_fields = ["text", "media", "shared_type", "shared_id", "tags"]
+        # Check for valid content type
+        ct = None
+        if "shared_type" in request.data:
+            try:
+                ct = ContentType.objects.get(pk=request.data["shared_type"])
+            except ContentType.DoesNotExist:
+                return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
+            
+            sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
+            if ct.model not in sharable_models:
+                return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                ct.get_object_for_this_type(pk=request.data["shared_id"])
+            except:
+                return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
+        if "shared_type" not in request.data and "shared_id" in request.data:
+            return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
+
+        # SHARED TYPE
+        update_fields = ["text", "media", "shared_id"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
-        # Unpack the dictionary and pass them as keyword arguments to create in UserPost
-        UserPost.objects.update(**fields)
-        post.save()
+        # Unpack the dictionary and pass them as keyword arguments to update in UserPost
+        UserPost.objects.filter(pk=request.data["id"]).update(shared_type=ct, **fields)
+        # Update tags
 
         return Response(status=status.HTTP_200_OK)
 
-    def post(self, request):
-        """To create new user post, user needs to be authenticated"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
-        if not request.user.is_authenticated:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-        
-        check_fields = ["text"]
-        # Have to manually do for m2m fields
-        # Check that all the required data is in the post request
-        for field in check_fields:
-            if field not in request.data:
-                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-        # if "media" in request.data:
-            # Check for media type
-            # if request.data["media"]
-        
-        # SHARED ID, CHECK CONTENT TYPE
-        create_fields = ["text", "media", "shared_id", "tags"]
-        fields = {field: request.data[field] for field in create_fields if field in request.data}
-        # Unpack the dictionary and pass them as keyword arguments to create in UserPost
-        post = UserPost.objects.create(poster=request.user, **fields)
 
-        # Adding tags
-        tags_qs = UserPost.objects.filter(pk__in=request.data["tags"])
-        try:
-            post.tags.add(*list(tags_qs))
-        except ValueError:
-            return Response("Cannot add exercise that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
-            
-        return Response(status=status.HTTP_201_CREATED)
-    
     def get(self, request, pk):
         """To get details of a UserPost"""
         try:
@@ -85,39 +125,8 @@ class UserPostView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 class CommentView(APIView):
-    def put(self, request):
-        """To update comment"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
-        if not request.user.is_authenticated:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        check_fields = ["text", "id"]
-        # Have to manually do for m2m fields
-        # Check that all the required data is in the post request
-        for field in check_fields:
-            if field not in request.data:
-                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-
-        # Check post
-        post = None
-        try:
-            post = Comment.objects.get(pk=request.data["id"])
-        except Comment.DoesNotExist:
-            return Response("Please put a valid Comment id", status=status.HTTP_404_NOT_FOUND)
-        # Check User
-        if request.user != post.poster:
-            return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
-
-        update_fields = ["text"]
-        fields = {field: request.data[field] for field in update_fields if field in request.data}
-        # Unpack the dictionary and pass them as keyword arguments to create in Comment
-        Comment.objects.filter(pk=request.data["id"]).update(**fields)
-
-        return Response(status=status.HTTP_200_OK)
-
     def post(self, request):
-        """To create new Comment, user needs to be authenticated"""
+        """To create new Comment"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
         permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
@@ -153,7 +162,39 @@ class CommentView(APIView):
         # Unpack the dictionary and pass them as keyword arguments to create in Comment
         post = Comment.objects.create(poster=request.user, parent_type=ct, **fields)
 
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)    
+
+        
+    def put(self, request):
+        """To update comment"""
+        authentication_classes = [SessionAuthentication, BasicAuthentication]
+        permission_classes = [IsAuthenticated]
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        check_fields = ["text", "id"]
+        # Check that all the required data is in the post request
+        for field in check_fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+
+        # Check post
+        post = None
+        try:
+            post = Comment.objects.get(pk=request.data["id"])
+        except Comment.DoesNotExist:
+            return Response("Please put a valid Comment id", status=status.HTTP_404_NOT_FOUND)
+        # Check User
+        if request.user != post.poster:
+            return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
+
+        update_fields = ["text"]
+        fields = {field: request.data[field] for field in update_fields if field in request.data}
+        # Unpack the dictionary and pass them as keyword arguments to create in Comment
+        Comment.objects.filter(pk=request.data["id"]).update(**fields)
+
+        return Response(status=status.HTTP_200_OK)
+
     
     def get(self, request, pk):
         """To get details of a Comment"""
@@ -165,6 +206,61 @@ class CommentView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
     
 class CommunityPostView(APIView):
+    def post(self, request):
+        """To create new community post"""
+        authentication_classes = [SessionAuthentication, BasicAuthentication]
+        permission_classes = [IsAuthenticated]
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        check_fields = ["text", "community_id", "tags"]
+        # Check that all the required data is in the post request
+        for field in check_fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+        # if "media" in request.data:
+            # Check for media type
+            # if request.data["media"]
+        
+        try:
+            community = Community.objects.get(pk=request.data["community_id"])
+        except Community.DoesNotExist:
+            return Response("Please put a valid community id", status=status.HTTP_400_BAD_REQUEST)
+
+        # Check for valid content type
+        ct = None
+        if "shared_type" in request.data:
+            try:
+                ct = ContentType.objects.get(pk=request.data["shared_type"])
+            except ContentType.DoesNotExist:
+                return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
+            
+            sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
+            if ct.model not in sharable_models:
+                return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                ct.get_object_for_this_type(pk=request.data["shared_id"])
+            except:
+                return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
+        if "shared_type" not in request.data and "shared_id" in request.data:
+            return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
+
+        create_fields = ["text", "media", "shared_id", "community"]
+        fields = {field: request.data[field] for field in create_fields if field in request.data}
+        # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
+        post = CommunityPost.objects.create(community=community, poster=request.user, shared_type=ct, **fields)
+
+        # Adding tags
+        post_qs = Tags.objects.filter(pk__in=request.data["tags"])
+        try:
+            post.tags.add(*list(post_qs))
+        except ValueError:
+            return Response("Cannot add tag that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_201_CREATED)
+
+
     def put(self, request):
         """To update user post"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -189,49 +285,35 @@ class CommunityPostView(APIView):
         if request.user != post.poster:
             return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
 
-        # SHARED ID, CHECK CONTENT TYPE
-        update_fields = ["text", "media", "shared_id", "tags"]
+        # Check for valid content type
+        ct = None
+        if "shared_type" in request.data:
+            try:
+                ct = ContentType.objects.get(pk=request.data["shared_type"])
+            except ContentType.DoesNotExist:
+                return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
+            
+            sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
+            if ct.model not in sharable_models:
+                return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                ct.get_object_for_this_type(pk=request.data["shared_id"])
+            except:
+                return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
+        if "shared_type" not in request.data and "shared_id" in request.data:
+            return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
+
+        update_fields = ["text", "media", "shared_id"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
-        CommunityPost.objects.update(**fields)
-        post.save()
+        CommunityPost.objects.filter(pk=request.data["id"]).update(shared_type=ct, **fields)
+
+        # Updating tags
 
         return Response(status=status.HTTP_200_OK)
 
-    def post(self, request):
-        """To create new user post, user needs to be authenticated"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
-        if not request.user.is_authenticated:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-        
-        check_fields = ["text", "community_id"]
-        # Check that all the required data is in the post request
-        for field in check_fields:
-            if field not in request.data:
-                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-        # if "media" in request.data:
-            # Check for media type
-            # if request.data["media"]
-            
-        try:
-            community = Community.objects.get(pk=request.data["community_id"])
-        except Community.DoesNotExist:
-            return Response("Please put a valid community id", status=status.HTTP_400_BAD_REQUEST)
-        create_fields = ["text", "media", "shared_type", "shared_id", "tags", "community"]
-        fields = {field: request.data[field] for field in create_fields if field in request.data}
-        # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
-        post = CommunityPost.objects.create(poster=request.user, **fields)
-
-        # Adding tags
-        post_qs = CommunityPost.objects.filter(pk__in=request.data["tags"])
-        try:
-            post.tags.add(*list(post_qs))
-        except ValueError:
-            return Response("Cannot add exercise that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(status=status.HTTP_201_CREATED)
-
+    
     
     def get(self, request, pk):
         """To get details of a CommunityPost"""
