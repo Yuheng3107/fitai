@@ -12,17 +12,17 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='comment',
-            name='like_count',
+            name='likes',
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
             model_name='communitypost',
-            name='like_count',
+            name='likes',
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
             model_name='userpost',
-            name='like_count',
+            name='likes',
             field=models.PositiveIntegerField(default=0),
         ),
     ]

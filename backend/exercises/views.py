@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 class ExerciseView(APIView):
+    """Creation of an exercise is done in admin console"""
     def patch(self, request):
         data = request.data 
         """To increment staistics to an exercise"""
@@ -29,7 +30,7 @@ class ExerciseView(APIView):
             serializer = ExerciseSerializer(exercise)
             return Response(serializer.data)
         except Exercise.DoesNotExist:
-            return Response(status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_404_NOT_FOUND)
     
 class ExerciseStatisticsView(APIView):
     def post(self, request):
@@ -86,7 +87,7 @@ class ExerciseRegimeView(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
         
         # exercises should not be updated in an exercise regime
-        fields = ["name", "text", "times_completed"]
+        fields = ["name", "text", "times_completed", "likes"]
         m2m_fields = []
         
         fields = ["name", "description", "exercises"]

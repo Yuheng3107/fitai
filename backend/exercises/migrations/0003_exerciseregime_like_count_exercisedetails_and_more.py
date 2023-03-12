@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='exerciseregime',
-            name='like_count',
+            name='likes',
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.CreateModel(

@@ -22,7 +22,7 @@ class UserPostTestCase(TestCase):
         media = SimpleUploadedFile(
             'small.gif', small_gif, content_type='image/gif')
         user_post = UserPost.objects.create(
-            poster=user, text=content, media=media, like_count=1)
+            poster=user, text=content, media=media, likes=1)
         tags = baker.make(Tags, tag='Gay')
         user_post.tags.add(tags)
         lover = baker.make(User)
@@ -30,7 +30,7 @@ class UserPostTestCase(TestCase):
 
         saved_user_post = UserPost.objects.get()
         self.assertEqual(saved_user_post.poster, user)
-        self.assertEqual(saved_user_post.like_count, 1)
+        self.assertEqual(saved_user_post.likes, 1)
         self.assertEqual(saved_user_post.text, content)
         self.assertEqual(saved_user_post.media.name, media.name)
 
@@ -154,10 +154,10 @@ class CommunityPostTestCase(TestCase):
     def test_read_community_post(self):
         post = baker.make(CommunityPost)
         content = post.text 
-        likes = post.like_count 
+        likes = post.likes 
         read_post = CommunityPost.objects.get(pk=post.id)
         self.assertEqual(content, read_post.text)
-        self.assertEqual(likes, read_post.like_count)
+        self.assertEqual(likes, read_post.likes)
         
     def test_update_community_post(self):
         post = baker.make(CommunityPost)
@@ -165,11 +165,11 @@ class CommunityPostTestCase(TestCase):
         updated_likes = 2
 
         post.text = updated_content
-        post.like_count = updated_likes
+        post.likes = updated_likes
         post.save()
         updated_post = CommunityPost.objects.get(pk=post.id)
         self.assertEqual(updated_post.text, updated_content)
-        self.assertEqual(updated_post.like_count, updated_likes)
+        self.assertEqual(updated_post.likes, updated_likes)
         
     def test_delete_community_post(self):
         post = baker.make(CommunityPost)

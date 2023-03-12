@@ -11,7 +11,7 @@ class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, null=True, blank=True, related_name='%(class)s_poster')
     posted_at = models.DateTimeField(auto_now=True)
     #likes
-    like_count = models.PositiveIntegerField(default=0)
+    likes = models.PositiveIntegerField(default=0)
     likers = models.ManyToManyField(User, related_name='%(class)s_likers')
     comments = GenericRelation('feed.Comment', content_type_field='parent_type', object_id_field='parent_id')
 

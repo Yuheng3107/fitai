@@ -171,11 +171,13 @@ class ExerciseViewTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content)
-        print(data)
-        self.assertEqual(data["like_count"], exercise.like_count)
+        self.assertEqual(data["likes"], exercise.likes)
         self.assertEqual(data["text"], exercise.text)
         self.assertEqual(data["name"], exercise.name)
         self.assertEqual(data["perfect_reps"], exercise.perfect_reps)
+        url = reverse('exercise_data', kwargs={"pk": 69})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     
         
 

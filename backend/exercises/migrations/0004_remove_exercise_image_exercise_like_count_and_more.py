@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='exercise',
-            name='like_count',
+            name='likes',
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
