@@ -88,25 +88,23 @@ class ExerciseRegimeTestCase(TestCase):
         media = SimpleUploadedFile(
             'small2.gif', small_gif, content_type='image/gif')
         content = 'Lorem Ipsum blablabla'
-        name = 'Test ExerciseRegime'
+        name = 'Test Exercise Regime'
+        exercises = [1,3,2]
         baker.make(
             ExerciseRegime,
             name = name,
             text = content,
             media = media,
             poster = user,
+            exercises = exercises,
         )
         exercise_regime = ExerciseRegime.objects.get()
         self.assertEqual(exercise_regime.name, name)
         self.assertEqual(exercise_regime.text, content)
         self.assertEqual(exercise_regime.media.name, media.name)
         self.assertEqual(exercise_regime.poster, user)
-
-        # many to many check
-        exercise = baker.make(Exercise)
-        exercise_regime.exercises.add(exercise)
-        for x in exercise_regime.exercises.all():
-            self.assertEqual(x,exercise)
+        self.assertEqual(exercise_regime.exercises, exercises)
+        
 
         # Clean up .gif file produced
         dir_path = os.getcwd()
@@ -261,9 +259,7 @@ class ExerciseRegimeViewTests(APITestCase):
         self.assertEqual(created_regime.poster, poster)
         self.assertEqual(created_regime.text, text)
         self.assertEqual(created_regime.name, name)
-        # Exercise works
-        new_exercises = [exercise.id for exercise in created_regime.exercises.all()]
-        self.assertEqual(exercises, new_exercises)
+        self.assertEqual(created_regime.exercises, exercises)
     
     def test_get_exercise_regime(self):
         exercise_regime = baker.make(ExerciseRegime)
@@ -277,5 +273,5 @@ class ExerciseRegimeViewTests(APITestCase):
         self.assertEqual(content["times_completed"], exercise_regime.times_completed)
         self.assertEqual(content["poster"], exercise_regime.poster)
         self.assertEqual(content["likers"], list(exercise_regime.likers.all()))
-        self.assertEqual(content["exercises"], list(exercise_regime.exercises.all()))
+        self.assertEqual(content["exercises"], exercise_regime.exercises)
     

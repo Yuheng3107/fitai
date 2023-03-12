@@ -87,8 +87,12 @@ class ExerciseRegimeView(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
         
         # exercises should not be updated in an exercise regime
-        fields = ["name", "text", "times_completed", "likes"]
-        m2m_fields = []
+        
+        # Add new fields to fields
+        fields = ["name", "text", "times_completed", "likes", "exercises"]
+        # Only updates fields that are sent in request
+        fields = [field for field in fields if field in request.data]
+        
         
         fields = ["name", "description", "exercises"]
     
@@ -99,22 +103,20 @@ class ExerciseRegimeView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
-        fields = ["name", "text"]
+        # All these fields are required
+        fields = ["name", "text", "exercises"]
+        
         # Have to manually do for m2m fields
         # Check that all the required data is in the post request
         for field in fields:
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-        if "exercises" not in request.data:
-            return Response("Please add exercises to the exercise regime", status=status.HTTP_400_BAD_REQUEST)
+        
         fields = {field: request.data[field] for field in fields}
         # Unpack the dictionary and pass them as keyword arguments to create in Exercise Regime
-        regime = ExerciseRegime.objects.create(poster=request.user, **fields)
-        exercises_qs = Exercise.objects.filter(pk__in=request.data["exercises"])
-        try:
-            regime.exercises.add(*list(exercises_qs))
-        except ValueError:
-            return Response("Cannot add exercise that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
+        ExerciseRegime.objects.create(poster=request.user, **fields)
+        
+        
         return Response(status=status.HTTP_201_CREATED)
     
     def get(self, request, pk):
