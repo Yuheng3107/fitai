@@ -480,6 +480,16 @@ class CommunityPostViewTests(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # check community id
+        data = {
+            "text": text,
+            "shared_type": ct.id,
+            "shared_id": exercise.id,
+            "tags": ["imgay"],
+            "community_id": 696969
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_community_post(self):
         """Ensure we can update data in CommunityPost Model"""
