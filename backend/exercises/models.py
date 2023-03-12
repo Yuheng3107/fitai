@@ -1,7 +1,7 @@
 from django.db import models
 from feed.models import FeedPost #type: ignore
 from django.contrib.auth import get_user_model
-
+from django.contrib.postgres.fields import ArrayField
 User = get_user_model()
 
 # Create your models here.
@@ -27,7 +27,7 @@ class ExerciseStatistics(models.Model):
 
 class ExerciseRegime(FeedPost):
     name = models.CharField(max_length=50)
-    exercises = models.ManyToManyField('Exercise',through='ExerciseDetails')
+    exercises = ArrayField(models.PositiveSmallIntegerField())
     times_completed = models.PositiveIntegerField(default=0)
 
     def __str__(self):
@@ -39,6 +39,7 @@ class ExerciseDetails(models.Model):
     """
     exercise = models.ForeignKey('Exercise', on_delete=models.CASCADE)
     exercise_regime = models.ForeignKey('ExerciseRegime', on_delete=models.CASCADE)
+    # Order gives index of the exercise array we are at
     order = models.PositiveSmallIntegerField(default=0)
     rep_count = models.PositiveSmallIntegerField(default=10)
     set_count = models.PositiveSmallIntegerField(default=3)

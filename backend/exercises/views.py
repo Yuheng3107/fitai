@@ -83,14 +83,37 @@ class ExerciseRegimeView(APIView):
         permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if "id" in request.data:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        # Requires id of exercise_regime
+        if "id" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         
-        # exercises should not be updated in an exercise regime
+        # exercises should not be updated in an exercise regime, otherwise it will break order etc
+        
+        # Add new fields to to the fields list for easy maintainance, 
+        # fields are the fields that we allow the user to update
+        # Exercises should not be modifiable so as to not break order
+        
         fields = ["name", "text", "times_completed", "likes"]
-        m2m_fields = []
         
-        fields = ["name", "description", "exercises"]
+        try:
+            # Gets exercise regime
+            exercise_regime = ExerciseRegime.objects.filter(pk=request.data["id"])
+            if request.user != exercise_regime[0].poster:
+                # Check that person is updating their own post, otherwise kick
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+        except ExerciseRegime.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # Only updates fields that are sent in request
+        fields = {field: request.data[field] for field in fields if field in request.data}
+        exercise_regime.update(**fields)
+        # tags is m2m (TODO)
+        if "tags" in request.data:
+            pass
+        # media is base64 encoding that will need to be processed separately (TODO)
+        
+        # Linked media also need to handle separately (TODO)
+        
+        return Response()
     
     def post(self, request):
         """To create new exercise regime, user needs to be authenticated"""
@@ -99,22 +122,20 @@ class ExerciseRegimeView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
-        fields = ["name", "text"]
+        # All these fields are required
+        fields = ["name", "text", "exercises"]
+        
         # Have to manually do for m2m fields
         # Check that all the required data is in the post request
         for field in fields:
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-        if "exercises" not in request.data:
-            return Response("Please add exercises to the exercise regime", status=status.HTTP_400_BAD_REQUEST)
+        
         fields = {field: request.data[field] for field in fields}
         # Unpack the dictionary and pass them as keyword arguments to create in Exercise Regime
-        regime = ExerciseRegime.objects.create(poster=request.user, **fields)
-        exercises_qs = Exercise.objects.filter(pk__in=request.data["exercises"])
-        try:
-            regime.exercises.add(*list(exercises_qs))
-        except ValueError:
-            return Response("Cannot add exercise that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
+        ExerciseRegime.objects.create(poster=request.user, **fields)
+        
+        
         return Response(status=status.HTTP_201_CREATED)
     
     def get(self, request, pk):
