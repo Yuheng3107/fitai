@@ -1,7 +1,6 @@
-from django.shortcuts import render
 from rest_framework.views import APIView, Response
 from .models import Exercise, ExerciseStatistics, ExerciseRegime
-from .serializers import ExerciseRegimeSerializer
+from .serializers import ExerciseRegimeSerializer, ExerciseSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -23,9 +22,19 @@ class ExerciseView(APIView):
         
         return Response()
     
+    def get(self, request, pk):
+        """To get data for an Exercise instance"""
+        try:
+            exercise = Exercise.objects.get(pk=pk)
+            serializer = ExerciseSerializer(exercise)
+            return Response(serializer.data)
+        except Exercise.DoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
+    
 class ExerciseStatisticsView(APIView):
     def post(self, request):
-        """Post request must contain both user and exercise foreign key
+        """ To update (increment) exercise statistics
+            Post request must contain both user and exercise foreign key
            It is a post request, not put because it is not idempotent
         """
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -75,8 +84,10 @@ class ExerciseRegimeView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         if "id" in request.data:
             return Response(status=status.HTTP_403_FORBIDDEN)
-        fields = ["name", "description", ""]
-        m2m_fields = ["exercises", ]
+        
+        # exercises should not be updated in an exercise regime
+        fields = ["name", "text", "times_completed"]
+        m2m_fields = []
         
         fields = ["name", "description", "exercises"]
     
@@ -87,7 +98,7 @@ class ExerciseRegimeView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
-        fields = ["name", "description"]
+        fields = ["name", "text"]
         # Have to manually do for m2m fields
         # Check that all the required data is in the post request
         for field in fields:

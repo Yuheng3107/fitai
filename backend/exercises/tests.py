@@ -72,6 +72,8 @@ class ExerciseTestCase(TestCase):
         exercise.save()
         updated_exercise = Exercise.objects.get(pk=exercise.id)
         self.assertEqual(updated_exercise.text, updated_content)
+        
+        
 
 # Create your tests here.
 class ExerciseRegimeTestCase(TestCase):
@@ -162,7 +164,20 @@ class ExerciseViewTests(APITestCase):
         }
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
+        
+    def test_get_exercise(self):
+        exercise = baker.make(Exercise)
+        url = reverse('exercise_data', kwargs={"pk": exercise.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        print(data)
+        self.assertEqual(data["like_count"], exercise.like_count)
+        self.assertEqual(data["text"], exercise.text)
+        self.assertEqual(data["name"], exercise.name)
+        self.assertEqual(data["perfect_reps"], exercise.perfect_reps)
+    
+        
 
 class ExerciseStatisticsViewTests(APITestCase):
     def setUp(self):
@@ -222,14 +237,14 @@ class ExerciseRegimeViewTests(APITestCase):
     def test_create_exercise_regime(self):
         poster = baker.make('users.AppUser')
         name = "Exercise Regime Name"
-        description = "Exercise Regime Description"
+        text = "Exercise Regime Description"
         exercises = []
         for i in range(3):
             exercise = baker.make(Exercise)
             exercises.append(exercise.id)
         data = {
             "name": name,
-            "description": description, 
+            "text": text, 
             "exercises": exercises
         }
         response = self.client.post(self.url, data)
@@ -237,12 +252,12 @@ class ExerciseRegimeViewTests(APITestCase):
         self.client.force_authenticate(user=poster)
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        created_regime = ExerciseRegime.objects.filter(name=name).filter(description=description)
+        created_regime = ExerciseRegime.objects.filter(name=name).filter(text=text)
         self.assertTrue(created_regime.exists())
         self.assertEqual(len(created_regime), 1)
         created_regime = created_regime[0]
         self.assertEqual(created_regime.poster, poster)
-        self.assertEqual(created_regime.description, description)
+        self.assertEqual(created_regime.text, text)
         self.assertEqual(created_regime.name, name)
         # Exercise works
         new_exercises = [exercise.id for exercise in created_regime.exercises.all()]
@@ -256,7 +271,7 @@ class ExerciseRegimeViewTests(APITestCase):
         # Content is now a dict
         self.assertEqual(content["id"], exercise_regime.id)
         self.assertEqual(content["name"], exercise_regime.name)
-        self.assertEqual(content["description"], exercise_regime.description)
+        self.assertEqual(content["text"], exercise_regime.text)
         self.assertEqual(content["times_completed"], exercise_regime.times_completed)
         self.assertEqual(content["poster"], exercise_regime.poster)
         self.assertEqual(content["likers"], list(exercise_regime.likers.all()))
