@@ -1,9 +1,15 @@
+# TestCase
 from django.test import TestCase
-import os
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.contrib.contenttypes.models import ContentType
 from model_bakery import baker
+from django.core.files.uploadedfile import SimpleUploadedFile
+import os
+from django.contrib.contenttypes.models import ContentType
+# API TestCase
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+import json
 
 from .models import UserPost, CommunityPost, Comment, Tags
 # Create your tests here.
@@ -195,4 +201,97 @@ class CommunityPostCommentTestCase(TestCase):
         self.assertEqual(comment.parent_type, ct)
         self.assertEqual(comment.parent_id, post.id)
     
+class CommentViewTests(APITestCase):
+    def test_create_comment(self):
+        """Ensure we can create comment in Comment Model"""
+        url = reverse('comment')
+        User = get_user_model()
+        post = baker.make(UserPost)
+        user = User.objects.create_user(
+            email='testuser@gmail.com', password='12345')
+        text = "Test UserPost Comment Content"
+        ct = ContentType.objects.get_for_model(UserPost)
+        data = {
+            "text": text,
+            "parent_type": ct.id,
+            "parent_id": user.id
+        }
+        # Check that data cannot be accessed if you are not logged in
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        # Check that comment creates once user is autheticated
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        comment = Comment.objects.get()
+        self.assertEqual(comment.text, text)
+        self.assertEqual(comment.parent_object, post)
+        # Check parent type
+        data = {
+            "text": text,
+            "parent_type": 696969,
+            "parent_id": user.id
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # check parent id
+        data = {
+            "text": text,
+            "parent_type": ct.id,
+            "parent_id": 696969
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_comment(self):
+        """Ensure we can update data in Comment Model"""
+        url = reverse('comment')
+        User = get_user_model()
+        user = baker.make(User)
+        comment = baker.make(Comment, poster=user)
+        text = "actually im gay"
+        data = {
+            "id": comment.id,
+            "text": text
+        }
+        # Check that data cannot be accessed if you are not logged in
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # check that data cannot be accessed if wrong user
+        user2 = baker.make(User)
+        self.client.force_authenticate(user=user2)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Check that comment edits once user is autheticated
+        self.client.force_authenticate(user=user)
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Comment.objects.get(pk=comment.id).text, text)
+        # Test that view will return status code 400 when id is not in data
+        data = {
+            "text": text
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Test that view will return status code 404 when id is wrong
+        data = {
+            "id": 696969,
+            "text": text
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        
+    def test_get_comment(self):
+        comment = baker.make(Comment)
+        url = reverse('comment', kwargs={"pk": comment.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["likes"], comment.likes)
+        self.assertEqual(data["text"], comment.text)
+        self.assertEqual(data["poster"], comment.poster)
+        url = reverse('comment', kwargs={"pk": 69})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
             
