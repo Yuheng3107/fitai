@@ -274,4 +274,31 @@ class ExerciseRegimeViewTests(APITestCase):
         self.assertEqual(content["poster"], exercise_regime.poster)
         self.assertEqual(content["likers"], list(exercise_regime.likers.all()))
         self.assertEqual(content["exercises"], exercise_regime.exercises)
-    
+        
+    def test_update_exercise_regime(self):
+        """PUT request, cause idempotent"""
+        """TODO: tags, media, and gfk"""
+        user = baker.make('users.AppUser')
+        exercise_regime = baker.make(ExerciseRegime, poster=user)
+        updated_name = "Updated Name"
+        updated_text = "Updated Text"
+        updated_times_completed = 69
+        updated_likes = 69
+        data = {
+            "id": exercise_regime.id,
+            "name": updated_name,
+            "text": updated_text,
+            "times_completed": updated_times_completed,
+            "likes": updated_likes
+        }
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_regime = ExerciseRegime.objects.get(pk=exercise_regime.id)
+        self.assertEqual(updated_regime.likes, updated_likes)
+        self.assertEqual(updated_regime.name, updated_name)
+        self.assertEqual(updated_regime.text, updated_text)
+        self.assertEqual(updated_regime.times_completed, updated_times_completed)
+      

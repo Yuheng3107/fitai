@@ -83,18 +83,37 @@ class ExerciseRegimeView(APIView):
         permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if "id" in request.data:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        # Requires id of exercise_regime
+        if "id" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         
-        # exercises should not be updated in an exercise regime
+        # exercises should not be updated in an exercise regime, otherwise it will break order etc
         
-        # Add new fields to fields
-        fields = ["name", "text", "times_completed", "likes", "exercises"]
+        # Add new fields to to the fields list for easy maintainance, 
+        # fields are the fields that we allow the user to update
+        # Exercises should not be modifiable so as to not break order
+        
+        fields = ["name", "text", "times_completed", "likes"]
+        
+        try:
+            # Gets exercise regime
+            exercise_regime = ExerciseRegime.objects.filter(pk=request.data["id"])
+            if request.user != exercise_regime[0].poster:
+                # Check that person is updating their own post, otherwise kick
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+        except ExerciseRegime.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         # Only updates fields that are sent in request
-        fields = [field for field in fields if field in request.data]
+        fields = {field: request.data[field] for field in fields if field in request.data}
+        exercise_regime.update(**fields)
+        # tags is m2m (TODO)
+        if "tags" in request.data:
+            pass
+        # media is base64 encoding that will need to be processed separately (TODO)
         
+        # Linked media also need to handle separately (TODO)
         
-        fields = ["name", "description", "exercises"]
+        return Response()
     
     def post(self, request):
         """To create new exercise regime, user needs to be authenticated"""
