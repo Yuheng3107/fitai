@@ -19,6 +19,7 @@ pillow = "*"
 daphne = "*"
 coverage = "*"
 model-bakery = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 autopep8 = "*"
