@@ -15,7 +15,7 @@ jobs:
         env:
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: P@ssword1234
-          POSTGRES_DB: mytestdatabase
+          POSTGRES_DB: flex
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
