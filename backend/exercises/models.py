@@ -39,6 +39,7 @@ class ExerciseDetails(models.Model):
     """
     exercise = models.ForeignKey('Exercise', on_delete=models.CASCADE)
     exercise_regime = models.ForeignKey('ExerciseRegime', on_delete=models.CASCADE)
+    # Order gives index of the exercise array we are at
     order = models.PositiveSmallIntegerField(default=0)
     rep_count = models.PositiveSmallIntegerField(default=10)
     set_count = models.PositiveSmallIntegerField(default=3)
