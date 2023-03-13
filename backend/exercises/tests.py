@@ -183,7 +183,7 @@ class ExerciseUpdateViewTests(APITestCase):
 class ExerciseListViewTests(APITestCase):
     def test_get_exercise_list(self):
         url = reverse('exercise_list')
-        exercise_no = 5
+        exercise_no = 2
         exercises = [baker.make(Exercise) for i in range(exercise_no)]
         data = {
             "exercises": [exercise.id for exercise in exercises]
@@ -197,7 +197,17 @@ class ExerciseListViewTests(APITestCase):
             self.assertEquals(exercise.text, retrieved_exercise["text"])
             self.assertEquals(exercise.name, retrieved_exercise["name"])
             
-        
+class ExerciseStatisticsDetailViewTests(APITestCase):
+    def test_get_exercise_statistics(self):
+        exercise_statistics = baker.make(ExerciseStatistics, make_m2m=True)
+        url = reverse('exercise_statistics', kwargs={"pk": exercise_statistics.exercise.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=exercise_statistics.user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(exercise_statistics.perfect_reps, data["perfect_reps"])
 class ExerciseStatisticsViewTests(APITestCase):
     def setUp(self):
         self.url = reverse('exercise_statistics')

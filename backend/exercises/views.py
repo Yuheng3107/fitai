@@ -1,6 +1,6 @@
 from rest_framework.views import APIView, Response
 from .models import Exercise, ExerciseStatistics, ExerciseRegime
-from .serializers import ExerciseRegimeSerializer, ExerciseSerializer
+from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseStatisticsSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -41,6 +41,14 @@ class ExerciseListView(APIView):
         serializer = ExerciseSerializer(exercises, many=True)
         return Response(serializer.data)
     
+class ExerciseStatisticsDetailView(APIView):
+    def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        exercise_statistics = ExerciseStatistics.objects.filter(exercise=pk).filter(user=request.user.id)
+        serializer = ExerciseStatisticsSerializer(exercise_statistics[0])
+        return Response(serializer.data)
+        
 class ExerciseStatisticsView(APIView):
     def post(self, request):
         """ To update (increment) exercise statistics
