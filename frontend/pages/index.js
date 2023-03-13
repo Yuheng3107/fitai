@@ -1,13 +1,16 @@
+//Nextjs imports
 import dynamic from "next/dynamic";
-import Image from "next/image";
+import Link from "next/link";
 
 import React from "react";
-import App from "./App";
 import reportWebVitals from "../utils/reportWebVitals";
 
+//component imports
 import Navbar from "../components/navbar/Navbar";
 import Main from "../components/main/Main";
-import { IonContent, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+
+//ionic imports
+import { IonContent, IonPage, IonTitle, IonToolbar, IonButtons, IonButton } from "@ionic/react";
 
 const IonFooter = dynamic(() => import('@ionic/react').then((m) => m.IonFooter), { ssr: false });
 
@@ -20,7 +23,15 @@ function Home() {
         </IonContent>
         <IonFooter>
             <IonToolbar>
-                <IonTitle>This is a footer</IonTitle>
+                <IonButtons slot="start">
+                    <IonButton>Start</IonButton>
+                </IonButtons>
+                <IonTitle>Buttons</IonTitle>
+                <IonButtons slot="end">
+                    <IonButton>
+                        <Link href="/profile">Profile</Link>
+                    </IonButton>
+                </IonButtons>
             </IonToolbar>
         </IonFooter>
     </IonPage>
