@@ -1,9 +1,11 @@
 import '../styles/globals.css'
 
+import { useEffect } from 'react';
+
 //ionic stuff
 import "@ionic/react/css/core.css";
 import { setupIonicReact } from '@ionic/react';
-setupIonicReact();
+import { IonApp } from '@ionic/react';
 
 /* Basic CSS for apps built with Ionic */
 import '@ionic/react/css/normalize.css';
@@ -19,14 +21,21 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
 
+
 //Google auth
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 function MyApp({ Component, pageProps, oAuthClientId }) {
+  useEffect(() => {
+    console.log('setupIonicReact running')
+    setupIonicReact();
+  }, [])
   console.log(oAuthClientId);
   return <GoogleOAuthProvider clientId={oAuthClientId}>
-    <Component {...pageProps} />
-  </GoogleOAuthProvider>
+    <IonApp>
+      <Component {...pageProps} />
+    </IonApp>
+  </GoogleOAuthProvider >
 }
 
 MyApp.getInitialProps = (ctx) => {
