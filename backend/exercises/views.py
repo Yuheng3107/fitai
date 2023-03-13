@@ -30,10 +30,16 @@ class ExerciseDetailView(APIView):
             exercise = Exercise.objects.get(pk=pk)
             serializer = ExerciseSerializer(exercise)
             return Response(serializer.data)
-            
-            
         except Exercise.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+class ExerciseListView(APIView):
+    def post(self, request):
+        if "exercises" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        exercises = Exercise.objects.filter(pk__in=request.data["exercises"])
+        serializer = ExerciseSerializer(exercises, many=True)
+        return Response(serializer.data)
     
 class ExerciseStatisticsView(APIView):
     def post(self, request):

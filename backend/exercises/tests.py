@@ -145,7 +145,7 @@ class ExerciseRegimeTestCase(TestCase):
 
 class ExerciseDetailViewTests(APITestCase):
         
-    def test_get_exercise(self):
+    def test_get_exercise_detail(self):
         exercise = baker.make(Exercise)
         url = reverse('exercise_detail', kwargs={"pk": exercise.id})
         response = self.client.get(url)
@@ -180,7 +180,24 @@ class ExerciseUpdateViewTests(APITestCase):
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
-
+class ExerciseListViewTests(APITestCase):
+    def test_get_exercise_list(self):
+        url = reverse('exercise_list')
+        exercise_no = 5
+        exercises = [baker.make(Exercise) for i in range(exercise_no)]
+        data = {
+            "exercises": [exercise.id for exercise in exercises]
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        for i, exercise in enumerate(exercises):
+            retrieved_exercise = data[i]
+            self.assertEquals(exercise.id, retrieved_exercise["id"])
+            self.assertEquals(exercise.text, retrieved_exercise["text"])
+            self.assertEquals(exercise.name, retrieved_exercise["name"])
+            
+        
 class ExerciseStatisticsViewTests(APITestCase):
     def setUp(self):
         self.url = reverse('exercise_statistics')
