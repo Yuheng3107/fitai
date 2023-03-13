@@ -1,9 +1,27 @@
 import React from 'react';
 
-import Navbar from '../../components/navbar/Navbar';
+//Nextjs imports
+import dynamic from "next/dynamic";
+import Link from 'next/link';
+import Image from 'next/future/image';
 
-function Profile() {
-    return <>
+import personUnfilled from '../../public/assets/svg/person_unfilled.svg';
+
+//ionic imports
+import {
+    IonContent,
+    IonPage,
+    IonTitle,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonIcon
+} from "@ionic/react";
+
+const IonFooter = dynamic(() => import('@ionic/react').then((m) => m.IonFooter), { ssr: false });
+
+function Profile() {g
+    return <IonPage>
         <div className="flex flex-col items-center justify-center space-y-4">
             <img
                 src="https://via.placeholder.com/150"
@@ -24,7 +42,22 @@ function Profile() {
                 </a>
             </div>
         </div>
-    </>
+        <IonFooter>
+            <IonToolbar>
+                <IonButtons slot="start">
+                    <IonButton>Start</IonButton>
+                </IonButtons>
+                <IonTitle>Buttons</IonTitle>
+                <IonButtons slot="end">
+                    <IonButton>
+                        <Link href="/profile">
+                            <Image src={personUnfilled} alt="profile icon" ></Image>
+                        </Link>
+                    </IonButton>
+                </IonButtons>
+            </IonToolbar>
+        </IonFooter>
+    </IonPage>
 }
 
 export default Profile
