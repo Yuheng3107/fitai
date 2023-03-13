@@ -143,10 +143,26 @@ class ExerciseRegimeTestCase(TestCase):
         updated_exercise_regime = ExerciseRegime.objects.get(pk=exercise_regime.id)
         self.assertEqual(updated_exercise_regime.text, updated_content)
 
-class ExerciseViewTests(APITestCase):
+class ExerciseDetailViewTests(APITestCase):
+        
+    def test_get_exercise(self):
+        exercise = baker.make(Exercise)
+        url = reverse('exercise_detail', kwargs={"pk": exercise.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["likes"], exercise.likes)
+        self.assertEqual(data["text"], exercise.text)
+        self.assertEqual(data["name"], exercise.name)
+        self.assertEqual(data["perfect_reps"], exercise.perfect_reps)
+        url = reverse('exercise_detail', kwargs={"pk": 69})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class ExerciseUpdateViewTests(APITestCase):
     def test_update_exercise_data(self):
         """Ensure we can update data in Exercise Model"""
-        url = reverse('exercise_data')
+        url = reverse('update_exercise')
         exercise = baker.make(Exercise)
         perfect_reps_increase = 10
         data = {
@@ -163,21 +179,6 @@ class ExerciseViewTests(APITestCase):
         }
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        
-    def test_get_exercise(self):
-        exercise = baker.make(Exercise)
-        url = reverse('exercise_data', kwargs={"pk": exercise.id})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = json.loads(response.content)
-        self.assertEqual(data["likes"], exercise.likes)
-        self.assertEqual(data["text"], exercise.text)
-        self.assertEqual(data["name"], exercise.name)
-        self.assertEqual(data["perfect_reps"], exercise.perfect_reps)
-        url = reverse('exercise_data', kwargs={"pk": 69})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
         
 
 class ExerciseStatisticsViewTests(APITestCase):
@@ -302,4 +303,15 @@ class ExerciseRegimeViewTests(APITestCase):
         self.assertEqual(updated_regime.name, updated_name)
         self.assertEqual(updated_regime.text, updated_text)
         self.assertEqual(updated_regime.times_completed, updated_times_completed)
-      
+        
+    def test_delete_exercise_regime(self):
+        user = baker.make('users.AppUser')
+        exercise_regime = baker.make(ExerciseRegime, poster=user)
+        url = reverse('exercise_regime', kwargs={"pk": exercise_regime.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertRaises(ExerciseRegime.DoesNotExist):
+            ExerciseRegime.objects.get(pk=exercise_regime.id)

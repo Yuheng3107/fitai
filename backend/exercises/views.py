@@ -6,8 +6,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
-class ExerciseView(APIView):
-    """Creation of an exercise is done in admin console"""
+class ExerciseUpdateView(APIView):
     def patch(self, request):
         data = request.data 
         """To increment staistics to an exercise"""
@@ -23,12 +22,16 @@ class ExerciseView(APIView):
         
         return Response()
     
+class ExerciseDetailView(APIView):
+    """Creation and deletion of an exercise is done in admin console"""
     def get(self, request, pk):
         """To get data for an Exercise instance"""
         try:
             exercise = Exercise.objects.get(pk=pk)
             serializer = ExerciseSerializer(exercise)
             return Response(serializer.data)
+            
+            
         except Exercise.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -144,6 +147,19 @@ class ExerciseRegimeView(APIView):
             regime = ExerciseRegime.objects.get(pk=pk)
             serializer = ExerciseRegimeSerializer(regime)
             return Response(serializer.data)
+            
+            
+        except ExerciseRegime.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self, request, pk):
+    
+        try:
+            regime = ExerciseRegime.objects.get(pk=pk)
+            if (regime.poster != request.user):
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+            regime.delete()
+            return Response()
         except ExerciseRegime.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
