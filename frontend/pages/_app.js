@@ -20,6 +20,7 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
+import Layout from '../components/layout/Layout';
 
 
 //Google auth
@@ -32,9 +33,10 @@ function MyApp({ Component, pageProps, oAuthClientId }) {
   }, [])
   console.log(oAuthClientId);
   return <GoogleOAuthProvider clientId={oAuthClientId}>
-    <IonApp>
+    <Layout>
       <Component {...pageProps} />
-    </IonApp>
+    </Layout>
+
   </GoogleOAuthProvider >
 }
 
