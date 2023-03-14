@@ -4,6 +4,8 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
+import './theme/tailwind.css';
+
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
