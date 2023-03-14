@@ -48,9 +48,9 @@ class ExerciseStatisticsDetailView(APIView):
         exercise_statistics = ExerciseStatistics.objects.filter(exercise=pk).filter(user=request.user.id)
         serializer = ExerciseStatisticsSerializer(exercise_statistics[0])
         return Response(serializer.data)
-        
-class ExerciseStatisticsView(APIView):
-    def post(self, request):
+
+class ExerciseStatisticsUpdateView(APIView):
+     def post(self, request):
         """ To update (increment) exercise statistics
             Post request must contain both user and exercise foreign key
            It is a post request, not put because it is not idempotent
@@ -75,11 +75,13 @@ class ExerciseStatisticsView(APIView):
         exercise_statistics.save()
         return Response()
     
-    def put(self, request):
-        """View for users to send put request to create a new exercise statistic, is idempotent
+class ExerciseStatisticsCreateView(APIView):
+    def post(self, request):
+        """View for users to send request to create a new exercise statistic, is idempotent
         as .add does not create duplicate entries in through table"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
         permission_classes = [IsAuthenticated]
+        
         if not request.user.is_authenticated:
             return Response("Please log in.", status=status.HTTP_401_UNAUTHORIZED)
         data = request.data 
@@ -92,9 +94,30 @@ class ExerciseStatisticsView(APIView):
             return Response("Please put a valid exercise id", status=status.HTTP_400_BAD_REQUEST)
         request.user.exercises.add(exercise)
         return Response()
+
+class ExerciseRegimeDetailView(APIView):
+    def get(self, request, pk):
+        """To get details of an exercise regime"""
+        try:
+            regime = ExerciseRegime.objects.get(pk=pk)
+            serializer = ExerciseRegimeSerializer(regime)
+            return Response(serializer.data)
+        except ExerciseRegime.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         
-class ExerciseRegimeView(APIView):
-    def put(self, request):
+class ExerciseRegimeDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            regime = ExerciseRegime.objects.get(pk=pk)
+            if (regime.poster != request.user):
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+            regime.delete()
+            return Response()
+        except ExerciseRegime.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+class ExerciseRegimeUpdateView(APIView):
+    def post(self, request):
         """To update exercise regime"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
         permission_classes = [IsAuthenticated]
@@ -132,6 +155,7 @@ class ExerciseRegimeView(APIView):
         
         return Response()
     
+class ExerciseRegimeCreateView(APIView):
     def post(self, request):
         """To create new exercise regime, user needs to be authenticated"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -155,26 +179,7 @@ class ExerciseRegimeView(APIView):
         
         return Response(status=status.HTTP_201_CREATED)
     
-    def get(self, request, pk):
-        """To get details of an exercise regime"""
-        try:
-            regime = ExerciseRegime.objects.get(pk=pk)
-            serializer = ExerciseRegimeSerializer(regime)
-            return Response(serializer.data)
-            
-            
-        except ExerciseRegime.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
     
-    def delete(self, request, pk):
     
-        try:
-            regime = ExerciseRegime.objects.get(pk=pk)
-            if (regime.poster != request.user):
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
-            regime.delete()
-            return Response()
-        except ExerciseRegime.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
         
     
