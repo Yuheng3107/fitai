@@ -1,13 +1,12 @@
 from rest_framework.views import APIView, Response
 from .models import Exercise, ExerciseStatistics, ExerciseRegime
-from .serializers import ExerciseRegimeSerializer, ExerciseSerializer
+from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseStatisticsSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
-class ExerciseView(APIView):
-    """Creation of an exercise is done in admin console"""
+class ExerciseUpdateView(APIView):
     def patch(self, request):
         data = request.data 
         """To increment staistics to an exercise"""
@@ -23,6 +22,8 @@ class ExerciseView(APIView):
         
         return Response()
     
+class ExerciseDetailView(APIView):
+    """Creation and deletion of an exercise is done in admin console"""
     def get(self, request, pk):
         """To get data for an Exercise instance"""
         try:
@@ -31,9 +32,25 @@ class ExerciseView(APIView):
             return Response(serializer.data)
         except Exercise.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-    
-class ExerciseStatisticsView(APIView):
+
+class ExerciseListView(APIView):
     def post(self, request):
+        if "exercises" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        exercises = Exercise.objects.filter(pk__in=request.data["exercises"])
+        serializer = ExerciseSerializer(exercises, many=True)
+        return Response(serializer.data)
+    
+class ExerciseStatisticsDetailView(APIView):
+    def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        exercise_statistics = ExerciseStatistics.objects.filter(exercise=pk).filter(user=request.user.id)
+        serializer = ExerciseStatisticsSerializer(exercise_statistics[0])
+        return Response(serializer.data)
+
+class ExerciseStatisticsUpdateView(APIView):
+     def post(self, request):
         """ To update (increment) exercise statistics
             Post request must contain both user and exercise foreign key
            It is a post request, not put because it is not idempotent
@@ -58,11 +75,13 @@ class ExerciseStatisticsView(APIView):
         exercise_statistics.save()
         return Response()
     
-    def put(self, request):
-        """View for users to send put request to create a new exercise statistic, is idempotent
+class ExerciseStatisticsCreateView(APIView):
+    def post(self, request):
+        """View for users to send request to create a new exercise statistic, is idempotent
         as .add does not create duplicate entries in through table"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
         permission_classes = [IsAuthenticated]
+        
         if not request.user.is_authenticated:
             return Response("Please log in.", status=status.HTTP_401_UNAUTHORIZED)
         data = request.data 
@@ -75,9 +94,30 @@ class ExerciseStatisticsView(APIView):
             return Response("Please put a valid exercise id", status=status.HTTP_400_BAD_REQUEST)
         request.user.exercises.add(exercise)
         return Response()
+
+class ExerciseRegimeDetailView(APIView):
+    def get(self, request, pk):
+        """To get details of an exercise regime"""
+        try:
+            regime = ExerciseRegime.objects.get(pk=pk)
+            serializer = ExerciseRegimeSerializer(regime)
+            return Response(serializer.data)
+        except ExerciseRegime.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         
-class ExerciseRegimeView(APIView):
-    def put(self, request):
+class ExerciseRegimeDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            regime = ExerciseRegime.objects.get(pk=pk)
+            if (regime.poster != request.user):
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+            regime.delete()
+            return Response()
+        except ExerciseRegime.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+class ExerciseRegimeUpdateView(APIView):
+    def post(self, request):
         """To update exercise regime"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
         permission_classes = [IsAuthenticated]
@@ -115,6 +155,7 @@ class ExerciseRegimeView(APIView):
         
         return Response()
     
+class ExerciseRegimeCreateView(APIView):
     def post(self, request):
         """To create new exercise regime, user needs to be authenticated"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -138,13 +179,7 @@ class ExerciseRegimeView(APIView):
         
         return Response(status=status.HTTP_201_CREATED)
     
-    def get(self, request, pk):
-        """To get details of an exercise regime"""
-        try:
-            regime = ExerciseRegime.objects.get(pk=pk)
-            serializer = ExerciseRegimeSerializer(regime)
-            return Response(serializer.data)
-        except ExerciseRegime.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    
         
     

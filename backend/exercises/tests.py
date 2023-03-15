@@ -143,10 +143,26 @@ class ExerciseRegimeTestCase(TestCase):
         updated_exercise_regime = ExerciseRegime.objects.get(pk=exercise_regime.id)
         self.assertEqual(updated_exercise_regime.text, updated_content)
 
-class ExerciseViewTests(APITestCase):
+class ExerciseDetailViewTests(APITestCase):
+        
+    def test_get_exercise_detail(self):
+        exercise = baker.make(Exercise)
+        url = reverse('exercise_detail', kwargs={"pk": exercise.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["likes"], exercise.likes)
+        self.assertEqual(data["text"], exercise.text)
+        self.assertEqual(data["name"], exercise.name)
+        self.assertEqual(data["perfect_reps"], exercise.perfect_reps)
+        url = reverse('exercise_detail', kwargs={"pk": 69})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class ExerciseUpdateViewTests(APITestCase):
     def test_update_exercise_data(self):
         """Ensure we can update data in Exercise Model"""
-        url = reverse('exercise_data')
+        url = reverse('update_exercise')
         exercise = baker.make(Exercise)
         perfect_reps_increase = 10
         data = {
@@ -164,29 +180,40 @@ class ExerciseViewTests(APITestCase):
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
-    def test_get_exercise(self):
-        exercise = baker.make(Exercise)
-        url = reverse('exercise_data', kwargs={"pk": exercise.id})
+class ExerciseListViewTests(APITestCase):
+    def test_get_exercise_list(self):
+        url = reverse('exercise_list')
+        exercise_no = 2
+        exercises = [baker.make(Exercise) for i in range(exercise_no)]
+        data = {
+            "exercises": [exercise.id for exercise in exercises]
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        for i, exercise in enumerate(exercises):
+            retrieved_exercise = data[i]
+            self.assertEquals(exercise.id, retrieved_exercise["id"])
+            self.assertEquals(exercise.text, retrieved_exercise["text"])
+            self.assertEquals(exercise.name, retrieved_exercise["name"])
+            
+class ExerciseStatisticsDetailViewTests(APITestCase):
+    def test_get_exercise_statistics(self):
+        exercise_statistics = baker.make(ExerciseStatistics, make_m2m=True)
+        url = reverse('exercise_statistics_detail', kwargs={"pk": exercise_statistics.exercise.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=exercise_statistics.user)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content)
-        self.assertEqual(data["likes"], exercise.likes)
-        self.assertEqual(data["text"], exercise.text)
-        self.assertEqual(data["name"], exercise.name)
-        self.assertEqual(data["perfect_reps"], exercise.perfect_reps)
-        url = reverse('exercise_data', kwargs={"pk": 69})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
+        self.assertEqual(exercise_statistics.perfect_reps, data["perfect_reps"])
         
-
-class ExerciseStatisticsViewTests(APITestCase):
-    def setUp(self):
-        self.url = reverse('exercise_statistics')
-        
+class ExerciseStatisticsUpdateViewTests(APITestCase):
     def test_update_exercise_statistics(self):
         """Test that we can update exercise statistics"""
         exercise = baker.make(Exercise)
+        url = reverse('update_exercise_statistics')
         user = baker.make('users.AppUser')
         user.exercises.add(exercise)
         perfect_reps_increase = 20
@@ -195,47 +222,102 @@ class ExerciseStatisticsViewTests(APITestCase):
             "perfect_reps": perfect_reps_increase
         }
         # Check that data cannot be accessed if you are not logged in
-        response = self.client.post(self.url, data, format='json')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.client.force_authenticate(user=user)
         # Check that perfect reps change once user is authenticated
-        response = self.client.post(self.url, data, format='json')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(ExerciseStatistics.objects.filter(user=user.id).filter(exercise=exercise.id)[0].perfect_reps, perfect_reps_increase)
         # Check that view denies malformed requests
         data = {}
-        response = self.client.post(self.url, data, format='json')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         data = {
             "user_id": user.id,
             "exercise_id": exercise.id,
         }
-        response = self.client.post(self.url, data, format='json')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
+class ExerciseStatisticsCreateViewTests(APITestCase):
     def test_create_exercise_statistics(self):
         """Test we can create exercise statistics"""
+        url = reverse('create_exercise_statistics')
         exercise = baker.make(Exercise)
         data = {
             "exercise_id": exercise.id
         }
         # Test that it will deny unauthorised access (not logged in)
-        response = self.client.put(self.url, data)
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         user = baker.make('users.AppUser')
         self.client.force_authenticate(user=user)
         # Check that we make a new exercise statistic
-        response = self.client.put(self.url, data)
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         exercise_statistic = ExerciseStatistics.objects.filter(user=user.id).filter(exercise=exercise.id)
         # Check that it only makes one exercise statistic
         self.assertEqual(len(exercise_statistic), 1)
         
+class ExerciseRegimeDetailViewTests(APITestCase):
+    def test_get_exercise_regime(self):
+        exercise_regime = baker.make(ExerciseRegime)
+        url = reverse('exercise_regime_detail', kwargs={"pk": exercise_regime.id})
+        response = self.client.get(url)
+        content = json.loads(response.content)
+        # Content is now a dict
+        self.assertEqual(content["id"], exercise_regime.id)
+        self.assertEqual(content["name"], exercise_regime.name)
+        self.assertEqual(content["text"], exercise_regime.text)
+        self.assertEqual(content["times_completed"], exercise_regime.times_completed)
+        self.assertEqual(content["poster"], exercise_regime.poster)
+        self.assertEqual(content["likers"], list(exercise_regime.likers.all()))
+        self.assertEqual(content["exercises"], exercise_regime.exercises)
         
-class ExerciseRegimeViewTests(APITestCase):
-    def setUp(self):
-        self.url = reverse('exercise_regime')
-        
+class ExerciseRegimeDeleteViewTests(APITestCase):    
+    def test_delete_exercise_regime(self):
+        user = baker.make('users.AppUser')
+        exercise_regime = baker.make(ExerciseRegime, poster=user)
+        url = reverse('delete_exercise_regime', kwargs={"pk": exercise_regime.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertRaises(ExerciseRegime.DoesNotExist):
+            ExerciseRegime.objects.get(pk=exercise_regime.id)
+            
+class ExerciseRegimeUpdateViewTests(APITestCase): 
+    def test_update_exercise_regime(self):
+        """TODO: tags, media, and gfk"""
+        url = reverse('update_exercise_regime')
+        user = baker.make('users.AppUser')
+        exercise_regime = baker.make(ExerciseRegime, poster=user)
+        updated_name = "Updated Name"
+        updated_text = "Updated Text"
+        updated_times_completed = 69
+        updated_likes = 69
+        data = {
+            "id": exercise_regime.id,
+            "name": updated_name,
+            "text": updated_text,
+            "times_completed": updated_times_completed,
+            "likes": updated_likes
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_regime = ExerciseRegime.objects.get(pk=exercise_regime.id)
+        self.assertEqual(updated_regime.likes, updated_likes)
+        self.assertEqual(updated_regime.name, updated_name)
+        self.assertEqual(updated_regime.text, updated_text)
+        self.assertEqual(updated_regime.times_completed, updated_times_completed)    
+                 
+class ExerciseRegimeCreateViewTests(APITestCase):      
     def test_create_exercise_regime(self):
+        self.url = reverse('create_exercise_regime')
         poster = baker.make('users.AppUser')
         name = "Exercise Regime Name"
         text = "Exercise Regime Description"
@@ -262,44 +344,8 @@ class ExerciseRegimeViewTests(APITestCase):
         self.assertEqual(created_regime.name, name)
         self.assertEqual(created_regime.exercises, exercises)
     
-    def test_get_exercise_regime(self):
-        exercise_regime = baker.make(ExerciseRegime)
-        url = reverse('exercise_regime', kwargs={"pk": exercise_regime.id})
-        response = self.client.get(url)
-        content = json.loads(response.content)
-        # Content is now a dict
-        self.assertEqual(content["id"], exercise_regime.id)
-        self.assertEqual(content["name"], exercise_regime.name)
-        self.assertEqual(content["text"], exercise_regime.text)
-        self.assertEqual(content["times_completed"], exercise_regime.times_completed)
-        self.assertEqual(content["poster"], exercise_regime.poster)
-        self.assertEqual(content["likers"], list(exercise_regime.likers.all()))
-        self.assertEqual(content["exercises"], exercise_regime.exercises)
+    
         
-    def test_update_exercise_regime(self):
-        """PUT request, cause idempotent"""
-        """TODO: tags, media, and gfk"""
-        user = baker.make('users.AppUser')
-        exercise_regime = baker.make(ExerciseRegime, poster=user)
-        updated_name = "Updated Name"
-        updated_text = "Updated Text"
-        updated_times_completed = 69
-        updated_likes = 69
-        data = {
-            "id": exercise_regime.id,
-            "name": updated_name,
-            "text": updated_text,
-            "times_completed": updated_times_completed,
-            "likes": updated_likes
-        }
-        response = self.client.put(self.url, data)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.client.force_authenticate(user=user)
-        response = self.client.put(self.url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_regime = ExerciseRegime.objects.get(pk=exercise_regime.id)
-        self.assertEqual(updated_regime.likes, updated_likes)
-        self.assertEqual(updated_regime.name, updated_name)
-        self.assertEqual(updated_regime.text, updated_text)
-        self.assertEqual(updated_regime.times_completed, updated_times_completed)
-      
+    
+        
+    
