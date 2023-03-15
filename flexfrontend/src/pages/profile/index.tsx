@@ -1,10 +1,5 @@
 import React from 'react';
 
-//Nextjs imports
-import dynamic from "next/dynamic";
-import Link from 'next/link';
-import Image from 'next/future/image';
-
 import personUnfilled from '../../public/assets/svg/person_unfilled.svg';
 
 //ionic imports
@@ -15,10 +10,10 @@ import {
     IonToolbar,
     IonButtons,
     IonButton,
-    IonIcon
+    IonIcon,
+    IonFooter
 } from "@ionic/react";
 
-const IonFooter = dynamic(() => import('@ionic/react').then((m) => m.IonFooter), { ssr: false });
 
 function Profile() {
     return <div className="flex flex-col items-center justify-center space-y-4">
