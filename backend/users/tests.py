@@ -118,23 +118,26 @@ class UsersManagersTests(TestCase):
         with self.assertRaises(self.User.DoesNotExist):
             self.User.objects.get(pk=user.id)
 
-class LoginDataViewTests(APITestCase):
+class UserCreateViewTests(APITestCase):
     def test_create_user(self):
         """Ensure we can create a new user"""
-        url = reverse('login_data')
+        url = reverse('create_user')
         data = {
             "first_name": "User",
             "last_name": "Test",
             "email": "testuser@gmail.com"
         }
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data)
         User = get_user_model()
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(User.objects.get(first_name="User").email, data["email"])
         
-    def test_retrieve_user(self):
+
+class UserDetailViewTests(APITestCase):
+      
+    def test_retrieve_user_data(self):
         "Ensure we can retrieve user from db"
-        url = reverse('login_data')
+        url = reverse('user_detail')
         User = get_user_model()
         email = "testuser@gmail.com"
         user = User.objects.create_user(email=email)

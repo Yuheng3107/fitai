@@ -6,8 +6,7 @@ from django.middleware.csrf import get_token
 from .serializer import UserSerializer
 from rest_framework.renderers import JSONRenderer
 
-
-class LoginDataView(APIView):
+class UserCreateView(APIView):
     def post(self, request):
         user_data = request.data
         # Need to serialize data
@@ -29,16 +28,16 @@ class LoginDataView(APIView):
             user.save()
             login(request, user)
             response.write("User Successfully Registered")
-        # Session not saved throughout views
         return response
     
+class UserDetailView(APIView):
     def get(self, request):
         if (request.user.is_authenticated):
             serializer = UserSerializer(request.user)
             return Response(serializer.data)
         else:
             return Response(False, status=status.HTTP_401_UNAUTHORIZED)
-
+    
         
 class CheckLoginStatus(APIView):
     def get(self, request):
