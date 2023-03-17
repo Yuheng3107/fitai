@@ -92,4 +92,8 @@ class UserAchievementUpdateView(UserManyToManyUpdateView):
         self.model = Achievement
         self.field_name = 'achievements'
         
-    
+class UserFriendsUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = get_user_model()
+        self.field_name = 'friends'

@@ -161,3 +161,19 @@ class UserAchievementsUpdateViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures achievements are successfully added
         self.assertEqual(list(user.achievements.all()), achievements)
+        
+class UserFriendsUpdateViewTests(APITestCase):
+    def test_update_user_friends(self):
+        url = reverse('update_user_friends')
+        friends = [baker.make('users.AppUser') for i in range(3)]
+        data = {
+            "fk_list": [friend.id for friend in friends]
+        }
+        user = baker.make('users.AppUser')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures friends are successfully added
+        self.assertEqual(list(user.friends.all()), friends)
