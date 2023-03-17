@@ -8,22 +8,24 @@ from rest_framework.renderers import JSONRenderer
 
 class UserCreateView(APIView):
     def post(self, request):
-        user_data = request.data
         # Need to serialize data
-        first_name = user_data["first_name"]
-        last_name = user_data["last_name"]
-        email = user_data["email"]
-        username = f"{first_name} {last_name}"
+        fields = ["first_name", "last_name", "email"]
+        # Ensures all fields are there
+        for field in fields:
+            if field not in request.data:
+                return Response(f"Please input data into {field}", status=status.HTTP_400_BAD_REQUEST)
+        fields = {field: request.data[field] for field in fields}
+        fields["username"] = f"{fields['first_name']} {fields['last_name']}"
         User = get_user_model()
         response = HttpResponse()
         csrf_token = get_token(request)
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email=fields["email"])
             login(request, user)
             response.write("User already in database")
             return response
         except User.DoesNotExist:
-            user = User.objects.create_user(email=email, first_name=first_name, last_name=last_name, username=username)
+            user = User.objects.create_user(**fields)
             user.save()
             login(request, user)
             response.write("User Successfully Registered")

@@ -20,7 +20,7 @@ class AppUser(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     ########
-    # Retations
+    # Relations
 
     # Many to Many Achievements
     achievements = models.ManyToManyField(
