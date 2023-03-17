@@ -23,25 +23,7 @@ class UserPostCreateView(APIView):
         for field in check_fields:
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-
-        # Check for valid content type
-        ct = None
-        if "shared_type" in request.data:
-            try:
-                ct = ContentType.objects.get(pk=request.data["shared_type"])
-            except ContentType.DoesNotExist:
-                return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
-            
-            sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
-            if ct.model not in sharable_models:
-                return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                ct.get_object_for_this_type(pk=request.data["shared_id"])
-            except:
-                return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
-        if "shared_type" not in request.data and "shared_id" in request.data:
-            return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
+        
         # if "media" in request.data (TODO):
             # Check for media type
             # if request.data["media"]
@@ -49,7 +31,7 @@ class UserPostCreateView(APIView):
         create_fields = ["text", "shared_id", "privacy_level"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in UserPost
-        UserPost.objects.create(poster=request.user, shared_type=ct, **fields)
+        UserPost.objects.create(poster=request.user, **fields)
             
         return Response(status=status.HTTP_201_CREATED)
 
@@ -77,28 +59,10 @@ class UserPostUpdateView(APIView):
             return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED) 
 
         # Check for valid content type
-        ct = None
-        if "shared_type" in request.data:
-            try:
-                ct = ContentType.objects.get(pk=request.data["shared_type"])
-            except ContentType.DoesNotExist:
-                return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
-            
-            sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
-            if ct.model not in sharable_models:
-                return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                ct.get_object_for_this_type(pk=request.data["shared_id"])
-            except:
-                return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
-        if "shared_type" not in request.data and "shared_id" in request.data:
-            return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
-
-        update_fields = ["text", "privacy_level", "shared_id"]
+        update_fields = ["text", "privacy_level"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to update in UserPost
-        UserPost.objects.filter(pk=request.data["id"]).update(shared_type=ct, **fields)
+        UserPost.objects.filter(pk=request.data["id"]).update(**fields)
 
         return Response(status=status.HTTP_200_OK)
 
@@ -260,29 +224,10 @@ class CommunityPostCreateView(APIView):
         except Community.DoesNotExist:
             return Response("Please put a valid community id", status=status.HTTP_400_BAD_REQUEST)
 
-        # Check for valid content type
-        ct = None
-        if "shared_type" in request.data:
-            try:
-                ct = ContentType.objects.get(pk=request.data["shared_type"])
-            except ContentType.DoesNotExist:
-                return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
-            
-            sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
-            if ct.model not in sharable_models:
-                return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                ct.get_object_for_this_type(pk=request.data["shared_id"])
-            except:
-                return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
-        if "shared_type" not in request.data and "shared_id" in request.data:
-            return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
-
-        create_fields = ["text", "shared_id", "community"]
+        create_fields = ["text"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
-        post = CommunityPost.objects.create(community=community, poster=request.user, shared_type=ct, **fields)
+        post = CommunityPost.objects.create(community=community, poster=request.user, **fields)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -310,28 +255,11 @@ class CommunityPostUpdateView(APIView):
             return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
 
         # Check for valid content type
-        ct = None
-        if "shared_type" in request.data:
-            try:
-                ct = ContentType.objects.get(pk=request.data["shared_type"])
-            except ContentType.DoesNotExist:
-                return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
-            
-            sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
-            if ct.model not in sharable_models:
-                return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                ct.get_object_for_this_type(pk=request.data["shared_id"])
-            except:
-                return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
-        if "shared_type" not in request.data and "shared_id" in request.data:
-            return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
-
-        update_fields = ["text", "shared_id"]
+       
+        update_fields = ["text"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
-        CommunityPost.objects.filter(pk=request.data["id"]).update(shared_type=ct, **fields)
+        CommunityPost.objects.filter(pk=request.data["id"]).update(**fields)
 
         return Response(status=status.HTTP_200_OK)
 
@@ -507,6 +435,84 @@ class LikesDeleteView(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class ShareUpdateView(APIView):
+    """Base class to update likes for posts"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def post(self, request):
+        """Adds new m2m relationships to model"""
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        fields = ["id","shared_type","shared_id"]
+        # Check that all the required data is in the post request
+        for field in fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+
+        #check for post
+        try:
+            post = self.model.objects.get(pk=request.data['id'])
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        # Check User
+        if request.user != post.poster:
+            return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
+        
+        # check for shared type
+        try:
+            ct = ContentType.objects.get(pk=request.data["shared_type"])
+        except ContentType.DoesNotExist:
+            return Response("Please put a valid shared_type", status=status.HTTP_400_BAD_REQUEST)
+        # check that model is sharable
+        sharable_models = ['comment','userpost','communitypost','exercise','exerciseregime','user','achievement']
+        if ct.model not in sharable_models:
+            return Response("Parent Type not sharable", status=status.HTTP_400_BAD_REQUEST)
+        # check for shared id
+        try:
+            ct.get_object_for_this_type(pk=request.data["shared_id"])
+        except:
+            return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
+
+        self.model.objects.filter(pk=request.data["id"]).update(shared_type=ct, shared_id=request.data["shared_id"])
+
+        return Response()
+
+class ShareDeleteView(APIView):
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def delete(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        #check for post
+        try:
+            post = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        # Check User
+        if request.user != post.poster:
+            return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
+        
+        post.shared_type = None
+        post.shared_id = None
+        post.save()
+        return Response()
+
+
 class UserPostTagsUpdateView(TagsUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -556,3 +562,23 @@ class CommentLikesDeleteView(LikesDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = Comment
+
+class UserPostShareUpdateView(ShareUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class CommunityPostShareUpdateView(ShareUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class UserPostShareDeleteView(ShareDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class CommunityPostShareDeleteView(ShareDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
