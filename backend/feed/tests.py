@@ -207,7 +207,7 @@ class CommunityPostCommentTestCase(TestCase):
 
 
 """
-API TestCasse
+API TestCase
 """
 class UserPostCreateViewTests(APITestCase):
     def test_create_user_post(self):
