@@ -1,14 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import checkLoginStatus from '../utils/checkLogin';
 import getProfileData from '../utils/getProfileData';
 
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonLabel, IonInput } from '@ionic/react';
 import Login from '../components/login/Login';
+import { backend } from '../App';
+
 
 const Tab3: React.FC = () => {
+
+
+  const endpoint = `${backend}/users/user/create`;
   const [loginStatus, setLoginStatus] = useState(false);
   const [profileData, setProfileData] = useState({});
+
+  const [usernameInput, setUsernameInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
+  const [filePath, setFilePath] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
   useEffect(() => {
@@ -20,6 +31,35 @@ const Tab3: React.FC = () => {
       getProfileData(setProfileData);
     }
   }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileData, setProfileData, profileData])
+
+
+  function createUserHandler(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData();
+    const fileInput = fileInputRef.current?.files?.[0];
+    if (!fileInput) {
+      console.log('no file input')
+      return;
+    }
+    formData.append("photo", fileInput);
+    formData.append("username", usernameInput);
+    formData.append("email", emailInput);
+    console.log(fileInput);
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}, ${pair[1]}`);
+    }
+    fetch(`${backend}/users/user/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: formData
+    }).then((response) => {
+      // do something with response
+      console.log(response);
+    });
+  }
 
   return (
     <IonPage>
@@ -34,8 +74,40 @@ const Tab3: React.FC = () => {
           Login Here
           <Login setLoginStatus={setLoginStatus} />
         </div>
-        <label htmlFor="profilePhoto">Upload Profile Photo</label>
-        <input type="file" name="profilePhoto"/>
+        <div>
+          <h1>Create User</h1>
+          <form onSubmit={createUserHandler}>
+            <label htmlFor="profilePhoto">Upload Profile Photo</label>
+            <input ref={fileInputRef} onChange={e => {
+              setFilePath(e.target.value)
+              console.log(e.target.value);
+            }} className="border border-neutral-500" type="file" name="profilePhoto" />
+
+            <div>
+              <label htmlFor="username">Username</label>
+              <input onChange={e => setUsernameInput(e.target.value)} className="border border-neutral-500" type="text" name="username" />
+            </div>
+
+            <div>
+              <label htmlFor="email">Email</label>
+              <input onChange={e => setEmailInput(e.target.value)} className="border border-neutral-500" type="email" name="email" />
+            </div>
+
+            <div>
+              <label htmlFor="password">Password</label>
+              <input className="border border-neutral-500" type="password" name="password" />
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input className="border border-neutral-500" type="password" name="confirmPassword" />
+            </div>
+
+
+            <input className="border border-neutral-500" type="submit" />
+          </form>
+        </div>
+
       </IonContent>
     </IonPage>
   );

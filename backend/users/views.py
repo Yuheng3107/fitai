@@ -5,6 +5,9 @@ from django.http import HttpResponse
 from django.middleware.csrf import get_token
 from .serializer import UserSerializer
 from achievements.models import Achievement #type: ignore
+from community.models import Community #type: ignore
+from exercises.models import Exercise, ExerciseRegime #type: ignore
+from chat.models import ChatGroup #type: ignore
 from rest_framework.renderers import JSONRenderer
 
 class UserCreateView(APIView):
@@ -69,8 +72,6 @@ class UserManyToManyUpdateView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         # Checks that there is a model setup
         if self.model is None or self.field_name is None:
-            print(self.model)
-            print(self.field_name)
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
         if "fk_list" not in request.data:
@@ -83,10 +84,9 @@ class UserManyToManyUpdateView(APIView):
             getattr(request.user, self.field_name).add(*request.data["fk_list"])
             return Response()
         except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-class UserAchievementUpdateView(UserManyToManyUpdateView):
+class UserAchievementsUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = Achievement
@@ -97,3 +97,86 @@ class UserFriendsUpdateView(UserManyToManyUpdateView):
         super().setup(request, *args, **kwargs)
         self.model = get_user_model()
         self.field_name = 'friends'
+
+class UserCommunitiesUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Community
+        self.field_name = 'communities'
+        
+class UserExercisesUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+        self.field_name = 'exercises'
+
+class UserExerciseRegimesUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+        self.field_name = 'exercise_regimes'
+        
+class UserChatGroupsUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ChatGroup
+        self.field_name = 'chat_groups'
+
+class UserManyToManyDeleteView(APIView):
+    """Base class to delete m2m relationships for users"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with users
+        self.model = None
+        # Field name is the name of the field with m2m relationship with users
+        self.field_name = None
+        # These two attributes will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def delete(self, request, pk):
+        """Delete m2m relationship"""
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None or self.field_name is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        try:
+            getattr(request.user, self.field_name).remove(pk)
+            return Response()
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+class UserAchievementsDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Achievement
+        self.field_name = 'achievements'
+        
+class UserFriendsDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = get_user_model()
+        self.field_name = 'friends'
+
+class UserCommunitiesDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Community
+        self.field_name = 'communities'
+        
+class UserExercisesDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+        self.field_name = 'exercises'
+
+class UserExerciseRegimesDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+        self.field_name = 'exercise_regimes'
+        
+class UserChatGroupsDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ChatGroup
+        self.field_name = 'chat_groups'
