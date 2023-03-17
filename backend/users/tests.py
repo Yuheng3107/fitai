@@ -278,15 +278,65 @@ class UserFriendsDeleteViewTests(APITestCase):
         self.assertFalse(user.friends.all().exists())
         
 class UserCommunitiesDeleteViewTests(APITestCase):
-    def test_delete_user_achievements(self):
-        achievement = baker.make(Community)
-        url = reverse('delete_user_achievements', kwargs={"pk": achievement.id})
+    def test_delete_user_communities(self):
+        community = baker.make(Community)
+        url = reverse('delete_user_communities', kwargs={"pk": community.id})
         user = baker.make('users.AppUser')
-        user.achievements.add(achievement.id)
+        user.communities.add(community.id)
         # Check that user has been added
-        self.assertTrue(user.achievements.all().exists())
+        self.assertTrue(user.communities.all().exists())
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.client.force_authenticate(user=user)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures communities are successfully deleted
+        self.assertFalse(user.communities.all().exists())
+
+class UserExercisesDeleteViewTests(APITestCase):
+    def test_delete_user_exercises(self):
+        exercise = baker.make(Exercise)
+        url = reverse('delete_user_exercises', kwargs={"pk": exercise.id})
+        user = baker.make('users.AppUser')
+        user.exercises.add(exercise.id)
+        # Check that user has been added
+        self.assertTrue(user.exercises.all().exists())
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures exercises are successfully deleted
+        self.assertFalse(user.exercises.all().exists())
+        
+class UserExerciseRegimesDeleteViewTests(APITestCase):
+    def test_delete_user_exercise_regimes(self):
+        exercise_regime = baker.make(ExerciseRegime)
+        url = reverse('delete_user_exercise_regimes', kwargs={"pk": exercise_regime.id})
+        user = baker.make('users.AppUser')
+        user.exercise_regimes.add(exercise_regime.id)
+        # Check that user has been added
+        self.assertTrue(user.exercise_regimes.all().exists())
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures exercise_regimes are successfully deleted
+        self.assertFalse(user.exercise_regimes.all().exists())
+        
+class UserChatGroupsDeleteViewTests(APITestCase):
+    def test_delete_user_chat_groups(self):
+        chat_group = baker.make(ChatGroup)
+        url = reverse('delete_user_chat_groups', kwargs={"pk": chat_group.id})
+        user = baker.make('users.AppUser')
+        user.chat_groups.add(chat_group.id)
+        # Check that user has been added
+        self.assertTrue(user.chat_groups.all().exists())
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures chat_groups are successfully deleted
+        self.assertFalse(user.chat_groups.all().exists())
