@@ -4,7 +4,6 @@ import {
   useGoogleLogin,
   useGoogleOneTapLogin,
 } from "@react-oauth/google";
-import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import Image from "next/future/image";
 
@@ -12,6 +11,7 @@ import Button from "../ui/Button";
 
 import googleIcon from "../../public/assets/svg/google-icon.svg";
 import { backend } from "../../pages/App";
+
 function Login(props) {
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});

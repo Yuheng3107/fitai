@@ -11,6 +11,7 @@ class LoginDataView(APIView):
     def post(self, request):
         user_data = request.data
         # Need to serialize data
+        print(user_data)
         first_name = user_data["first_name"]
         last_name = user_data["last_name"]
         email = user_data["email"]
