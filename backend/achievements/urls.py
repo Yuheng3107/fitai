@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import AchievementView
+from .views import AchievementListView
 
 urlpatterns = [
-    path('data', AchievementView.as_view(), name='achievement_view')
+    path('achievement/list', AchievementListView.as_view(), name='achievement_list')
 ]

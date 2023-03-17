@@ -1,17 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
-import checkLoginStatus from '../utils/checkLogin';
-import getProfileData from '../utils/getProfileData';
+import checkLoginStatus from "../utils/checkLogin";
+import getProfileData from "../utils/getProfileData";
 
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonLabel, IonInput } from '@ionic/react';
-import Login from '../components/login/Login';
-import { backend } from '../App';
-
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonItem,
+  IonLabel,
+  IonInput,
+} from "@ionic/react";
+import Login from "../components/login/Login";
+import { backend } from "../App";
 
 const Tab3: React.FC = () => {
-
-
-  const endpoint = `${backend}/users/user/create`;
+  const endpoint = `${backend}/users/user/update`;
   const [loginStatus, setLoginStatus] = useState(false);
   const [profileData, setProfileData] = useState({});
 
@@ -21,24 +27,29 @@ const Tab3: React.FC = () => {
   const [filePath, setFilePath] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-
   useEffect(() => {
-    console.log(`the current loginStatus is ${loginStatus}`)
-    console.log(`the current profileData is ${profileData}`)
+    console.log(`the current loginStatus is ${loginStatus}`);
+    console.log(`the current profileData is ${profileData}`);
     checkLoginStatus(loginStatus, setLoginStatus);
 
     if (loginStatus && !Object.keys(profileData).length) {
       getProfileData(setProfileData);
     }
-  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileData, setProfileData, profileData])
-
+  }, [
+    loginStatus,
+    setLoginStatus,
+    checkLoginStatus,
+    getProfileData,
+    setProfileData,
+    profileData,
+  ]);
 
   function createUserHandler(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData();
     const fileInput = fileInputRef.current?.files?.[0];
     if (!fileInput) {
-      console.log('no file input')
+      console.log("no file input");
       return;
     }
     formData.append("photo", fileInput);
@@ -48,13 +59,16 @@ const Tab3: React.FC = () => {
     for (const pair of formData.entries()) {
       console.log(`${pair[0]}, ${pair[1]}`);
     }
-    fetch(`${backend}/users/user/create`, {
+    fetch(`${backend}/users/user/update`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRFToken": String(
+          document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
+        ),
       },
       credentials: "include",
-      body: formData
+      body: formData,
     }).then((response) => {
       // do something with response
       console.log(response);
@@ -78,36 +92,58 @@ const Tab3: React.FC = () => {
           <h1>Create User</h1>
           <form onSubmit={createUserHandler}>
             <label htmlFor="profilePhoto">Upload Profile Photo</label>
-            <input ref={fileInputRef} onChange={e => {
-              setFilePath(e.target.value)
-              console.log(e.target.value);
-            }} className="border border-neutral-500" type="file" name="profilePhoto" />
+            <input
+              ref={fileInputRef}
+              onChange={(e) => {
+                setFilePath(e.target.value);
+                console.log(e.target.value);
+              }}
+              className="border border-neutral-500"
+              type="file"
+              name="profilePhoto"
+            />
 
             <div>
               <label htmlFor="username">Username</label>
-              <input onChange={e => setUsernameInput(e.target.value)} className="border border-neutral-500" type="text" name="username" />
+              <input
+                onChange={(e) => setUsernameInput(e.target.value)}
+                className="border border-neutral-500"
+                type="text"
+                name="username"
+              />
             </div>
 
             <div>
               <label htmlFor="email">Email</label>
-              <input onChange={e => setEmailInput(e.target.value)} className="border border-neutral-500" type="email" name="email" />
+              <input
+                onChange={(e) => setEmailInput(e.target.value)}
+                className="border border-neutral-500"
+                type="email"
+                name="email"
+              />
             </div>
 
             <div>
               <label htmlFor="password">Password</label>
-              <input className="border border-neutral-500" type="password" name="password" />
+              <input
+                className="border border-neutral-500"
+                type="password"
+                name="password"
+              />
             </div>
 
             <div>
               <label htmlFor="confirmPassword">Confirm Password</label>
-              <input className="border border-neutral-500" type="password" name="confirmPassword" />
+              <input
+                className="border border-neutral-500"
+                type="password"
+                name="confirmPassword"
+              />
             </div>
-
 
             <input className="border border-neutral-500" type="submit" />
           </form>
         </div>
-
       </IonContent>
     </IonPage>
   );
