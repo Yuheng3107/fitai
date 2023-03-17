@@ -4,10 +4,12 @@ from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
 from django.middleware.csrf import get_token
 from .serializer import UserSerializer
+from django.views.generic import ListView
 from rest_framework.renderers import JSONRenderer
 
 class UserCreateView(APIView):
     def post(self, request):
+        """API used internally to create users in DB from social logins"""
         # Need to serialize data
         fields = ["first_name", "last_name", "email"]
         # Ensures all fields are there
@@ -43,3 +45,42 @@ class UserDetailView(APIView):
 class CheckLoginStatus(APIView):
     def get(self, request):
         return Response(request.user.is_authenticated)
+    
+class UserUpdateView(APIView):
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        fields = ["username", "privacy_level"]
+
+class UserManyToManyUpdateView(APIView):
+    """Base class to update m2m relationships for users"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with users
+        self.model = None
+        # Field name is the name of the field with m2m relationship with users
+        self.field_name = None
+        # These two attributes will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def post(self, request):
+        """Adds new m2m relationships to user model"""
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None or self.field_name is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        if "fk_list" not in request.data:
+            return Response("Please add list of foreign keys as fk_list in request.", status=status.HTTP_400_BAD_REQUEST)
+        # Gets queryset of all foreign keys provided
+        qs = self.model.objects.filter(pk__in=request.data["fk_list"])
+    
+        # Adds the relations to the model
+        try:
+            getattr(get_user_model(), self.field_name).add(list(qs))
+            return Response()
+        except Exception as e:
+            return Response(e, status=status.HTTP_400_BAD_REQUEST)
+            
+        

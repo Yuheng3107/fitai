@@ -6,5 +6,5 @@ urlpatterns = [
     path('user/create', UserCreateView.as_view(), name='create_user'),
     path('user', UserDetailView.as_view(), name='user_detail'),
     # Check login status
-    path('status', CheckLoginStatus.as_view(), name='login_status')
+    path('user/status', CheckLoginStatus.as_view(), name='login_status')
 ]
