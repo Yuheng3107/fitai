@@ -42,11 +42,11 @@ class UserPostCreateView(APIView):
                 return Response("Please put a valid shared_id", status=status.HTTP_400_BAD_REQUEST)
         if "shared_type" not in request.data and "shared_id" in request.data:
             return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
-        # if "media" in request.data:
+        # if "media" in request.data (TODO):
             # Check for media type
             # if request.data["media"]
         
-        create_fields = ["text", "media", "shared_id"]
+        create_fields = ["text", "shared_id", "privacy_level"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in UserPost
         UserPost.objects.create(poster=request.user, shared_type=ct, **fields)
@@ -68,7 +68,6 @@ class UserPostUpdateView(APIView):
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
 
         # Check post
-        post = None
         try:
             post = UserPost.objects.get(pk=request.data["id"])
         except UserPost.DoesNotExist:
@@ -96,12 +95,10 @@ class UserPostUpdateView(APIView):
         if "shared_type" not in request.data and "shared_id" in request.data:
             return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
 
-        # SHARED TYPE
-        update_fields = ["text", "media", "shared_id"]
+        update_fields = ["text", "privacy_level", "shared_id"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to update in UserPost
         UserPost.objects.filter(pk=request.data["id"]).update(shared_type=ct, **fields)
-        # Update tags
 
         return Response(status=status.HTTP_200_OK)
 
@@ -193,7 +190,6 @@ class CommentUpdateView(APIView):
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
 
         # Check post
-        post = None
         try:
             post = Comment.objects.get(pk=request.data["id"])
         except Comment.DoesNotExist:
@@ -283,7 +279,7 @@ class CommunityPostCreateView(APIView):
         if "shared_type" not in request.data and "shared_id" in request.data:
             return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
 
-        create_fields = ["text", "media", "shared_id", "community"]
+        create_fields = ["text", "shared_id", "community"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
         post = CommunityPost.objects.create(community=community, poster=request.user, shared_type=ct, **fields)
@@ -305,7 +301,6 @@ class CommunityPostUpdateView(APIView):
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
                 
         # Check post
-        post = None
         try:
             post = CommunityPost.objects.get(pk=request.data["id"])
         except CommunityPost.DoesNotExist:
@@ -333,7 +328,7 @@ class CommunityPostUpdateView(APIView):
         if "shared_type" not in request.data and "shared_id" in request.data:
             return Response("shared_id but no shared_type", status=status.HTTP_400_BAD_REQUEST)
 
-        update_fields = ["text", "media", "shared_id"]
+        update_fields = ["text", "shared_id"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
         CommunityPost.objects.filter(pk=request.data["id"]).update(shared_type=ct, **fields)

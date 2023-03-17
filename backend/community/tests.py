@@ -3,7 +3,13 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 from model_bakery import baker
-from .models import Community
+# API TestCase
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+import json
+
+from .models import Community, CommunityMembers
 
 # Create your tests here.
 
@@ -71,3 +77,157 @@ class CommunityTestCase(TestCase):
         community.save()
         updated_community = Community.objects.get(pk=community.id)
         self.assertEqual(updated_community.description, updated_content)
+
+class CommunityCreateViewTests(APITestCase):
+    def test_create_community(self):
+        url = reverse('create_community')
+        user = baker.make('users.AppUser')
+        content = 'Lorem Ipsum blablabla'
+        name = 'Test Community'
+        privacy_level = 1
+        data = {
+            'name': name,
+            'description': content,
+            'privacy_level': privacy_level,
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        # Check that community creates once user is autheticated
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        community = Community.objects.get()
+        self.assertEqual(community.name, name)
+        self.assertEqual(community.description, content)
+        self.assertEqual(community.created_by, user)
+        self.assertEqual(community.privacy_level, privacy_level)
+
+class CommunityUpdateViewTests(APITestCase):
+    def test_update_community(self):
+        url = reverse('update_community')
+        user = baker.make('users.AppUser')
+        community = baker.make(Community)
+        user.communities.add(community)
+        content = 'Lorem Ipsum blablabla'
+        name = 'Test Community'
+        privacy_level = 1
+        data = {
+            'id': community.id,
+            'name': name,
+            'description': content,
+            'privacy_level': privacy_level,
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        member = CommunityMembers.objects.get(user=user.id, community=community.id)
+        member.moderator_level = 2
+        member.save()
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        community = Community.objects.get()
+        self.assertEqual(community.name, name)
+        self.assertEqual(community.description, content)
+        self.assertEqual(community.privacy_level, privacy_level)
+
+        data = {
+            'name': name,
+            'description': content,
+            'privacy_level': privacy_level,
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+class CommunityDetailViewTests(APITestCase):
+    def test_community_detail(self):
+        community = baker.make(Community)
+        
+        url = reverse('community_detail', kwargs={"pk": community.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["name"], community.name)
+        self.assertEqual(data["description"], community.description)
+        self.assertEqual(data["created_by"], community.created_by)
+        url = reverse('community_detail', kwargs={"pk": 69})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class CommunityListViewTests(APITestCase):
+    def test_community_list(self):
+        """test the list method"""
+        url = reverse('community_list')
+        post_no = 2
+        communities = [baker.make(Community) for i in range(post_no)]
+        data = {
+            "communities": [community.id for community in communities]
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        for i, community in enumerate(communities):
+            self.assertEqual(data[i]["name"], community.name)
+            self.assertEqual(data[i]["description"], community.description)
+            self.assertEqual(data[i]["created_by"], community.created_by)
+    
+class CommunityDeleteViewTests(APITestCase):
+    def test_delete_community(self):
+        user = baker.make('users.AppUser')
+        community = baker.make(Community, created_by=user)
+        url = reverse('delete_community', kwargs={"pk": community.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        user.communities.add(community)
+        member = CommunityMembers.objects.get(user=user.id, community=community.id)
+        member.moderator_level = 3
+        member.save()
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertRaises(Community.DoesNotExist):
+            Community.objects.get(pk=community.id)
+
+class CommunityMembersUpdateViewTests(APITestCase):
+    def test_update_community_members(self):
+        user = baker.make('users.AppUser')
+        user2 = baker.make('users.AppUser')
+        community = baker.make(Community, created_by=user)
+        data = {
+            'user_id': user2.id,
+            'community_id': community.id,
+            'moderator_level': 69,
+        }
+        url = reverse('update_community_members')
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        user.communities.add(community)
+        member = CommunityMembers.objects.get(user=user.id, community=community.id)
+        member.moderator_level = 3
+        member.save()
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        user2.communities.add(community)
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        data = {
+            'user_id': user2.id,
+            'community_id': community.id,
+            'moderator_level': 2,
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        member = CommunityMembers.objects.get(user=user2.id, community=community.id)
+        self.assertEqual(member.moderator_level, 2)

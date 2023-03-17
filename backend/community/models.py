@@ -21,6 +21,6 @@ class Community(models.Model):
 class CommunityMembers(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
-    moderator = models.BooleanField(default=False)
+    moderator_level = models.SmallIntegerField(default=0)
 
     
