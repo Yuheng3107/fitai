@@ -427,7 +427,7 @@ class LikesUpdateView(APIView):
         if self.model is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        check_fields = ["liker","id"]
+        check_fields = ["id"]
         # Check that all the required data is in the post request
         for field in check_fields:
             if field not in request.data:
@@ -438,12 +438,75 @@ class LikesUpdateView(APIView):
         except self.model.DoesNotExist:
             return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
         
-        if request.user.id != request.data['liker']:
-            return Response('Wrong User', status=status.HTTP_401_UNAUTHORIZED)
         # Adds the relations to the model
         try:
-            post.likers.add(request.data["liker"])
+            post.likers.add(request.user)
             post.likes = post.likes + 1
+            post.save()
+            return Response()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class TagsDeleteView(APIView):
+    """Base class to delete Tags for posts"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def delete(self, request, pk_tag, pk_post):
+        """deletes m2m relationships to model"""
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+       
+        try:
+            post = self.model.objects.get(pk=pk_post)
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        # Check User
+        if request.user != post.poster:
+            return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
+
+        
+        # Adds the relations to the model
+        try:
+            # Unpacks foreign keys in fk_list
+            post.tags.remove(pk_tag)
+            return Response()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class LikesDeleteView(APIView):
+    """Base class to delete likes for posts"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def delete(self, request, pk):
+        """removes m2m relationships to user model"""
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+       
+        try:
+            post = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        
+        # Adds the relations to the model
+        try:
+            post.likers.remove(request.user)
+            post.likes = post.likes - 1
             post.save()
             return Response()
         except:
@@ -470,6 +533,31 @@ class CommunityPostLikesUpdateView(LikesUpdateView):
         self.model = CommunityPost
 
 class CommentLikesUpdateView(LikesUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Comment
+
+class UserPostTagsDeleteView(TagsDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class CommunityPostTagsDeleteView(TagsDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class UserPostLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class CommunityPostLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class CommentLikesDeleteView(LikesDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = Comment
