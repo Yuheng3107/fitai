@@ -98,6 +98,12 @@ class UserFriendsUpdateView(UserManyToManyUpdateView):
         self.model = get_user_model()
         self.field_name = 'friends'
 
+class UserBlockedUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = get_user_model()
+        self.field_name = 'blocked'
+
 class UserCommunitiesUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -156,6 +162,12 @@ class UserFriendsDeleteView(UserManyToManyDeleteView):
         super().setup(request, *args, **kwargs)
         self.model = get_user_model()
         self.field_name = 'friends'
+
+class UserBlockedDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = get_user_model()
+        self.field_name = 'blocked'
 
 class UserCommunitiesDeleteView(UserManyToManyDeleteView):
     def setup(self, request, *args, **kwargs):

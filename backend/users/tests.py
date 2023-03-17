@@ -180,6 +180,22 @@ class UserFriendsUpdateViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures friends are successfully added
         self.assertEqual(list(user.friends.all()), friends)
+
+class UserBlockedUpdateViewTests(APITestCase):
+    def test_update_user_blocked(self):
+        url = reverse('update_user_blocked')
+        blocked = [baker.make('users.AppUser') for i in range(3)]
+        data = {
+            "fk_list": [enemy.id for enemy in blocked]
+        }
+        user = baker.make('users.AppUser')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures friends are successfully added
+        self.assertEqual(list(user.blocked.all()), blocked)
         
 class UserCommunitiesUpdateViewTests(APITestCase):
     def test_update_user_communities(self):
@@ -276,6 +292,22 @@ class UserFriendsDeleteViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures friends are successfully deleted
         self.assertFalse(user.friends.all().exists())
+
+class UserBlockedDeleteViewTests(APITestCase):
+    def test_delete_user_blocked(self):
+        enemy = baker.make('users.AppUser')
+        url = reverse('delete_user_blocked', kwargs={"pk": enemy.id})
+        user = baker.make('users.AppUser')
+        user.blocked.add(enemy.id)
+        # Check that user has been added
+        self.assertTrue(user.blocked.all().exists())
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures friends are successfully deleted
+        self.assertFalse(user.blocked.all().exists())
         
 class UserCommunitiesDeleteViewTests(APITestCase):
     def test_delete_user_communities(self):
