@@ -7,6 +7,7 @@ from .serializer import UserSerializer
 from achievements.models import Achievement #type: ignore
 from community.models import Community #type: ignore
 from exercises.models import Exercise, ExerciseRegime #type: ignore
+from chat.models import ChatGroup #type: ignore
 from rest_framework.renderers import JSONRenderer
 
 class UserCreateView(APIView):
@@ -111,4 +112,15 @@ class UserExercisesUpdateView(UserManyToManyUpdateView):
         super().setup(request, *args, **kwargs)
         self.model = Exercise
         self.field_name = 'exercises'
+
+class UserExerciseRegimesUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+        self.field_name = 'exercise_regimes'
         
+class UserChatGroupsUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ChatGroup
+        self.field_name = 'chat_groups'

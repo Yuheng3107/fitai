@@ -7,6 +7,7 @@ from rest_framework.test import APITestCase
 from achievements.models import Achievement # type: ignore
 from community.models import Community #type: ignore
 from exercises.models import Exercise, ExerciseRegime #type: ignore
+from chat.models import ChatGroup #type: ignore
 from rest_framework.views import status
 # Create your tests here.
 class UsersManagersTests(TestCase):
@@ -212,3 +213,34 @@ class UserExercisesUpdateViewTests(APITestCase):
         # Ensures exercises are successfully added
         self.assertEqual(list(user.exercises.all()), exercises)
         
+class UserExerciseRegimesUpdateViewTests(APITestCase):
+    def test_update_user_exercise_regimes(self):
+        url = reverse('update_user_exercise_regimes')
+        exercise_regimes = [baker.make(ExerciseRegime) for i in range(3)]
+        data = {
+            "fk_list": [exercise_regime.id for exercise_regime in exercise_regimes]
+        }
+        user = baker.make('users.AppUser')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures exercise_regimes are successfully added
+        self.assertEqual(list(user.exercise_regimes.all()), exercise_regimes)
+
+class UserChatGroupsUpdateViewTests(APITestCase):
+    def test_update_user_chat_groups(self):
+        url = reverse('update_user_chat_groups')
+        chat_groups = [baker.make(ChatGroup) for i in range(3)]
+        data = {
+            "fk_list": [chat_group.id for chat_group in chat_groups]
+        }
+        user = baker.make('users.AppUser')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures chat_groups are successfully added
+        self.assertEqual(list(user.chat_groups.all()), chat_groups)
