@@ -32,8 +32,10 @@ const Tab3: React.FC = () => {
         <IonTitle size="large">Tab 3</IonTitle>
         <div>
           Login Here
-          <Login setLoginStatus={setLoginStatus}/>
+          <Login setLoginStatus={setLoginStatus} />
         </div>
+        <label htmlFor="profilePhoto">Upload Profile Photo</label>
+        <input type="file" name="profilePhoto"/>
       </IonContent>
     </IonPage>
   );
