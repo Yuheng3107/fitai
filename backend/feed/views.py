@@ -10,7 +10,6 @@ from community.models import Community #type: ignore
 from .serializers import CommentSerializer, UserPostSerializer, CommunityPostSerializer
 # Create your views here.
 
-
 class UserPostCreateView(APIView):
     def post(self, request):
         """To create new user post"""
@@ -50,14 +49,7 @@ class UserPostCreateView(APIView):
         create_fields = ["text", "media", "shared_id"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in UserPost
-        post = UserPost.objects.create(poster=request.user, shared_type=ct, **fields)
-
-        # Adding tags
-        tags_qs = Tags.objects.filter(pk__in=request.data["tags"])
-        try:
-            post.tags.add(*list(tags_qs))
-        except ValueError:
-            return Response("Cannot add tag that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
+        UserPost.objects.create(poster=request.user, shared_type=ct, **fields)
             
         return Response(status=status.HTTP_201_CREATED)
 
@@ -175,7 +167,7 @@ class CommentCreateView(APIView):
             ct.get_object_for_this_type(pk=request.data["parent_id"])
         except:
             return Response("Please put a valid parent_id", status=status.HTTP_400_BAD_REQUEST)
-        # Check for media type
+        # Check for media type (TODO)
             # Check for media type
             # if request.data["media"]
         
@@ -263,7 +255,7 @@ class CommunityPostCreateView(APIView):
         for field in check_fields:
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-        # if "media" in request.data:
+        # if "media" in request.data (TODO):
             # Check for media type
             # if request.data["media"]
         
@@ -295,13 +287,6 @@ class CommunityPostCreateView(APIView):
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
         post = CommunityPost.objects.create(community=community, poster=request.user, shared_type=ct, **fields)
-
-        # Adding tags
-        post_qs = Tags.objects.filter(pk__in=request.data["tags"])
-        try:
-            post.tags.add(*list(post_qs))
-        except ValueError:
-            return Response("Cannot add tag that doesn't exist", status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -353,8 +338,6 @@ class CommunityPostUpdateView(APIView):
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
         CommunityPost.objects.filter(pk=request.data["id"]).update(shared_type=ct, **fields)
 
-        # Updating tags
-
         return Response(status=status.HTTP_200_OK)
 
 class CommunityPostDetailView(APIView):
@@ -386,3 +369,195 @@ class CommunityPostDeleteView(APIView):
             return Response()
         except CommunityPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+class TagsUpdateView(APIView):
+    """Base class to update Tags for posts"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def post(self, request):
+        """Adds new m2m relationships to model"""
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        check_fields = ["tags","id"]
+        # Check that all the required data is in the post request
+        for field in check_fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+       
+        try:
+            post = self.model.objects.get(pk=request.data['id'])
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        # Check User
+        if request.user != post.poster:
+            return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
+
+        
+        # Adds the relations to the model
+        try:
+            # Unpacks foreign keys in fk_list
+            post.tags.add(*request.data["tags"])
+            return Response()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class LikesUpdateView(APIView):
+    """Base class to update likes for posts"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def post(self, request):
+        """Adds new m2m relationships to user model"""
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        check_fields = ["id"]
+        # Check that all the required data is in the post request
+        for field in check_fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+       
+        try:
+            post = self.model.objects.get(pk=request.data['id'])
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        
+        # Adds the relations to the model
+        try:
+            post.likers.add(request.user)
+            post.likes = post.likes + 1
+            post.save()
+            return Response()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class TagsDeleteView(APIView):
+    """Base class to delete Tags for posts"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def delete(self, request, pk_tag, pk_post):
+        """deletes m2m relationships to model"""
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+       
+        try:
+            post = self.model.objects.get(pk=pk_post)
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        # Check User
+        if request.user != post.poster:
+            return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
+
+        
+        # Adds the relations to the model
+        try:
+            # Unpacks foreign keys in fk_list
+            post.tags.remove(pk_tag)
+            return Response()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class LikesDeleteView(APIView):
+    """Base class to delete likes for posts"""
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+    
+    def delete(self, request, pk):
+        """removes m2m relationships to user model"""
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+       
+        try:
+            post = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        
+        # Adds the relations to the model
+        try:
+            post.likers.remove(request.user)
+            post.likes = post.likes - 1
+            post.save()
+            return Response()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class UserPostTagsUpdateView(TagsUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class CommunityPostTagsUpdateView(TagsUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class UserPostLikesUpdateView(LikesUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class CommunityPostLikesUpdateView(LikesUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class CommentLikesUpdateView(LikesUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Comment
+
+class UserPostTagsDeleteView(TagsDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class CommunityPostTagsDeleteView(TagsDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class UserPostLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class CommunityPostLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class CommentLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Comment

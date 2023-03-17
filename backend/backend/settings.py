@@ -168,3 +168,6 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 
 # MEDIA ROOT
 MEDIA_ROOT = BASE_DIR / 'static/media/'
+
+# STATIC
+STATIC_URL = 'static/'

@@ -20,7 +20,6 @@ class UserCreateView(APIView):
             if field not in request.data:
                 return Response(f"Please input data into {field}", status=status.HTTP_400_BAD_REQUEST)
         fields = {field: request.data[field] for field in fields}
-        fields["username"] = f"{fields['first_name']} {fields['last_name']}"
         User = get_user_model()
         response = HttpResponse()
         csrf_token = get_token(request)
@@ -35,6 +34,15 @@ class UserCreateView(APIView):
             login(request, user)
             response.write("User Successfully Registered")
         return response
+
+class UserAllowedView(APIView):
+    def post(self, request):
+        if "username" not in request.data or "email" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        User = get_user_model()
+        if User.objects.filter(email=request.data["email"]).exists() or User.objects.filter(username=request.data["username"]).exists():
+            return Response(False)
+        return Response(True)
     
 class UserDetailView(APIView):
     def get(self, request):
@@ -98,6 +106,12 @@ class UserFriendsUpdateView(UserManyToManyUpdateView):
         self.model = get_user_model()
         self.field_name = 'friends'
 
+class UserBlockedUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = get_user_model()
+        self.field_name = 'blocked'
+
 class UserCommunitiesUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -156,6 +170,12 @@ class UserFriendsDeleteView(UserManyToManyDeleteView):
         super().setup(request, *args, **kwargs)
         self.model = get_user_model()
         self.field_name = 'friends'
+
+class UserBlockedDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = get_user_model()
+        self.field_name = 'blocked'
 
 class UserCommunitiesDeleteView(UserManyToManyDeleteView):
     def setup(self, request, *args, **kwargs):
