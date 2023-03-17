@@ -62,7 +62,7 @@ function Login(props) {
           let first_name = res.data.given_name;
           let email = res.data.email;
 
-          fetch(`${backend}/users/data`, {
+          fetch(`${backend}/users/user/create`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

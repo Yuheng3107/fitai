@@ -1,7 +1,13 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import VideoFeed from '../components/exercise/video';
-import { useParams } from 'react-router';
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
+import ExploreContainer from "../components/ExploreContainer";
+import VideoFeed from "../components/Exercise/video";
+import { useParams } from "react-router";
 const Tab2: React.FC = () => {
   const param = useParams();
   console.log(param);

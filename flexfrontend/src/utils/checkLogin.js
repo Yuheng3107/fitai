@@ -2,7 +2,7 @@ import { backend } from "../App.tsx";
 
 function checkLoginStatus(currentLoginState, updateLoginState) {
   // modify to return boolean
-  fetch(`${backend}/users/status`, {
+  fetch(`${backend}/users/user/status`, {
     method: "GET",
     credentials: "include", // include cookies in the request
     headers: {
@@ -13,7 +13,7 @@ function checkLoginStatus(currentLoginState, updateLoginState) {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(`user login status is ${data}`)
+      console.log(`user login status is ${data}`);
       if (data !== currentLoginState) {
         updateLoginState(data);
         console.log(data);
