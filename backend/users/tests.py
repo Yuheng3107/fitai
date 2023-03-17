@@ -9,6 +9,7 @@ from community.models import Community #type: ignore
 from exercises.models import Exercise, ExerciseRegime #type: ignore
 from chat.models import ChatGroup #type: ignore
 from rest_framework.views import status
+import json
 # Create your tests here.
 class UsersManagersTests(TestCase):
     def setUp(self):
@@ -372,3 +373,44 @@ class UserChatGroupsDeleteViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures chat_groups are successfully deleted
         self.assertFalse(user.chat_groups.all().exists())
+        
+class UserAllowedViewTests(APITestCase):
+    def setUp(self):
+        self.url = reverse('user_allowed')
+    def test_username_and_email_no_duplicates_allowed(self):
+        user = baker.make('users.AppUser')
+        data = {
+            "username": user.username
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(response.content)
+        data = {
+            "username": user.username,
+            "email": user.email
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(json.loads(response.content))
+        data = {
+            "username": "testname",
+            "email": user.email
+        }
+        
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(json.loads(response.content))
+        data = {
+            "username": user.username,
+            "email": "test"
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(json.loads(response.content))
+        data = {
+            "username": "testuser",
+            "email": "testemail"
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(json.loads(response.content))

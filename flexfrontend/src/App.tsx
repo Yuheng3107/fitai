@@ -42,7 +42,7 @@ import '@ionic/react/css/display.css';
 
 setupIonicReact();
 
-const backend = "http://localhost:8000";
+const backend = " http://127.0.0.1:8000/";
 
 
 const App: React.FC = () => {

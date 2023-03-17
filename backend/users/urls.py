@@ -1,10 +1,11 @@
 from django.urls import path
 from .views import  CheckLoginStatus, UserCreateView, UserDetailView, UserAchievementsUpdateView, UserFriendsUpdateView, UserCommunitiesUpdateView, UserExercisesUpdateView, UserExerciseRegimesUpdateView, UserChatGroupsUpdateView
-from .views import UserAchievementsDeleteView, UserFriendsDeleteView, UserCommunitiesDeleteView, UserExercisesDeleteView, UserExerciseRegimesDeleteView, UserChatGroupsDeleteView, UserBlockedUpdateView, UserBlockedDeleteView
+from .views import UserAchievementsDeleteView, UserFriendsDeleteView, UserCommunitiesDeleteView, UserExercisesDeleteView, UserExerciseRegimesDeleteView, UserChatGroupsDeleteView, UserBlockedUpdateView, UserBlockedDeleteView, UserAllowedView
 urlpatterns = [
     # Login stuff
     path('user/create', UserCreateView.as_view(), name='create_user'),
     path('user', UserDetailView.as_view(), name='user_detail'),
+    path('user/allowed', UserAllowedView.as_view(), name='user_allowed'),
     # Check login status
     path('user/status', CheckLoginStatus.as_view(), name='login_status'),
     # Update m2m relationships
