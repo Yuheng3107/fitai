@@ -1,4 +1,5 @@
 # TestCase
+from turtle import update
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from model_bakery import baker
@@ -354,6 +355,46 @@ class UserPostDeleteViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         with self.assertRaises(UserPost.DoesNotExist):
             UserPost.objects.get(pk=post.id)
+    
+class UserPostUpdateLikesViewTests(APITestCase):
+    def test_update_likes(self):
+        post = baker.make(UserPost, likes=69)
+        likes = post.likes
+        user = baker.make('users.AppUser')
+        url = reverse('update_user_post_likes')
+        data = {
+            'liker': user.id,
+            'id': post.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_post = UserPost.objects.get()
+        self.assertEqual(updated_post.likes,likes + 1)
+        # many to many checks
+        for x in updated_post.likers.all():
+            self.assertEqual(x,user)
+
+class UserPostUpdateTagsViewTests(APITestCase):
+    def test_update_tags(self):
+        user = baker.make('users.AppUser')
+        post = baker.make(UserPost, poster=user)
+        tag = baker.make(Tags)
+        url = reverse('update_user_post_tags')
+        data = {
+            'tags': [tag.tag],
+            'id': post.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # many to many checks
+        for x in post.tags.all():
+            self.assertEqual(x,tag)
 
 
 class CommentCreateViewTests(APITestCase):
@@ -482,6 +523,27 @@ class CommentDeleteViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         with self.assertRaises(Comment.DoesNotExist):
             Comment.objects.get(pk=post.id)
+
+class CommentUpdateLikesViewTests(APITestCase):
+    def test_update_likes(self):
+        post = baker.make(Comment, likes=69)
+        likes = post.likes
+        user = baker.make('users.AppUser')
+        url = reverse('update_comment_likes')
+        data = {
+            'liker': user.id,
+            'id': post.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_post = Comment.objects.get()
+        self.assertEqual(updated_post.likes,likes + 1)
+        # many to many checks
+        for x in updated_post.likers.all():
+            self.assertEqual(x,user)
             
 class CommunityPostCreateViewTests(APITestCase):
     def test_create_community_post(self):
@@ -653,3 +715,43 @@ class CommunityPostDeleteViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         with self.assertRaises(CommunityPost.DoesNotExist):
             CommunityPost.objects.get(pk=post.id)
+
+class CommunityPostUpdateLikesViewTests(APITestCase):
+    def test_update_likes(self):
+        post = baker.make(CommunityPost, likes=69)
+        likes = post.likes
+        user = baker.make('users.AppUser')
+        url = reverse('update_community_post_likes')
+        data = {
+            'liker': user.id,
+            'id': post.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_post = CommunityPost.objects.get()
+        self.assertEqual(updated_post.likes,likes + 1)
+        # many to many checks
+        for x in updated_post.likers.all():
+            self.assertEqual(x,user)
+
+class UserPostUpdateTagsViewTests(APITestCase):
+    def test_update_tags(self):
+        user = baker.make('users.AppUser')
+        post = baker.make(CommunityPost, poster=user)
+        tag = baker.make(Tags)
+        url = reverse('update_community_post_tags')
+        data = {
+            'tags': [tag.tag],
+            'id': post.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # many to many checks
+        for x in post.tags.all():
+            self.assertEqual(x,tag)
