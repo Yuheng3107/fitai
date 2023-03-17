@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.middleware.csrf import get_token
 from .serializer import UserSerializer
 from achievements.models import Achievement #type: ignore
+from community.models import Community #type: ignore
+from exercises.models import Exercise, ExerciseRegime #type: ignore
 from rest_framework.renderers import JSONRenderer
 
 class UserCreateView(APIView):
@@ -97,3 +99,16 @@ class UserFriendsUpdateView(UserManyToManyUpdateView):
         super().setup(request, *args, **kwargs)
         self.model = get_user_model()
         self.field_name = 'friends'
+
+class UserCommunitiesUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Community
+        self.field_name = 'communities'
+        
+class UserExercisesUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+        self.field_name = 'exercises'
+        

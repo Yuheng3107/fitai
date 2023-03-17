@@ -5,6 +5,8 @@ import os
 from model_bakery import baker
 from rest_framework.test import APITestCase
 from achievements.models import Achievement # type: ignore
+from community.models import Community #type: ignore
+from exercises.models import Exercise, ExerciseRegime #type: ignore
 from rest_framework.views import status
 # Create your tests here.
 class UsersManagersTests(TestCase):
@@ -177,3 +179,36 @@ class UserFriendsUpdateViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures friends are successfully added
         self.assertEqual(list(user.friends.all()), friends)
+        
+class UserCommunitiesUpdateViewTests(APITestCase):
+    def test_update_user_communities(self):
+        url = reverse('update_user_communities')
+        communities = [baker.make(Community) for i in range(3)]
+        data = {
+            "fk_list": [community.id for community in communities]
+        }
+        user = baker.make('users.AppUser')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures communities are successfully added
+        self.assertEqual(list(user.communities.all()), communities)
+
+class UserExercisesUpdateViewTests(APITestCase):
+    def test_update_user_exercises(self):
+        url = reverse('update_user_exercises')
+        exercises = [baker.make(Exercise) for i in range(3)]
+        data = {
+            "fk_list": [exercise.id for exercise in exercises]
+        }
+        user = baker.make('users.AppUser')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures exercises are successfully added
+        self.assertEqual(list(user.exercises.all()), exercises)
+        
