@@ -10,7 +10,8 @@ from community.models import Community #type: ignore
 from .serializers import CommentSerializer, UserPostSerializer, CommunityPostSerializer
 # Create your views here.
 
-class UserPostView(APIView):
+
+class UserPostCreateView(APIView):
     def post(self, request):
         """To create new user post"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -18,8 +19,7 @@ class UserPostView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
-        check_fields = ["text", "tags"]
-        # Have to manually do for m2m fields
+        check_fields = ["text"]
         # Check that all the required data is in the post request
         for field in check_fields:
             if field not in request.data:
@@ -61,7 +61,7 @@ class UserPostView(APIView):
             
         return Response(status=status.HTTP_201_CREATED)
 
-
+class UserPostUpdateView(APIView):
     def put(self, request):
         """To update user post"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -69,8 +69,7 @@ class UserPostView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        check_fields = ["text", "id"]
-        # Have to manually do for m2m fields
+        check_fields = ["id"]
         # Check that all the required data is in the post request
         for field in check_fields:
             if field not in request.data:
@@ -114,7 +113,7 @@ class UserPostView(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-
+class UserPostDetailView(APIView):
     def get(self, request, pk):
         """To get details of a UserPost"""
         try:
@@ -124,7 +123,30 @@ class UserPostView(APIView):
         except UserPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-class CommentView(APIView):
+class UserPostListView(APIView):
+    def post(self, request):
+        if "user_posts" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user_posts = UserPost.objects.filter(pk__in=request.data["user_posts"])
+        serializer = UserPostSerializer(user_posts, many=True)
+        return Response(serializer.data)
+
+class UserPostDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            post = UserPost.objects.get(pk=pk)
+            if (post.poster != request.user):
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+            post.delete()
+            return Response()
+        except UserPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+"""
+Comment Views
+"""
+class CommentCreateView(APIView):
     def post(self, request):
         """To create new Comment"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -164,7 +186,7 @@ class CommentView(APIView):
 
         return Response(status=status.HTTP_201_CREATED)    
 
-        
+class CommentUpdateView(APIView):
     def put(self, request):
         """To update comment"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -195,7 +217,7 @@ class CommentView(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-    
+class CommentDetailView(APIView):
     def get(self, request, pk):
         """To get details of a Comment"""
         try:
@@ -204,8 +226,31 @@ class CommentView(APIView):
             return Response(serializer.data)
         except Comment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-    
-class CommunityPostView(APIView):
+
+class CommentListView(APIView):
+    def post(self, request):
+        if "comments" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        comments = Comment.objects.filter(pk__in=request.data["comments"])
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+class CommentDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            post = Comment.objects.get(pk=pk)
+            if (post.poster != request.user):
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+            post.delete()
+            return Response()
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+"""
+CommunityPost Views
+"""              
+class CommunityPostCreateView(APIView):
     def post(self, request):
         """To create new community post"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -213,7 +258,7 @@ class CommunityPostView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
-        check_fields = ["text", "community_id", "tags"]
+        check_fields = ["text", "community_id"]
         # Check that all the required data is in the post request
         for field in check_fields:
             if field not in request.data:
@@ -260,16 +305,15 @@ class CommunityPostView(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-
+class CommunityPostUpdateView(APIView):
     def put(self, request):
-        """To update user post"""
+        """To update community post"""
         authentication_classes = [SessionAuthentication, BasicAuthentication]
         permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        check_fields = ["text", "id"]
-        # Have to manually do for m2m fields
+        check_fields = ["id"]
         # Check that all the required data is in the post request
         for field in check_fields:
             if field not in request.data:
@@ -313,13 +357,32 @@ class CommunityPostView(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-    
-    
+class CommunityPostDetailView(APIView):
     def get(self, request, pk):
         """To get details of a CommunityPost"""
         try:
             post = CommunityPost.objects.get(pk=pk)
             serializer = CommunityPostSerializer(post)
             return Response(serializer.data)
+        except CommunityPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+class CommunityPostListView(APIView):
+    def post(self, request):
+        """To get details of multiple CommunityPosts"""
+        if "community_posts" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        community_posts = CommunityPost.objects.filter(pk__in=request.data["community_posts"])
+        serializer = CommunityPostSerializer(community_posts, many=True)
+        return Response(serializer.data)
+
+class CommunityPostDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            post = CommunityPost.objects.get(pk=pk)
+            if (post.poster != request.user):
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+            post.delete()
+            return Response()
         except CommunityPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)

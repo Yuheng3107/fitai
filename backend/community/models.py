@@ -18,4 +18,9 @@ class Community(models.Model):
     def __str__(self):
         return self.name
 
+class CommunityMembers(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    moderator = models.BooleanField(default=False)
+
     
