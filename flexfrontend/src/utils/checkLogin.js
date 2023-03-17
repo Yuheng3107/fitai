@@ -1,4 +1,4 @@
-import { backend } from "../pages/App";
+import { backend } from "../App.tsx";
 
 function checkLoginStatus(currentLoginState, updateLoginState) {
   // modify to return boolean
@@ -13,6 +13,7 @@ function checkLoginStatus(currentLoginState, updateLoginState) {
   })
     .then((response) => response.json())
     .then((data) => {
+      console.log(`user login status is ${data}`)
       if (data !== currentLoginState) {
         updateLoginState(data);
         console.log(data);

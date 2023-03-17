@@ -1,4 +1,4 @@
-import { backend } from "../pages/App";
+import { backend } from "../App.tsx";
 
 function getProfileData(updateFunction) {
     fetch(`${backend}/users/data`, {
