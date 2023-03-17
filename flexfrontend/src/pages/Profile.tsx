@@ -17,7 +17,7 @@ import Login from "../components/login/Login";
 import { backend } from "../App";
 
 const Tab3: React.FC = () => {
-  const endpoint = `${backend}/users/user/create`;
+  const endpoint = `${backend}/users/user/update`;
   const [loginStatus, setLoginStatus] = useState(false);
   const [profileData, setProfileData] = useState({});
 

@@ -59,9 +59,11 @@ class CheckLoginStatus(APIView):
     
 class UserUpdateView(APIView):
     def post(self, request):
+        print(request.user)
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         fields = ["username", "privacy_level"]
+        return Response()
 
 class UserManyToManyUpdateView(APIView):
     """Base class to update m2m relationships for users"""

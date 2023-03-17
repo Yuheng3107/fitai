@@ -1,7 +1,7 @@
 import { backend } from "../pages/App";
 
 function getProfileData(updateFunction) {
-  fetch(`${backend}/users/data`, {
+  fetch(`${backend}/user`, {
     method: "GET",
     credentials: "include", // include cookies in the request
     headers: {

@@ -51,3 +51,4 @@ class AchievementsTest(TestCase):
         Achievement.objects.get(pk=achievement.id).delete()
         with self.assertRaises(Achievement.DoesNotExist):
             Achievement.objects.get(pk=achievement.id)
+
