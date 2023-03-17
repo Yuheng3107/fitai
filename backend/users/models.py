@@ -20,7 +20,7 @@ class AppUser(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     ########
-    # Retations
+    # Relations
 
     # Many to Many Achievements
     achievements = models.ManyToManyField(
@@ -28,7 +28,7 @@ class AppUser(AbstractUser):
     # Many to Many friends
     friends = models.ManyToManyField('self')
     # Many to Many communities
-    communities = models.ManyToManyField('community.Community')
+    communities = models.ManyToManyField('community.Community', through='community.CommunityMembers')
     # Many to Many exercises, with stats included
     exercises = models.ManyToManyField('exercises.Exercise', through='exercises.ExerciseStatistics')
     # Many to Many exercise regimes, with stats included
