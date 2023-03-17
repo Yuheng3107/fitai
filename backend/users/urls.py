@@ -1,7 +1,10 @@
 from django.urls import path
-from .views import LoginDataView, CheckLoginStatus
+from .views import  CheckLoginStatus, UserCreateView, UserDetailView
 
 urlpatterns = [
-    path('data', LoginDataView.as_view(), name='login_data'),
+    # Login stuff
+    path('user/create', UserCreateView.as_view(), name='create_user'),
+    path('user', UserDetailView.as_view(), name='user_detail'),
+    # Check login status
     path('status', CheckLoginStatus.as_view(), name='login_status')
 ]
