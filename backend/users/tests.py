@@ -244,3 +244,19 @@ class UserChatGroupsUpdateViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures chat_groups are successfully added
         self.assertEqual(list(user.chat_groups.all()), chat_groups)
+        
+class UserAchievementsDeleteViewTests(APITestCase):
+    def test_delete_user_achievements(self):
+        achievement = baker.make(Achievement)
+        url = reverse('delete_user_achievements', kwargs={"pk": achievement.id})
+        user = baker.make('users.AppUser')
+        user.achievements.add(achievement.id)
+        # Check that user has been added
+        self.assertTrue(user.achievements.all().exists())
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures achievements are successfully deleted
+        self.assertFalse(user.achievements.all().exists())
