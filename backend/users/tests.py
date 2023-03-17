@@ -260,3 +260,33 @@ class UserAchievementsDeleteViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures achievements are successfully deleted
         self.assertFalse(user.achievements.all().exists())
+        
+class UserFriendsDeleteViewTests(APITestCase):
+    def test_delete_user_friends(self):
+        friend = baker.make('users.AppUser')
+        url = reverse('delete_user_friends', kwargs={"pk": friend.id})
+        user = baker.make('users.AppUser')
+        user.friends.add(friend.id)
+        # Check that user has been added
+        self.assertTrue(user.friends.all().exists())
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures friends are successfully deleted
+        self.assertFalse(user.friends.all().exists())
+        
+class UserCommunitiesDeleteViewTests(APITestCase):
+    def test_delete_user_achievements(self):
+        achievement = baker.make(Community)
+        url = reverse('delete_user_achievements', kwargs={"pk": achievement.id})
+        user = baker.make('users.AppUser')
+        user.achievements.add(achievement.id)
+        # Check that user has been added
+        self.assertTrue(user.achievements.all().exists())
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
