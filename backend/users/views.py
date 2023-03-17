@@ -35,6 +35,15 @@ class UserCreateView(APIView):
             login(request, user)
             response.write("User Successfully Registered")
         return response
+
+class UserAllowedView(APIView):
+    def post(self, request):
+        if "username" not in request.data or "email" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        User = get_user_model()
+        if User.objects.filter(email=request.data["email"]).exists() or User.objects.filter(username=request.data["username"]).exists():
+            return Response(False)
+        return Response(True)
     
 class UserDetailView(APIView):
     def get(self, request):
