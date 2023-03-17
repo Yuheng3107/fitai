@@ -1,10 +1,24 @@
 from django.urls import path
-from .views import UserPostView, CommentView, CommunityPostView
+from .views import UserPostCreateView, UserPostUpdateView, UserPostDetailView, UserPostListView, UserPostDeleteView, CommentCreateView, CommentUpdateView, CommentDetailView, CommentListView, CommentDeleteView, CommunityPostCreateView, CommunityPostUpdateView, CommunityPostDetailView, CommunityPostListView, CommunityPostDeleteView
 urlpatterns = [
-    path('user_post', UserPostView.as_view(), name='user_post'),
-    path('comment', CommentView.as_view(), name='comment'),
-    path('community_post', CommunityPostView.as_view(), name='community_post'),
-    path('user_post/<int:pk>', UserPostView.as_view(), name='user_post'),
-    path('comment/<int:pk>', CommentView.as_view(), name='comment'),
-    path('community_post/<int:pk>', CommunityPostView.as_view(), name='community_post'),
+    #UserPost
+    path('user_post/<int:pk>', UserPostDetailView.as_view(), name='user_post_detail'),
+    path('user_post/list', UserPostListView.as_view(), name='user_post_list'),
+    path('user_post/create', UserPostCreateView.as_view(), name='create_user_post'),
+    path('user_post/update', UserPostUpdateView.as_view(), name='update_user_post'),
+    path('user_post/delete/<int:pk>', UserPostDeleteView.as_view(), name='delete_user_post'),
+    
+    #Comments
+    path('comment/<int:pk>', CommentDetailView.as_view(), name='comment_detail'),
+    path('comment/list', CommentListView.as_view(), name='comment_list'),
+    path('comment/create', CommentCreateView.as_view(), name='create_comment'),
+    path('comment/update', CommentUpdateView.as_view(), name='update_comment'),
+    path('comment/delete/<int:pk>', CommentDeleteView.as_view(), name='delete_comment'),
+
+    #Community Posts
+    path('community_post/<int:pk>', CommunityPostDetailView.as_view(), name='community_post_detail'),
+    path('community_post/list', CommunityPostListView.as_view(), name='community_post_list'),
+    path('community_post/create', CommunityPostCreateView.as_view(), name='create_community_post'),
+    path('community_post/update', CommunityPostUpdateView.as_view(), name='update_community_post'),
+    path('community_post/delete/<int:pk>', CommunityPostDeleteView.as_view(), name='delete_community_post'),
 ]

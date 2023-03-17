@@ -7,11 +7,13 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserPostSerializer(serializers.ModelSerializer):
+    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model = UserPost
         fields = '__all__'
 
 class CommunityPostSerializer(serializers.ModelSerializer):
+    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model = CommunityPost
         fields = '__all__'

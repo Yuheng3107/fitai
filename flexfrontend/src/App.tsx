@@ -1,11 +1,14 @@
 /* Tailwind styles */
 import './theme/tailwind.css';
 
-import { Redirect, Route } from 'react-router-dom';
+import personUnfilled from './assets/svg/person_unfilled.svg';
+
+import { Redirect, Route, useParams } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
   IonLabel,
+  IonImg,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -13,10 +16,10 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
-import Tab1 from './pages/Home';
-import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Profile';
+import { accessibility, ellipse, home, person, personOutline, square, triangle } from 'ionicons/icons';
+import Home from './pages/Home';
+import Exercise from './pages/Exercise';
+import Profile from './pages/Profile';
 
 
 
@@ -42,42 +45,44 @@ setupIonicReact();
 const backend = "http://localhost:8000";
 
 
-const App: React.FC = () => (
-  <IonApp>
+const App: React.FC = () => {
+  return <IonApp>
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route exact path="/tab1">
-            <Tab1 />
+          <Route exact path="/home">
+            <Home />
           </Route>
-          <Route exact path="/tab2">
-            <Tab2 />
+          <Route exact path="/exercise">
+            <Exercise />
           </Route>
-          <Route path="/tab3">
-            <Tab3 />
+          <Route path="/profile">
+            <Profile />
           </Route>
           <Route exact path="/">
-            <Redirect to="/tab1" />
+            <Redirect to="/home" />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon aria-hidden="true" icon={triangle} />
-            <IonLabel>Tab 1</IonLabel>
+          <IonTabButton tab="home" href="/home">
+            <IonIcon aria-hidden="true" icon={home} />
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon aria-hidden="true" icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
+          <IonTabButton tab="exercise" href="/exercise">
+            {/* <div className="relative bg-sky-400 aspect-square rounded-full"> */}
+              <IonIcon className="absolute" aria-hidden="true" icon={accessibility} />
+            {/* </div> */}
           </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon aria-hidden="true" icon={square} />
-            <IonLabel>Tab 3</IonLabel>
+          <IonTabButton tab="profile" href="/profile">
+
+            {/* <IonIcon className="fill-red-600 stroke-red-600" aria-hidden="true" src={personUnfilled} /> */}
+            <IonIcon aria-hidden="true" icon={person} />
+
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
     </IonReactRouter>
   </IonApp>
-);
+};
 
 export default App;
 

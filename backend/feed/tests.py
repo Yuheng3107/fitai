@@ -205,10 +205,14 @@ class CommunityPostCommentTestCase(TestCase):
         self.assertEqual(comment.parent_type, ct)
         self.assertEqual(comment.parent_id, post.id)
 
-class UserPostViewTests(APITestCase):
+
+"""
+API TestCasse
+"""
+class UserPostCreateViewTests(APITestCase):
     def test_create_user_post(self):
         """Ensure we can create user_post in UserPost Model"""
-        url = reverse('user_post')
+        url = reverse('create_user_post')
         User = get_user_model()
         post = baker.make(CommunityPost)
         user = User.objects.create_user(
@@ -262,9 +266,10 @@ class UserPostViewTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+class UserPostUpdateViewTests(APITestCase):
     def test_update_user_post(self):
         """Ensure we can update data in UserPost Model"""
-        url = reverse('user_post')
+        url = reverse('update_user_post')
         User = get_user_model()
         user = baker.make(User)
         user_post = baker.make(UserPost, poster=user)
@@ -300,25 +305,61 @@ class UserPostViewTests(APITestCase):
         }
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        
-    def test_get_user_post(self):
+
+class UserPostDetailViewTests(APITestCase):
+    def test_user_post_detail(self):
+        user = baker.make('users.AppUser')
         user_post = baker.make(UserPost)
-        url = reverse('user_post', kwargs={"pk": user_post.id})
+        
+        comment = user_post.comments.create(poster=user, text='content')
+        url = reverse('user_post_detail', kwargs={"pk": user_post.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content)
         self.assertEqual(data["likes"], user_post.likes)
         self.assertEqual(data["text"], user_post.text)
         self.assertEqual(data["poster"], user_post.poster)
-        url = reverse('user_post', kwargs={"pk": 69})
+        self.assertEqual(data["comments"][0], comment.id)
+        url = reverse('user_post_detail', kwargs={"pk": 69})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+class UserPostListViewTests(APITestCase):
+    def test_user_post_list(self):
+        """test the list method"""
+        url = reverse('user_post_list')
+        post_no = 2
+        posts = [baker.make(UserPost) for i in range(post_no)]
+        data = {
+            "user_posts": [post.id for post in posts]
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        for i, post in enumerate(posts):
+            retrieved_post = data[i]
+            self.assertEquals(post.id, retrieved_post["id"])
+            self.assertEquals(post.text, retrieved_post["text"])
+            self.assertEquals(post.poster, retrieved_post["poster"])
+    
+class UserPostDeleteViewTests(APITestCase):
+    def test_delete_user_post(self):
+        user = baker.make('users.AppUser')
+        post = baker.make(UserPost, poster=user)
+        url = reverse('delete_user_post', kwargs={"pk": post.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertRaises(UserPost.DoesNotExist):
+            UserPost.objects.get(pk=post.id)
 
-class CommentViewTests(APITestCase):
+
+class CommentCreateViewTests(APITestCase):
     def test_create_comment(self):
         """Ensure we can create comment in Comment Model"""
-        url = reverse('comment')
+        url = reverse('create_comment')
         User = get_user_model()
         post = baker.make(UserPost)
         user = User.objects.create_user(
@@ -357,9 +398,10 @@ class CommentViewTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+class CommentUpdateViewTests(APITestCase):
     def test_update_comment(self):
         """Ensure we can update data in Comment Model"""
-        url = reverse('comment')
+        url = reverse('update_comment')
         User = get_user_model()
         user = baker.make(User)
         comment = baker.make(Comment, poster=user)
@@ -396,23 +438,55 @@ class CommentViewTests(APITestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         
+class CommentDetailViewTests(APITestCase):
     def test_get_comment(self):
         comment = baker.make(Comment)
-        url = reverse('comment', kwargs={"pk": comment.id})
+        url = reverse('comment_detail', kwargs={"pk": comment.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content)
         self.assertEqual(data["likes"], comment.likes)
         self.assertEqual(data["text"], comment.text)
         self.assertEqual(data["poster"], comment.poster)
-        url = reverse('comment', kwargs={"pk": 69})
+        url = reverse('comment_detail', kwargs={"pk": 69})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class CommentListViewTests(APITestCase):
+    def test_comment_list(self):
+        """test the list method"""
+        url = reverse('comment_list')
+        post_no = 2
+        posts = [baker.make(Comment) for i in range(post_no)]
+        data = {
+            "comments": [post.id for post in posts]
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        for i, post in enumerate(posts):
+            retrieved_post = data[i]
+            self.assertEquals(post.id, retrieved_post["id"])
+            self.assertEquals(post.text, retrieved_post["text"])
+            self.assertEquals(post.poster, retrieved_post["poster"])
+    
+class CommentDeleteViewTests(APITestCase):
+    def test_delete_comment(self):
+        user = baker.make('users.AppUser')
+        post = baker.make(Comment, poster=user)
+        url = reverse('delete_comment', kwargs={"pk": post.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertRaises(Comment.DoesNotExist):
+            Comment.objects.get(pk=post.id)
             
-class CommunityPostViewTests(APITestCase):
+class CommunityPostCreateViewTests(APITestCase):
     def test_create_community_post(self):
         """Ensure we can create community_post in CommunityPost Model"""
-        url = reverse('community_post')
+        url = reverse('create_community_post')
         User = get_user_model()
         exercise = baker.make(Exercise)
         community = baker.make('community.Community')
@@ -491,9 +565,10 @@ class CommunityPostViewTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+class CommunityPostUpdateViewTests(APITestCase):
     def test_update_community_post(self):
         """Ensure we can update data in CommunityPost Model"""
-        url = reverse('community_post')
+        url = reverse('update_community_post')
         User = get_user_model()
         user = baker.make(User)
         community_post = baker.make(CommunityPost, poster=user)
@@ -530,15 +605,51 @@ class CommunityPostViewTests(APITestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         
+class CommunityPostDetailTests(APITestCase):
     def test_get_community_post(self):
         community_post = baker.make(CommunityPost)
-        url = reverse('community_post', kwargs={"pk": community_post.id})
+        user = baker.make('users.AppUser')
+        
+        comment = community_post.comments.create(poster=user, text='content')
+        url = reverse('community_post_detail', kwargs={"pk": community_post.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content)
         self.assertEqual(data["likes"], community_post.likes)
         self.assertEqual(data["text"], community_post.text)
         self.assertEqual(data["poster"], community_post.poster)
-        url = reverse('community_post', kwargs={"pk": 69})
+        self.assertEqual(data["comments"][0],comment.id)
+        url = reverse('community_post_detail', kwargs={"pk": 69})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class CommunityPostListViewTests(APITestCase):
+    def test_community_post_list(self):
+        """test the list method"""
+        url = reverse('community_post_list')
+        post_no = 2
+        posts = [baker.make(CommunityPost) for i in range(post_no)]
+        data = {
+            "community_posts": [post.id for post in posts]
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        for i, post in enumerate(posts):
+            retrieved_post = data[i]
+            self.assertEquals(post.id, retrieved_post["id"])
+            self.assertEquals(post.text, retrieved_post["text"])
+            self.assertEquals(post.poster, retrieved_post["poster"])
+    
+class CommunityPostDeleteViewTests(APITestCase):
+    def test_delete_community_post(self):
+        user = baker.make('users.AppUser')
+        post = baker.make(CommunityPost, poster=user)
+        url = reverse('delete_community_post', kwargs={"pk": post.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertRaises(CommunityPost.DoesNotExist):
+            CommunityPost.objects.get(pk=post.id)
