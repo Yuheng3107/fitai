@@ -4,7 +4,8 @@ from django.contrib.auth import get_user_model
 import os
 from model_bakery import baker
 from rest_framework.test import APITestCase
-
+from achievements.models import Achievement # type: ignore
+from rest_framework.views import status
 # Create your tests here.
 class UsersManagersTests(TestCase):
     def setUp(self):
@@ -144,4 +145,19 @@ class UserDetailViewTests(APITestCase):
         self.client.force_authenticate(user=user)
         response = self.client.get(url, format='json')
         self.assertEqual(response.data.get("email", None), email)
-        
+
+class UserAchievementsUpdateViewTests(APITestCase):
+    def test_update_user_achievements(self):
+        url = reverse('update_user_achievements')
+        achievements = [baker.make(Achievement) for i in range(3)]
+        data = {
+            "fk_list": [achievement.id for achievement in achievements]
+        }
+        user = baker.make('users.AppUser')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures achievements are successfully added
+        self.assertEqual(list(user.achievements.all()), achievements)

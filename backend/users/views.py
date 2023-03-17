@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
 from django.middleware.csrf import get_token
 from .serializer import UserSerializer
-from django.views.generic import ListView
+from achievements.models import Achievement #type: ignore
 from rest_framework.renderers import JSONRenderer
 
 class UserCreateView(APIView):
@@ -69,18 +69,27 @@ class UserManyToManyUpdateView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         # Checks that there is a model setup
         if self.model is None or self.field_name is None:
+            print(self.model)
+            print(self.field_name)
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
         if "fk_list" not in request.data:
             return Response("Please add list of foreign keys as fk_list in request.", status=status.HTTP_400_BAD_REQUEST)
-        # Gets queryset of all foreign keys provided
-        qs = self.model.objects.filter(pk__in=request.data["fk_list"])
+       
     
         # Adds the relations to the model
         try:
-            getattr(get_user_model(), self.field_name).add(list(qs))
+            # Unpacks foreign keys in fk_list
+            getattr(request.user, self.field_name).add(*request.data["fk_list"])
             return Response()
         except Exception as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
-            
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class UserAchievementUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Achievement
+        self.field_name = 'achievements'
         
+    
