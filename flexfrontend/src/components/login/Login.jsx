@@ -26,6 +26,8 @@ function Login(props) {
   //   },
   // });
 
+
+  //When the button is clicked, this function is triggered
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
       console.log(codeResponse);
@@ -41,10 +43,12 @@ function Login(props) {
   });
 
   useEffect(() => {
+    //This should trigger when the if the google login is completed, because the user state is now populated
     console.log("useEffect is running");
     if (Object.keys(user).length) {
       console.log("user object not empty");
 
+      //Here, we query the google API to get the user's personal details: email, first name, last name, profile pic
       axios
         .get(
           `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
@@ -67,6 +71,7 @@ function Login(props) {
             email,
           };
           console.log(data);
+          //if we get the data from google successfully, we now try to send the user's details to the backend and create an account for him
           fetch(`${backend}/users/user/create`, {
             method: "POST",
             credentials: "include",
@@ -82,7 +87,10 @@ function Login(props) {
           });
           // To use fetch API to send POST request to backend here
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log("there's an error at Login.jsx");
+          console.log(err)
+        });
     }
   }, [user]);
 

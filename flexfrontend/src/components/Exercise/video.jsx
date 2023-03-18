@@ -2,12 +2,10 @@ import React, { Component, useEffect } from "react";
 import { isMobile, isSafari, isFirefox } from "react-device-detect";
 import Webcam from "react-webcam";
 
-import { IonImg } from "@ionic/react";
 
 //components
 import Button from "../ui/Button";
 import TextBox from "../ui/TextBox";
-import Select from "../ui/Select";
 
 //assets
 import expandIcon from "../../assets/svg/expand-icon.svg";
@@ -19,7 +17,7 @@ import "@tensorflow/tfjs-backend-webgl";
 // import '@tensorflow/tfjs-backend-wasm';
 
 //formCorrection
-import * as formCorrection from "../utils/formCorrection";
+import * as formCorrection from "../../utils/formCorrection";
 
 let feedback = new Array();
 let isActive = false;
