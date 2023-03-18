@@ -46,19 +46,29 @@ const Tab3: React.FC = () => {
 
   function createUserHandler(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formData = new FormData();
     const fileInput = fileInputRef.current?.files?.[0];
     if (!fileInput) {
       console.log("no file input");
       return;
     }
-    formData.append("photo", fileInput);
-    formData.append("username", usernameInput);
-    formData.append("email", emailInput);
-    console.log(fileInput);
-    for (const pair of formData.entries()) {
-      console.log(`${pair[0]}, ${pair[1]}`);
+    let profilePhotoFormData = new FormData();
+    profilePhotoFormData.append("photo", fileInput);
+
+    interface Data {
+      email?: string;
+      privacy_level?: number;
+      username?: string;
     }
+    let data: Data = {};
+    if (emailInput !== "") {
+      data["email"] = emailInput;
+    }
+    if (usernameInput !== "") {
+      data["username"] = usernameInput;
+    }
+
+    console.log(fileInput);
+
     fetch(`${backend}/users/user/update`, {
       method: "POST",
       headers: {
@@ -68,7 +78,20 @@ const Tab3: React.FC = () => {
         ),
       },
       credentials: "include",
-      body: formData,
+      body: JSON.stringify(data),
+    }).then((response) => {
+      // do something with response
+      console.log(response);
+    });
+    fetch(`${backend}/users/user/update/profile_photo`, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": String(
+          document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
+        ),
+      },
+      credentials: "include",
+      body: profilePhotoFormData,
     }).then((response) => {
       // do something with response
       console.log(response);

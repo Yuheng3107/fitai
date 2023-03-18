@@ -9,6 +9,7 @@ from community.models import Community #type: ignore
 from exercises.models import Exercise, ExerciseRegime #type: ignore
 from chat.models import ChatGroup #type: ignore
 from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import FormParser, MultiPartParser
 
 class UserCreateView(APIView):
     def post(self, request):
@@ -64,7 +65,7 @@ class UserUpdateView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         if (len(request.data) == 0 or "id" in request.data):
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        fields = ["username", "privacy_level"]
+        fields = ["username", "privacy_level", "email"]
         fields = {field: request.data[field] for field in fields if field in request.data}
         User = get_user_model()
         # Update the user with the new fields
@@ -77,11 +78,21 @@ class UserUpdateView(APIView):
 
 class UserUpdateProfilePhotoView(APIView):
     def post(self, request):
+        parser_classes = [FormParser, MultiPartParser]
+        
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if "profile_photo" not in request.data:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        uploaded_file_object = request.FILES.get("photo", None)
+        # Check that profile photo is indeed uploaded
+        if uploaded_file_object is None:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        user = request.user
+        user.profile_photo = uploaded_file_object
+        user.save()
+        return Response()
         # Process byte data here
+        
 class UserManyToManyUpdateView(APIView):
     """Base class to update m2m relationships for users"""
     def setup(self, request, *args, **kwargs):

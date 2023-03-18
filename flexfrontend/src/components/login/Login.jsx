@@ -70,14 +70,12 @@ function Login(props) {
             first_name,
             email,
           };
-          console.log(data);
-          //if we get the data from google successfully, we now try to send the user's details to the backend and create an account for him
+          // Sends POST request to create user/ log user in
           fetch(`${backend}/users/user/create`, {
             method: "POST",
             credentials: "include",
             headers: {
               "Content-Type": "application/json",
-              "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
             },
             body: JSON.stringify(data),
           }).then((response) => {
