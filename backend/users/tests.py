@@ -428,12 +428,15 @@ class UserUpdateViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         updated_username = "Updated Username"
         updated_privacy_level = 1
+        updated_email = "test@testuser.com"
         data = {
             "username": updated_username,
-            "privacy_level": updated_privacy_level
+            "privacy_level": updated_privacy_level,
+            "email": updated_email
         }
         response = self.client.post(url, data)
         user = User.objects.get(pk=user.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(user.username, updated_username)
         self.assertEqual(user.privacy_level, updated_privacy_level)
+        self.assertEqual(user.email, updated_email)

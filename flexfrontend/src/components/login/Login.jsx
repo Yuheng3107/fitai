@@ -66,13 +66,12 @@ function Login(props) {
             first_name,
             email,
           };
-          console.log(data);
+          // Sends POST request to create user/ log user in
           fetch(`${backend}/users/user/create`, {
             method: "POST",
             credentials: "include",
             headers: {
               "Content-Type": "application/json",
-              "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
             },
             body: JSON.stringify(data),
           }).then((response) => {
