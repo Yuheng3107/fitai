@@ -61,18 +61,20 @@ function Login(props) {
           let last_name = res.data.family_name;
           let first_name = res.data.given_name;
           let email = res.data.email;
-
+          let data = {
+            last_name,
+            first_name,
+            email,
+          };
+          console.log(data);
           fetch(`${backend}/users/user/create`, {
             method: "POST",
+            credentials: "include",
             headers: {
               "Content-Type": "application/json",
+              "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
             },
-            credentials: "include",
-            body: JSON.stringify({
-              last_name,
-              first_name,
-              email,
-            }),
+            body: JSON.stringify(data),
           }).then((response) => {
             // do something with response
             console.log(response);
