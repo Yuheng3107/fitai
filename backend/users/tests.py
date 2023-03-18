@@ -414,3 +414,26 @@ class UserAllowedViewTests(APITestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(json.loads(response.content))
+        
+class UserUpdateViewTests(APITestCase):
+    def test_update_user_normal_fields(self):
+        User = get_user_model()
+        user = baker.make(User)
+        url = reverse('update_user')
+        data = {}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        updated_username = "Updated Username"
+        updated_privacy_level = 1
+        data = {
+            "username": updated_username,
+            "privacy_level": updated_privacy_level
+        }
+        response = self.client.post(url, data)
+        user = User.objects.get(pk=user.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(user.username, updated_username)
+        self.assertEqual(user.privacy_level, updated_privacy_level)

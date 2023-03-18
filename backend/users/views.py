@@ -59,12 +59,29 @@ class CheckLoginStatus(APIView):
     
 class UserUpdateView(APIView):
     def post(self, request):
-        print(request.user)
+        """Post normal fields here"""
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+        if (len(request.data) == 0 or "id" in request.data):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         fields = ["username", "privacy_level"]
+        fields = {field: request.data[field] for field in fields if field in request.data}
+        User = get_user_model()
+        # Update the user with the new fields
+        try:
+            User.objects.filter(pk=request.user.id).update(**fields)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+        
         return Response()
 
+class UserUpdateProfilePhotoView(APIView):
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        if "profile_photo" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # Process byte data here
 class UserManyToManyUpdateView(APIView):
     """Base class to update m2m relationships for users"""
     def setup(self, request, *args, **kwargs):
