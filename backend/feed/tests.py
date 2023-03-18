@@ -214,20 +214,12 @@ class UserPostCreateViewTests(APITestCase):
         """Ensure we can create user_post in UserPost Model"""
         url = reverse('create_user_post')
         User = get_user_model()
-        post = baker.make(CommunityPost)
         user = User.objects.create_user(
             email='testuser@gmail.com', password='12345')
         text = "Test UserPost Content"
-        ct = ContentType.objects.get_for_model(CommunityPost)
-        tags = []
-        for i in range(3):
-            tag = baker.make(Tags)
-            tags.append(tag.tag)
         data = {
             "text": text,
-            "shared_type": ct.id,
-            "shared_id": post.id,
-            "tags":  tags
+            "privacy_level": 1,
         }
         # Check that data cannot be accessed if you are not logged in
         response = self.client.post(url, data, format='json')
@@ -238,30 +230,10 @@ class UserPostCreateViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         user_post = UserPost.objects.get()
         self.assertEqual(user_post.text, text)
-        self.assertEqual(user_post.shared_object, post)
+        self.assertEqual(user_post.privacy_level, 1)
         # Check no text
         data = {
-            "shared_type": ct.id,
-            "shared_id": post.id,
-            "tags": tags
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check shared type
-        data = {
-            "text": text,
-            "shared_type": 696969,
-            "shared_id": post.id,
-            "tags": tags
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # check shared id
-        data = {
-            "text": text,
-            "shared_type": ct.id,
-            "shared_id": 696969,
-            "tags": tags
+            "privacy_level": 1,
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -599,21 +571,12 @@ class CommunityPostCreateViewTests(APITestCase):
         """Ensure we can create community_post in CommunityPost Model"""
         url = reverse('create_community_post')
         User = get_user_model()
-        exercise = baker.make(Exercise)
         community = baker.make('community.Community')
         user = User.objects.create_user(
             email='testuser@gmail.com', password='12345')
         text = "Test UserPost Content"
-        ct = ContentType.objects.get_for_model(Exercise)
-        tags = []
-        for i in range(3):
-            tag = baker.make(Tags)
-            tags.append(tag.tag)
         data = {
             "text": text,
-            "shared_type": ct.id,
-            "shared_id": exercise.id,
-            "tags":  tags,
             "community_id": community.id
         }
         # Check that data cannot be accessed if you are not logged in
@@ -625,52 +588,15 @@ class CommunityPostCreateViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         community_post = CommunityPost.objects.get()
         self.assertEqual(community_post.text, text)
-        self.assertEqual(community_post.shared_object, exercise)
         # check no community
         data = {
             "text": text,
-            "shared_type": ct.id,
-            "shared_id": exercise.id,
-            "tags": tags,
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check shared type
-        data = {
-            "text": text,
-            "shared_type": 696969,
-            "shared_id": exercise.id,
-            "tags": tags,
-            "community_id": community.id
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # check shared id
-        data = {
-            "text": text,
-            "shared_type": ct.id,
-            "shared_id": 696969,
-            "tags": tags,
-            "community_id": community.id
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # check community id
         data = {
             "text": text,
-            "shared_type": ct.id,
-            "shared_id": exercise.id,
-            "tags": tags,
-            "community_id": 696969
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # check community id
-        data = {
-            "text": text,
-            "shared_type": ct.id,
-            "shared_id": exercise.id,
-            "tags": ["imgay"],
             "community_id": 696969
         }
         response = self.client.post(url, data, format='json')
@@ -837,3 +763,126 @@ class CommunityPostDeleteTagsViewTests(APITestCase):
         updated_post = CommunityPost.objects.get()
         # many to many checks
         self.assertFalse(updated_post.tags.all().exists())
+
+class UserPostUpdateShareViewTests(APITestCase):
+    def test_update_share(self):
+        url = reverse('update_user_post_share')
+        user = baker.make('users.AppUser')
+        post = baker.make(UserPost, poster=user)
+        community_post = baker.make(CommunityPost)
+        ct = ContentType.objects.get_for_model(CommunityPost)
+        data = {
+            'id': post.id,
+            'shared_id': community_post.id,
+            'shared_type': ct.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        response.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_post = UserPost.objects.get()
+        self.assertEqual(updated_post.shared_object, community_post)
+        # test no id
+        data = {
+            'shared_id': community_post.id,
+            'shared_type': ct.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test bad shared id
+        data = {
+            'id': post.id,
+            'shared_id': 6969,
+            'shared_type': ct.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test bad shared type
+        data = {
+            'id': post.id,
+            'shared_id': community_post.id,
+            'shared_type': 6969,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class UserPostDeleteShareViewTests(APITestCase):
+    def test_delete_share(self):
+        user = baker.make('users.AppUser')
+        post = baker.make(UserPost, poster=user)
+        community_post = baker.make(CommunityPost)
+        post.shared_object = community_post
+        post.save()
+        url = reverse('delete_user_post_share', kwargs={"pk": post.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_post = UserPost.objects.get()
+        # many to many checks
+        self.assertEqual(updated_post.shared_object, None)
+
+class CommunityPostUpdateShareViewTests(APITestCase):
+    def test_update_share(self):
+        url = reverse('update_community_post_share')
+        user = baker.make('users.AppUser')
+        post = baker.make(CommunityPost, poster=user)
+        exercise = baker.make(Exercise)
+        ct = ContentType.objects.get_for_model(Exercise)
+        data = {
+            'id': post.id,
+            'shared_id': exercise.id,
+            'shared_type': ct.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        response.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_post = CommunityPost.objects.get()
+        self.assertEqual(updated_post.shared_object, exercise)
+        # test no id
+        data = {
+            'shared_id': exercise.id,
+            'shared_type': ct.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test bad shared id
+        data = {
+            'id': post.id,
+            'shared_id': 6969,
+            'shared_type': ct.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test bad shared type
+        data = {
+            'id': post.id,
+            'shared_id': exercise.id,
+            'shared_type': 6969,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+class CommunityPostDeleteShareViewTests(APITestCase):
+    def test_delete_share(self):
+        user = baker.make('users.AppUser')
+        post = baker.make(CommunityPost, poster=user)
+        community_post = baker.make(CommunityPost)
+        post.shared_object = community_post
+        post.save()
+        url = reverse('delete_community_post_share', kwargs={"pk": post.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_post = CommunityPost.objects.get(pk=post.id)
+        # many to many checks
+        self.assertEqual(updated_post.shared_object, None)

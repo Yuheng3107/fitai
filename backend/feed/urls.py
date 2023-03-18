@@ -11,6 +11,8 @@ urlpatterns = [
     path('user_post/update/likes', UserPostLikesUpdateView.as_view(), name='update_user_post_likes'),
     path('user_post/delete/tags/<slug:pk_tag><int:pk_post>', UserPostTagsDeleteView.as_view(), name='delete_user_post_tags'),
     path('user_post/delete/likes/<int:pk>', UserPostLikesDeleteView.as_view(), name='delete_user_post_likes'),
+    path('user_post/update/share', UserPostShareUpdateView.as_view(), name='update_user_post_share'),
+    path('user_post/delete/share/<int:pk>', UserPostShareDeleteView.as_view(), name='delete_user_post_share'),
     
     #Comments
     path('comment/<int:pk>', CommentDetailView.as_view(), name='comment_detail'),
@@ -20,6 +22,7 @@ urlpatterns = [
     path('comment/delete/<int:pk>', CommentDeleteView.as_view(), name='delete_comment'),
     path('comment/update/likes', CommentLikesUpdateView.as_view(), name='update_comment_likes'),
     path('comment/delete/likes/<int:pk>', CommentLikesDeleteView.as_view(), name='delete_comment_likes'),
+    
 
     #Community Posts
     path('community_post/<int:pk>', CommunityPostDetailView.as_view(), name='community_post_detail'),
@@ -31,4 +34,6 @@ urlpatterns = [
     path('community_post/update/likes', CommunityPostLikesUpdateView.as_view(), name='update_community_post_likes'),
     path('community_post/delete/tags/<slug:pk_tag><int:pk_post>', CommunityPostTagsDeleteView.as_view(), name='delete_community_post_tags'),
     path('community_post/delete/likes/<int:pk>', CommunityPostLikesDeleteView.as_view(), name='delete_community_post_likes'),
+    path('community_post/update/share', CommunityPostShareUpdateView.as_view(), name='update_community_post_share'),
+    path('community_post/delete/share/<int:pk>', CommunityPostShareDeleteView.as_view(), name='delete_community_post_share'),
 ]
