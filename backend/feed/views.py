@@ -378,7 +378,7 @@ class TagsDeleteView(APIView):
         # This attribute will need to be overwritten in the descendant class
         return super().setup(self, request, *args, **kwargs)
     
-    def delete(self, request, pk_tag, pk_post):
+    def delete(self, request, pk_post, tag_name):
         """deletes m2m relationships to model"""
         
         if not request.user.is_authenticated:
@@ -386,8 +386,7 @@ class TagsDeleteView(APIView):
         # Checks that there is a model setup
         if self.model is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-       
-        try:
+        try:            
             post = self.model.objects.get(pk=pk_post)
         except self.model.DoesNotExist:
             return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
@@ -399,7 +398,7 @@ class TagsDeleteView(APIView):
         # Adds the relations to the model
         try:
             # Unpacks foreign keys in fk_list
-            post.tags.remove(pk_tag)
+            post.tags.remove(tag_name)
             return Response()
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -518,17 +517,57 @@ class UserPostTagsUpdateView(TagsUpdateView):
         super().setup(request, *args, **kwargs)
         self.model = UserPost
 
+class UserPostTagsDeleteView(TagsDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class UserPostLikesUpdateView(LikesUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost  
+
+class UserPostLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class UserPostShareUpdateView(ShareUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class UserPostShareDeleteView(ShareDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
 class CommunityPostTagsUpdateView(TagsUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = CommunityPost
 
-class UserPostLikesUpdateView(LikesUpdateView):
+class CommunityPostTagsDeleteView(TagsDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.model = UserPost
+        self.model = CommunityPost
 
 class CommunityPostLikesUpdateView(LikesUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class CommunityPostLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class CommunityPostShareUpdateView(ShareUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class CommunityPostShareDeleteView(ShareDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = CommunityPost
@@ -538,47 +577,7 @@ class CommentLikesUpdateView(LikesUpdateView):
         super().setup(request, *args, **kwargs)
         self.model = Comment
 
-class UserPostTagsDeleteView(TagsDeleteView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = UserPost
-
-class CommunityPostTagsDeleteView(TagsDeleteView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = CommunityPost
-
-class UserPostLikesDeleteView(LikesDeleteView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = UserPost
-
-class CommunityPostLikesDeleteView(LikesDeleteView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = CommunityPost
-
 class CommentLikesDeleteView(LikesDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = Comment
-
-class UserPostShareUpdateView(ShareUpdateView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = UserPost
-
-class CommunityPostShareUpdateView(ShareUpdateView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = CommunityPost
-
-class UserPostShareDeleteView(ShareDeleteView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = UserPost
-
-class CommunityPostShareDeleteView(ShareDeleteView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = CommunityPost
