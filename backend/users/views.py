@@ -87,11 +87,19 @@ class UserUpdateProfilePhotoView(APIView):
         # Check that profile photo is indeed uploaded
         if uploaded_file_object is None:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        file_name = uploaded_file_object.name
+        start = file_name.rfind('.')
+        allowed_formats = [".png", ".jpeg", ".jpg", ".webp"]
+        if file_name[start:] not in allowed_formats:
+            return Response("File format is not allowed",status=status.HTTP_403_FORBIDDEN)
+        # File size in Megabytes
+        file_size = uploaded_file_object.size / (1024*1024)
+        if file_size > 2:
+            return Response("File size greater than 2MB", status=status.HTTP_400_BAD_REQUEST)
         user = request.user
         user.profile_photo = uploaded_file_object
         user.save()
         return Response()
-        # Process byte data here
         
 class UserManyToManyUpdateView(APIView):
     """Base class to update m2m relationships for users"""
