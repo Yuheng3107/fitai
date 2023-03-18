@@ -343,7 +343,28 @@ class ExerciseRegimeCreateViewTests(APITestCase):
         self.assertEqual(created_regime.text, text)
         self.assertEqual(created_regime.name, name)
         self.assertEqual(created_regime.exercises, exercises)
+
     
+class UpdateLikesViewTests(APITestCase):
+    def test_update_likes(self):
+        post = baker.make(ExerciseRegime, likes=69)
+        likes = post.likes
+        user = baker.make('users.AppUser')
+        url = reverse('update_exercise_regime_likes')
+        data = {
+            'liker': user.id,
+            'id': post.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_post = ExerciseRegime.objects.get()
+        self.assertEqual(updated_post.likes,likes + 1)
+        # many to many checks
+        for x in updated_post.likers.all():
+            self.assertEqual(x,user)
     
         
     

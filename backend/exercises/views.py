@@ -4,6 +4,7 @@ from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseS
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from feed.views import TagsUpdateView, TagsDeleteView, LikesUpdateView, LikesDeleteView, ShareUpdateView, ShareDeleteView
 # Create your views here.
 
 class ExerciseUpdateView(APIView):
@@ -178,7 +179,66 @@ class ExerciseRegimeCreateView(APIView):
         
         
         return Response(status=status.HTTP_201_CREATED)
-    
+
+class ExerciseTagsUpdateView(TagsUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+
+class ExerciseTagsDeleteView(TagsDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+
+class ExerciseLikesUpdateView(LikesUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise  
+
+class ExerciseLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+
+class ExerciseShareUpdateView(ShareUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+
+class ExerciseShareDeleteView(ShareDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+
+class ExerciseRegimeTagsUpdateView(TagsUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+
+class ExerciseRegimeTagsDeleteView(TagsDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+
+class ExerciseRegimeLikesUpdateView(LikesUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime  
+
+class ExerciseRegimeLikesDeleteView(LikesDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+
+class ExerciseRegimeShareUpdateView(ShareUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+
+class ExerciseRegimeShareDeleteView(ShareDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
     
     
         
