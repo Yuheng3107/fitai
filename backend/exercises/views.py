@@ -4,7 +4,7 @@ from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseS
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from feed.views import TagsUpdateView, TagsDeleteView, LikesUpdateView, LikesDeleteView, ShareUpdateView, ShareDeleteView
+from feed.views import TagsUpdateView, TagsDeleteView, LikesUpdateView, LikesDeleteView, ShareUpdateView, ShareDeleteView, MediaUpdateView, MediaDeleteView
 # Create your views here.
 
 class ExerciseUpdateView(APIView):
@@ -177,9 +177,12 @@ class ExerciseRegimeCreateView(APIView):
         # Unpack the dictionary and pass them as keyword arguments to create in Exercise Regime
         ExerciseRegime.objects.create(poster=request.user, **fields)
         
-        
         return Response(status=status.HTTP_201_CREATED)
 
+
+"""
+PRESET CLASSES
+"""
 class ExerciseTagsUpdateView(TagsUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -210,6 +213,16 @@ class ExerciseShareDeleteView(ShareDeleteView):
         super().setup(request, *args, **kwargs)
         self.model = Exercise
 
+class ExerciseMediaUpdateView(MediaUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+
+class ExerciseMediaDeleteView(MediaDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = Exercise
+
 class ExerciseRegimeTagsUpdateView(TagsUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -236,6 +249,16 @@ class ExerciseRegimeShareUpdateView(ShareUpdateView):
         self.model = ExerciseRegime
 
 class ExerciseRegimeShareDeleteView(ShareDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+
+class ExerciseRegimeMediaUpdateView(MediaUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = ExerciseRegime
+
+class ExerciseRegimeMediaDeleteView(MediaDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = ExerciseRegime
