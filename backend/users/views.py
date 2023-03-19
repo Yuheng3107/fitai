@@ -8,7 +8,6 @@ from achievements.models import Achievement #type: ignore
 from community.models import Community #type: ignore
 from exercises.models import Exercise, ExerciseRegime #type: ignore
 from chat.models import ChatGroup #type: ignore
-from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import FormParser, MultiPartParser
 
 class UserCreateView(APIView):

@@ -10,6 +10,9 @@ from exercises.models import Exercise, ExerciseRegime #type: ignore
 from chat.models import ChatGroup #type: ignore
 from rest_framework.views import status
 import json
+from django.core.files.uploadedfile import SimpleUploadedFile
+import os
+
 # Create your tests here.
 class UsersManagersTests(TestCase):
     def setUp(self):
@@ -247,3 +250,25 @@ class UserUpdateViewTests(APITestCase):
         self.assertEqual(user.username, updated_username)
         self.assertEqual(user.privacy_level, updated_privacy_level)
         self.assertEqual(user.email, updated_email)
+        
+class UserUpdateProfilePhotoViewTest(APITestCase):
+    def test_upload_photo(self):
+        url = reverse('update_user_profile_photo')
+        data = {"photo": SimpleUploadedFile('test.mp4', b'test', content_type='text/plain')}
+        user = baker.make('users.AppUser')
+        # Need to have multipart format to enable file uploads
+        response = self.client.post(url, data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        with open(os.path.join(os.getcwd(), "users/2MB_Text.txt"), "rb") as f:
+            long_text_of_2MB_size = f.read()
+        
+        data = {"photo": SimpleUploadedFile('test.jpg', long_text_of_2MB_size, content_type='text/plain')}
+        # Test that file of 2MB or more does not work
+        response = self.client.post(url, data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data = {"photo": SimpleUploadedFile('test.jpg', b"test", content_type='text/plain')}
+        response = self.client.post(url, data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
