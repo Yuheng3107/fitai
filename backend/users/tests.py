@@ -272,3 +272,10 @@ class UserUpdateProfilePhotoViewTest(APITestCase):
         data = {"photo": SimpleUploadedFile('test.jpg', b"test", content_type='text/plain')}
         response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Clean the static media directory
+        dir_path = os.getcwd()
+        dir_path = os.path.join(dir_path, 'static/media')
+        files = os.listdir(dir_path)
+        for file in files:
+            os.remove(os.path.join(dir_path, file))
+                
