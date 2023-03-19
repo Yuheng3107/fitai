@@ -13,6 +13,8 @@ urlpatterns = [
     path('user_post/delete/likes/<int:pk>', UserPostLikesDeleteView.as_view(), name='delete_user_post_likes'),
     path('user_post/update/share', UserPostShareUpdateView.as_view(), name='update_user_post_share'),
     path('user_post/delete/share/<int:pk>', UserPostShareDeleteView.as_view(), name='delete_user_post_share'),
+    path('user_post/update/media', UserPostMediaUpdateView.as_view(), name='update_user_post_media'),
+    path('user_post/delete/media/<int:pk>', UserPostMediaDeleteView.as_view(), name='delete_user_post_media'),
     
     #Comments
     path('comment/<int:pk>', CommentDetailView.as_view(), name='comment_detail'),
@@ -36,4 +38,6 @@ urlpatterns = [
     path('community_post/delete/likes/<int:pk>', CommunityPostLikesDeleteView.as_view(), name='delete_community_post_likes'),
     path('community_post/update/share', CommunityPostShareUpdateView.as_view(), name='update_community_post_share'),
     path('community_post/delete/share/<int:pk>', CommunityPostShareDeleteView.as_view(), name='delete_community_post_share'),
+    path('community_post/update/media', CommunityPostMediaUpdateView.as_view(), name='update_community_post_media'),
+    path('community_post/delete/media/<int:pk>', CommunityPostMediaDeleteView.as_view(), name='delete_community_post_media'),
 ]

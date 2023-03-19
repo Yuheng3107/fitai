@@ -1,8 +1,6 @@
-from django.shortcuts import render
 from rest_framework.views import APIView, Response
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import FormParser, MultiPartParser
 from django.contrib.contenttypes.models import ContentType
 
 from .models import Comment, Tags, UserPost, CommunityPost
@@ -13,8 +11,6 @@ from .serializers import CommentSerializer, UserPostSerializer, CommunityPostSer
 class UserPostCreateView(APIView):
     def post(self, request):
         """To create new user post"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
@@ -38,8 +34,6 @@ class UserPostCreateView(APIView):
 class UserPostUpdateView(APIView):
     def put(self, request):
         """To update user post"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -102,8 +96,6 @@ Comment Views
 class CommentCreateView(APIView):
     def post(self, request):
         """To create new Comment"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
@@ -142,8 +134,6 @@ class CommentCreateView(APIView):
 class CommentUpdateView(APIView):
     def put(self, request):
         """To update comment"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -205,8 +195,6 @@ CommunityPost Views
 class CommunityPostCreateView(APIView):
     def post(self, request):
         """To create new community post"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
@@ -234,8 +222,6 @@ class CommunityPostCreateView(APIView):
 class CommunityPostUpdateView(APIView):
     def put(self, request):
         """To update community post"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -293,6 +279,10 @@ class CommunityPostDeleteView(APIView):
         except CommunityPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+
+"""
+PRESETS
+"""
 class TagsUpdateView(APIView):
     """Base class to update Tags for posts"""
     def setup(self, request, *args, **kwargs):
@@ -511,7 +501,75 @@ class ShareDeleteView(APIView):
         post.save()
         return Response()
 
+class MediaUpdateView(APIView):
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
 
+    def post(self, request):
+        parser_classes = [FormParser, MultiPartParser]
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        fields = ["id"]
+        # Check that all the required data is in the post request
+        for field in fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+
+        #check for post
+        try:
+            post = self.model.objects.get(pk=request.data['id'])
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        # Check User
+        if request.user != post.poster:
+            return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
+        
+        uploaded_file_object = request.FILES.get("photo", None)
+        # Check that profile photo is indeed uploaded
+        if uploaded_file_object is None:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        post.media = uploaded_file_object
+        post.save()
+        return Response()
+
+class MediaDeleteView(APIView):
+    def setup(self, request, *args, **kwargs):
+        # Model is the model of the object with m2m relationship with tags
+        self.model = None
+        # This attribute will need to be overwritten in the descendant class
+        return super().setup(self, request, *args, **kwargs)
+
+    def delete(self, request, pk):        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Checks that there is a model setup
+        if self.model is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        #check for post
+        try:
+            post = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
+            return Response("Please put a valid Post id", status=status.HTTP_404_NOT_FOUND)
+        # Check User
+        if request.user != post.poster:
+            return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
+        
+        post.media = None
+        post.save()
+        return Response()
+
+
+"""
+PRESET CLASSES
+"""
 class UserPostTagsUpdateView(TagsUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -542,6 +600,16 @@ class UserPostShareDeleteView(ShareDeleteView):
         super().setup(request, *args, **kwargs)
         self.model = UserPost
 
+class UserPostMediaUpdateView(MediaUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
+class UserPostMediaDeleteView(MediaDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = UserPost
+
 class CommunityPostTagsUpdateView(TagsUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -568,6 +636,16 @@ class CommunityPostShareUpdateView(ShareUpdateView):
         self.model = CommunityPost
 
 class CommunityPostShareDeleteView(ShareDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class CommunityPostMediaUpdateView(MediaUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = CommunityPost
+
+class CommunityPostMediaDeleteView(MediaDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = CommunityPost

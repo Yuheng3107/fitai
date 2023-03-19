@@ -185,7 +185,7 @@ These functions are called directly by webcam
 */
 function run(poses) {
   // check for empty
-  if (poses.length == 0) {
+  if (poses.length === 0) {
     return ["","Position Self in Frame"];
   }
 
@@ -193,13 +193,13 @@ function run(poses) {
   let curPose = processData(keypoints);
   let score = poseScore(curPose);
   console.log(score);
-  if (score == -1) {
+  if (score === -1) {
     return ["","Position Self in Frame"];
   }
   
   // check pose switching
   let repStatus = checkScore(score, curPose);
-  if (repStatus == true) {
+  if (repStatus === true) {
     //finish rep
     repFeedback.push(finishRep());
     return [repFeedback,"Exercise in Progress"];
@@ -233,7 +233,7 @@ function init (_evalPoses, _scoreThreshold, _scoreDeviation, _angleWeights, _ang
 * @returns feedback summary.
 */
 function endExercise() {
-  if (repCount == 0) {
+  if (repCount === 0) {
     return "No Reps Detected. "
   }
   return summariseFeedback();
@@ -249,7 +249,7 @@ function summariseFeedback() {
   let feedback =  "";
   feedback += repCount.toString() + " reps completed. ";
   // time
-  if (repTimeError !=0) {
+  if (repTimeError !== 0) {
     feedback += "Reps too fast " + repTimeError.toString() + " times. ";
   }
   
@@ -257,10 +257,10 @@ function summariseFeedback() {
   let n = smallErrorCount[0].length;
   for (let j=0;j<smallErrorCount.length;j++) {
     for (let i=0;i<n;i++) {
-      if (smallErrorCount[j][i] != 0) {
+      if (smallErrorCount[j][i] !== 0) {
         feedback += glossary[j][i][0] + " " + smallErrorCount[j][i].toString() + " times. ";
       }
-      if (largeErrorCount[j][i] != 0) {
+      if (largeErrorCount[j][i] !== 0) {
         feedback += glossary[j][i][1] + " " + largeErrorCount[j][i].toString() + " times. ";
       }
     }
@@ -286,12 +286,12 @@ These methods are called once per rep.
 */
 function finishRep() {
   repCount += 1;
-  if (frameArray.length == 0) return "No Frames Detected";
+  if (frameArray.length === 0) return "No Frames Detected";
   let feedback = "";
 
   // time
   let timeDifference = compareTime(minRepTime, repStartTime);
-  if (timeDifference == 1) {
+  if (timeDifference === 1) {
     repTimeError += 1;
     feedback += "Rep too fast. ";
   }
@@ -321,7 +321,7 @@ function finishRep() {
     feedback += giveFeedback(angleDifferences, 2);    
   }
 
-  if (feedback == "") {
+  if (feedback === "") {
     feedback += "Perfect! ";
     perfectReps += 1;
   }
@@ -367,16 +367,16 @@ function splitFrames(centre) {
 */
 function giveFeedback(angleDifferences, state) {
   let feedback = "";
-  if (angleDifferences[0] == -98 || angleDifferences[0] == -97) {
+  if (angleDifferences[0] === -98 || angleDifferences[0] === -97) {
     return feedback;
   }
 
-  if (angleDifferences[0] == -99) {
+  if (angleDifferences[0] === -99) {
     return "No Frames!";
   }
   let n = angleDifferences.length;
   for (let i=0;i<n;i++) {
-    if (angleDifferences[i] == 0) continue;
+    if (angleDifferences[i] === 0) continue;
     if (angleDifferences[i] > 0) {
       smallErrorCount[state][i] += 1;
       feedback += glossary[state][i][0] + ". ";
@@ -406,7 +406,7 @@ function compareAngles (range, evalPose, angleThreshold) {
   if (n < 10) {
     return new Float32Array([-98]);
   }
-  if (frameArray.length == 0) {
+  if (frameArray.length === 0) {
     return new Float32Array([-99]);
   }
 
@@ -431,7 +431,7 @@ for (let i=0;i<n;i++) {
   let x = 0;
   if (differences[i]<0) x = 1;
   // skip if no angleThreshold
-  if (angleThreshold[i][x] == 0) {
+  if (angleThreshold[i][x] === 0) {
     differences[i] = 0;
     continue;
   }
@@ -476,7 +476,7 @@ These methods are called once per frame.
 * @returns {Boolean} false: nothing, true: end of rep
 */
 function checkScore (score, curPose) {
-  if (score == -1) return false;
+  if (score === -1) return false;
 
   // check for anomalous frame with massive score jump
   if (Math.abs(score-prevScore) > 0.07) {
@@ -485,7 +485,7 @@ function checkScore (score, curPose) {
   }
   prevScore = score;
 
-  if (score < minScore  && poseStatus == 1) {
+  if (score < minScore  && poseStatus === 1) {
     minScore = score;
     minFrame = frameCount;
   }
@@ -494,7 +494,7 @@ function checkScore (score, curPose) {
     selectFrame(curPose, score);
 
     // Currently in rest pose
-    if (poseStatus == 0) {
+    if (poseStatus === 0) {
       switchPoseCount += 1;
       if (switchPoseCount >= 7) {
         // switch to key pose
@@ -505,7 +505,7 @@ function checkScore (score, curPose) {
     }
 
     // Currently in key pose
-    if (poseStatus == 1) {
+    if (poseStatus === 1) {
       switchPoseCount = 0;
       return false;
     }
@@ -513,13 +513,13 @@ function checkScore (score, curPose) {
 
   if (score >= scoreThreshold) {
     // Currently in rest pose
-    if (poseStatus == 0) {
+    if (poseStatus === 0) {
       switchPoseCount = 0;
       return false;
     }
 
     // Currently in key pose
-    if (poseStatus == 1) {
+    if (poseStatus === 1) {
       switchPoseCount += 1;
       if (switchPoseCount >= 10) {
         // End of rep
@@ -557,7 +557,7 @@ function selectFrame(curPose, score) {
 * @returns {Array} processed keypoints, (-1,-1) if invalid
 */
 function processKeypoints (poses) {
-  if (poses.length == 0) {
+  if (poses.length === 0) {
     return;
   }
   for (let i=0;i<17;i++) {
@@ -578,11 +578,11 @@ function processKeypoints (poses) {
 * @returns {Float32Array} angle data of the pose
 */
 function processData (keypoints) {
-  if (keypoints.length != 17 || keypoints[0].length != 2) {
+  if (keypoints.length !== 17 || keypoints[0].length !== 2) {
     return initArray();
   }
 
-  let lines = new Array();
+  let lines = [];
   // vertical
   lines[0] = new Float32Array([0,1]);
 
@@ -656,10 +656,10 @@ function poseScore (curPose) {
   for (let i=0;i<n;i++) {
       angleWeightSum += Math.abs(angleWeights[i]);
   }
-  if (angleWeightSum == 0) return -1;
+  if (angleWeightSum === 0) return -1;
   for (let i=0;i<n;i++) {
-    if (angleWeights[i] == 0) continue;
-    if (curPose[i] == 0) {
+    if (angleWeights[i] === 0) continue;
+    if (curPose[i] === 0) {
       // check if movenet missed out any useful keypoints, i.e. no value but have weight
       return -1;
     }
@@ -684,9 +684,9 @@ They help do things
 * @called when a rep is finished.
 */
 function resetFrames () {
-  frameArray = new Array();
+  frameArray = [];
   frameCount = 0;
-  frameScores = new Array();
+  frameScores = [];
   minFrame = 0;
   minScore = 1;
   switchPoseCount = 0;
@@ -702,12 +702,12 @@ function resetFrames () {
 function resetAll () {
   resetFrames();
   repCount = 0;
-  repFeedback = new Array();
+  repFeedback = [];
   repTimeError = 0;
   smallErrorCount = initBigArray();
   largeErrorCount = initBigArray();
   perfectReps = 0;
-  keypoints = new Array();
+  keypoints = [];
   for (let i=0;i<17;i++) {
     keypoints.push(new Float32Array(2));
   }
@@ -720,7 +720,7 @@ function resetAll () {
 * @returns {Float32Array} line from point1 to point2, (0,0) if the points cannot be calculated due to missing keypoint
 */
 function makeLine (point1, point2) {
-  if((point1[0] == 0 && point1[1] == 0) || point2[0] == 0 && point2[1] == 0) {
+  if((point1[0] === 0 && point1[1] === 0) || (point2[0] === 0 && point2[1] === 0)) {
     return new Float32Array([0,0]);
   }
   let line = new Float32Array(2);
@@ -737,7 +737,7 @@ function makeLine (point1, point2) {
 * @returns {Number} angle between line1 and line2, 0 if the angle cannot be calculated due to missing line
 */
 function calcAngle (line1, line2) {
-    if((line1[0] == 0 && line1[1] == 0) || line2[0] == 0 && line2[1] == 0) {
+    if((line1[0] === 0 && line1[1] === 0) || (line2[0] === 0 && line2[1] === 0)) {
         return 0;
     }
     // dot product
@@ -755,7 +755,7 @@ function calcAngle (line1, line2) {
 * @returns {Number} the length of a line
 */
 function normalise (line) {
-  if (line.length != 2) return -1; 
+  if (line.length !== 2) return -1; 
   return Math.sqrt((line[0]*line[0])+(line[1]*line[1]));
 }
 
@@ -766,8 +766,8 @@ function normalise (line) {
 * @returns {Number} average of 2 angles, one of the angles if the other is missing, or 0 if both are missing
 */
 function calcAvg (angle1, angle2) {
-    if (angle1 == 0) return angle2;
-    if (angle2 == 0) return angle1;
+    if (angle1 === 0) return angle2;
+    if (angle2 === 0) return angle1;
     return (angle1+angle2)/2;
 }
 
@@ -807,7 +807,7 @@ function initIntArray() {
 * @returns {Array} Array with size 4, keyAngles of datatype Uint8
 */
 function initBigArray() {
-  let x = new Array();
+  let x = [];
   for (let i=0;i<3;i++) {
     x.push(initIntArray());
   }

@@ -1,10 +1,6 @@
-from django.shortcuts import render
 from rest_framework.views import APIView, Response
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-from django.contrib.contenttypes.models import ContentType
 
 from .models import Community, CommunityMembers
 from .serializers import CommunitySerializer
@@ -13,8 +9,6 @@ from .serializers import CommunitySerializer
 class CommunityCreateView(APIView):
     def post(self, request):
         """To create new user post"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
@@ -39,8 +33,6 @@ class CommunityCreateView(APIView):
 class CommunityUpdateView(APIView):
     def put(self, request):
         """To update community"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -115,8 +107,6 @@ class CommunityMemberUpdateView(APIView):
     def put(self, request):
         User = get_user_model()
         """To update community"""
-        authentication_classes = [SessionAuthentication, BasicAuthentication]
-        permission_classes = [IsAuthenticated]
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
