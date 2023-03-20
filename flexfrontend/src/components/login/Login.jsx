@@ -115,16 +115,16 @@ function Login(props) {
         </div>
       ) : (
         <IonButton
-          className="flex flex-row items-center dark:text-zinc-100 dark:border-zinc-100 text-base border border-gray-800 border-1"
+          className="flex flex-row items-center
+          dark:text-zinc-100 dark:border-zinc-100 text-base border border-gray-800 border-1"
           onClick={() => login()}
+          color="light"
         >
           Sign in with Google{" "}
           <IonImg
-            className="ml-2"
+            className="ml-2 h-6"
             src={googleIcon}
             alt="Google icon"
-            width="20"
-            height={20}
           ></IonImg>
         </IonButton>
       )}

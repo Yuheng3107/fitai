@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 
+//utils imports
 import checkLoginStatus from "../utils/checkLogin";
 import getProfileData from "../utils/getProfileData";
-import UpdateProfile from "../components/login/UpdateProfile";
 
+import { googleLogout } from "@react-oauth/google";
+
+//ionic imports
 import {
   IonContent,
   IonHeader,
@@ -14,7 +17,12 @@ import {
   IonLabel,
   IonInput,
 } from "@ionic/react";
+
+//component imports
+import UpdateProfile from "../components/login/UpdateProfile";
 import Login from "../components/login/Login";
+import ProfileInfo from "../components/profile/ProfileInfo";
+
 import { backend } from "../App";
 
 const Tab3: React.FC = () => {
@@ -41,21 +49,22 @@ const Tab3: React.FC = () => {
     profileData,
   ]);
 
-
+  const logOut = () => {
+    googleLogout();
+    setLoginStatus(false);
+    setProfileData({});
+  };
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Tab 3</IonTitle>
+          {loginStatus === true && <button onClick={logOut}>logout</button>}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonTitle size="large">Tab 3</IonTitle>
-        <div>
-          Login Here
-          <Login setLoginStatus={setLoginStatus} />
-        </div>
+        {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
+          <ProfileInfo profileData={profileData} />}
         <UpdateProfile />
       </IonContent>
     </IonPage>

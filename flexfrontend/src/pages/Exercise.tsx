@@ -9,8 +9,6 @@ import ExploreContainer from "../components/ExploreContainer";
 import VideoFeed from "../components/Exercise/video";
 import { useParams } from "react-router";
 const Tab2: React.FC = () => {
-  const param = useParams();
-  console.log(param);
   return (
     <IonPage>
       <IonContent fullscreen>
