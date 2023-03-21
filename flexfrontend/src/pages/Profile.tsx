@@ -16,6 +16,8 @@ import {
   IonItem,
   IonLabel,
   IonInput,
+  IonNavLink,
+  IonButton
 } from "@ionic/react";
 
 //component imports
@@ -23,6 +25,7 @@ import UpdateProfile from "../components/login/UpdateProfile";
 import Login from "../components/login/Login";
 import ProfileInfo from "../components/profile/ProfileInfo";
 import UpdateProfilePic from "../components/profile/UpdateProfilePic";
+import CreateProfile from "./CreateProfile";
 
 import { backend } from "../App";
 
@@ -65,6 +68,7 @@ const Tab3: React.FC = () => {
         {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
           <ProfileInfo profileData={profileData} />}
         <UpdateProfile />
+          <IonButton routerLink="/profile/create" routerDirection="forward">Profile Create Page</IonButton>
         <UpdateProfilePic />
       </IonContent>
     </IonPage>

@@ -61,7 +61,7 @@ const App: React.FC = () => {
             <Route exact path="/exercise">
               <Exercise />
             </Route>
-            <Route path="/profile">
+            <Route exact path="/profile">
               <Profile />
             </Route>
             <Route exact path='/profile/create/'>
