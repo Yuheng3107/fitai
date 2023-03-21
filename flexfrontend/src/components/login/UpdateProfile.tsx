@@ -8,9 +8,7 @@ function UpdateProfile() {
     const endpoint = `${backend}/users/user/update`;
 
     const [usernameInput, setUsernameInput] = useState("");
-    const [passwordInput, setPasswordInput] = useState("");
     const [emailInput, setEmailInput] = useState("");
-    const [filePath, setFilePath] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
 
@@ -74,10 +72,6 @@ function UpdateProfile() {
             <label htmlFor="profilePhoto">Upload Profile Photo</label>
             <input
                 ref={fileInputRef}
-                onChange={(e) => {
-                    setFilePath(e.target.value);
-                    console.log(e.target.value);
-                }}
                 className="border border-neutral-500"
                 type="file"
                 name="profilePhoto"
@@ -100,24 +94,6 @@ function UpdateProfile() {
                     className="border border-neutral-500"
                     type="email"
                     name="email"
-                />
-            </div>
-
-            <div>
-                <label htmlFor="password">Password</label>
-                <input
-                    className="border border-neutral-500"
-                    type="password"
-                    name="password"
-                />
-            </div>
-
-            <div>
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <input
-                    className="border border-neutral-500"
-                    type="password"
-                    name="confirmPassword"
                 />
             </div>
 
