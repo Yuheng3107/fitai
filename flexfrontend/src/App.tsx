@@ -27,7 +27,7 @@ import {
 import Home from "./pages/Home";
 import Exercise from "./pages/Exercise";
 import Profile from "./pages/Profile";
-import CreateProfile from "./pages/CreateProfile";
+import EditProfile from "./pages/EditProfile";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -65,7 +65,7 @@ const App: React.FC = () => {
               <Profile />
             </Route>
             <Route exact path='/profile/create/'>
-              <CreateProfile />
+              <EditProfile />
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />
