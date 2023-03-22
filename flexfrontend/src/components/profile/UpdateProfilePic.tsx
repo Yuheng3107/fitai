@@ -38,32 +38,35 @@ const UpdateProfilePic = () => {
         console.log(croppedAreaPixels);
     }
 
+    let variable:string |number = "what";
+    let var2: number | null = 43;
+    variable = var2;
+
+
     //When the save button is clicked, send POST req to backend
     function sendImageHandler() {
-        cropImage(imageString, cropAreaBuffer)
-            .then((image) => {
-                console.log(image);
-                profilePhotoFormData.append("photo", image);
-                fetch(`${backend}/users/user/update/profile_photo`, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": String(
-                            document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
-                        ),
-                    },
-                    credentials: "include",
-                    body: profilePhotoFormData,
+        //The last param of the cropImage function is actually a callback which acts on the cropped image (that is now a blob)
+        cropImage(imageString, cropAreaBuffer, (croppedBlob) => {
+            console.log(image);
+            profilePhotoFormData.append("photo", croppedBlob);
+            fetch(`${backend}/users/user/update/profile_photo`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": String(
+                        document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
+                    ),
+                },
+                credentials: "include",
+                body: profilePhotoFormData,
+            })
+                .then((response) => {
+                    // do something with response
+                    console.log(response);
                 })
-                    .then((response) => {
-                        // do something with response
-                        console.log(response);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            });
-
-
+                .catch((err) => {
+                    console.log(err);
+                });
+        });
 
     }
 
