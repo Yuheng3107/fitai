@@ -1,9 +1,10 @@
 /* Tailwind styles */
 import "./theme/tailwind.css";
 
-import personUnfilled from "./assets/svg/person_unfilled.svg";
 
 import { Redirect, Route, useParams } from "react-router-dom";
+
+//Ionic Imports
 import {
   IonApp,
   IonIcon,
@@ -18,16 +19,15 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import {
   accessibility,
-  ellipse,
   home,
   person,
-  personOutline,
-  square,
-  triangle,
 } from "ionicons/icons";
+
+//Pages Components imports
 import Home from "./pages/Home";
 import Exercise from "./pages/Exercise";
 import Profile from "./pages/Profile";
+import CreateProfile from "./pages/CreateProfile";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -61,8 +61,11 @@ const App: React.FC = () => {
             <Route exact path="/exercise">
               <Exercise />
             </Route>
-            <Route path="/profile">
+            <Route exact path="/profile">
               <Profile />
+            </Route>
+            <Route exact path='/profile/create/'>
+              <CreateProfile />
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />

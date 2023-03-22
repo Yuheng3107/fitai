@@ -16,28 +16,30 @@ import {
   IonItem,
   IonLabel,
   IonInput,
+  IonNavLink,
+  IonButton
 } from "@ionic/react";
 
 //component imports
 import UpdateProfile from "../components/login/UpdateProfile";
 import Login from "../components/login/Login";
 import ProfileInfo from "../components/profile/ProfileInfo";
+import UpdateProfilePic from "../components/profile/UpdateProfilePic";
+import CreateProfile from "./CreateProfile";
 
 import { backend } from "../App";
 
 const Tab3: React.FC = () => {
 
   const [loginStatus, setLoginStatus] = useState(false);
-  const [profileData, setProfileData] = useState({});
+  const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
     console.log(`the current profileData is ${profileData}`);
     checkLoginStatus(loginStatus, setLoginStatus);
 
-
-
-    if (loginStatus && !Object.keys(profileData).length) {
+    if (loginStatus && profileData === null) {
       getProfileData(setProfileData);
     }
   }, [
@@ -52,7 +54,7 @@ const Tab3: React.FC = () => {
   const logOut = () => {
     googleLogout();
     setLoginStatus(false);
-    setProfileData({});
+    setProfileData(null);
   };
 
   return (
@@ -66,6 +68,8 @@ const Tab3: React.FC = () => {
         {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
           <ProfileInfo profileData={profileData} />}
         <UpdateProfile />
+          <IonButton routerLink="/profile/create" routerDirection="forward">Profile Create Page</IonButton>
+        <UpdateProfilePic />
       </IonContent>
     </IonPage>
   );

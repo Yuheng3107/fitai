@@ -1,18 +1,19 @@
-import React, { ProfilerOnRenderCallback } from 'react';
 
-interface ProfileDataType {
-    achivements:[];
-    username:"";
-    email:"zhangjem2002@gmail.com";
-    profile_photo: null | string;
+type ProfileInfoProps = {
+    profileData: {
+        achivements: any[];
+        username: string;
+        email: string;
+        profile_photo: null | string;
+    } | null
 }
 
-const ProfileInfo: React.FC<{ profileData: object }> = (props) => {
+const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
     const placeholder = ""
-    console.log(props.profileData.username);
+    console.log(profileData?.username);
     return <div>
         <img src="placeholder" />
-        <p>{props.profileData["username"]}</p>
+        <p>{profileData?.email}</p>
     </div>
 }
 
