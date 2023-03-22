@@ -12,7 +12,7 @@ from rest_framework.views import status
 import json
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
-
+from .serializer import UserSerializer
 # Create your tests here.
 class UsersManagersTests(TestCase):
     def setUp(self):
@@ -278,4 +278,44 @@ class UserUpdateProfilePhotoViewTest(APITestCase):
         files = os.listdir(dir_path)
         for file in files:
             os.remove(os.path.join(dir_path, file))
-                
+
+class UserFollowingListView(APITestCase):
+    def test_get_user_following_list(self):
+        """Gets whole list of user following"""
+        User = get_user_model()
+        user = baker.make(User)
+        following = [baker.make(User) for i in range(3)]
+        user.following.add(*following)
+        # Check that followers were added
+        self.assertEqual(following, list(user.following.all()))
+        url = reverse('user_following_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        following_data = UserSerializer(following, many=True).data
+        self.assertEqual(data, following_data)
+        
+class UserFollowerListView(APITestCase):
+    def test_get_user_follower_list(self):
+        """Gets whole list of user's followers"""
+        User = get_user_model()
+        user = baker.make(User)
+        followers = [baker.make(User) for i in range(3)]
+        for follower in followers:
+            # Get followers to follow the user
+            follower.following.add(user)
+        # Check that followers were added
+        self.assertEqual(followers, list(user.followers.all()))
+        
+        url = reverse('user_followers_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        follower_data = UserSerializer(followers, many=True).data
+        self.assertEqual(data, follower_data)

@@ -27,6 +27,8 @@ class AppUser(AbstractUser):
         'achievements.Achievement', related_name='users', blank=True)
     # Many to Many friends
     friends = models.ManyToManyField('self')
+    # Many to Many people they follow
+    following = models.ManyToManyField('self', symmetrical=False, related_name='followers')
     # Many to Many friends
     blocked = models.ManyToManyField('self', symmetrical=False)
     # Many to Many communities

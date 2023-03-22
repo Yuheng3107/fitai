@@ -148,7 +148,13 @@ class UserBlockedUpdateView(UserManyToManyUpdateView):
         super().setup(request, *args, **kwargs)
         self.model = get_user_model()
         self.field_name = 'blocked'
-
+        
+class UserFollowingUpdateView(UserManyToManyUpdateView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = get_user_model()
+        self.field_name = 'following'
+        
 class UserCommunitiesUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -213,7 +219,13 @@ class UserBlockedDeleteView(UserManyToManyDeleteView):
         super().setup(request, *args, **kwargs)
         self.model = get_user_model()
         self.field_name = 'blocked'
-
+        
+class UserFollowingDeleteView(UserManyToManyDeleteView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.model = get_user_model()
+        self.field_name = 'following'
+        
 class UserCommunitiesDeleteView(UserManyToManyDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -237,3 +249,17 @@ class UserChatGroupsDeleteView(UserManyToManyDeleteView):
         super().setup(request, *args, **kwargs)
         self.model = ChatGroup
         self.field_name = 'chat_groups'
+        
+class UserFollowingListView(APIView):
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        serializer = UserSerializer(request.user.following.all(), many=True)
+        return Response(serializer.data)
+    
+class UserFollowerListView(APIView):
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        serializer = UserSerializer(request.user.followers.all(), many=True)
+        return Response(serializer.data)

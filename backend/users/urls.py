@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import  CheckLoginStatus, UserCreateView, UserDetailView, UserAchievementsUpdateView, UserFriendsUpdateView, UserCommunitiesUpdateView, UserExercisesUpdateView, UserExerciseRegimesUpdateView, UserChatGroupsUpdateView
-from .views import UserAchievementsDeleteView, UserFriendsDeleteView, UserCommunitiesDeleteView, UserExercisesDeleteView, UserExerciseRegimesDeleteView, UserChatGroupsDeleteView, UserBlockedUpdateView, UserBlockedDeleteView, UserAllowedView, UserUpdateView, UserUpdateProfilePhotoView
+from .views import UserAchievementsDeleteView, UserFriendsDeleteView, UserCommunitiesDeleteView, UserExercisesDeleteView, UserExerciseRegimesDeleteView, UserChatGroupsDeleteView, UserBlockedUpdateView, UserBlockedDeleteView, UserAllowedView, UserUpdateView, UserUpdateProfilePhotoView, UserFollowingDeleteView, UserFollowingUpdateView
+from .views import UserFollowingListView, UserFollowerListView
 urlpatterns = [
     # Login stuff
     path('user/create', UserCreateView.as_view(), name='create_user'),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('user/update/exercises', UserExercisesUpdateView.as_view(), name='update_user_exercises'),
     path('user/update/exercise_regimes', UserExerciseRegimesUpdateView.as_view(), name='update_user_exercise_regimes'),
     path('user/update/chat_groups', UserChatGroupsUpdateView.as_view(), name='update_user_chat_groups'),
+    path('user/update/following', UserFollowingUpdateView.as_view(), name='update_user_following'),
     # Delete m2m 
     path('user/delete/achievements/<int:pk>', UserAchievementsDeleteView.as_view(), name='delete_user_achievements'),
     path('user/delete/friends/<int:pk>', UserFriendsDeleteView.as_view(), name='delete_user_friends'),
@@ -28,4 +30,8 @@ urlpatterns = [
     path('user/delete/exercises/<int:pk>', UserExercisesDeleteView.as_view(), name='delete_user_exercises'),
     path('user/delete/exercise_regimes/<int:pk>', UserExerciseRegimesDeleteView.as_view(), name='delete_user_exercise_regimes'),
     path('user/delete/chat_groups/<int:pk>', UserChatGroupsDeleteView.as_view(), name='delete_user_chat_groups'),
+    path('user/delete/following/<int:pk>', UserFollowingDeleteView.as_view(), name='delete_user_following'),
+    # List Views
+    path('user/list/following', UserFollowingListView.as_view(), name='user_following_list'),
+    path('user/list/followers', UserFollowerListView.as_view(), name='user_followers_list'),
 ]
