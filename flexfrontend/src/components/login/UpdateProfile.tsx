@@ -51,6 +51,7 @@ function UpdateProfile() {
             // do something with response
             console.log(response);
         });
+        
         fetch(`${backend}/users/user/update/profile_photo`, {
             method: "POST",
             headers: {
