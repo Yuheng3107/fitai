@@ -86,11 +86,13 @@ class UserUpdateProfilePhotoView(APIView):
         # Check that profile photo is indeed uploaded
         if uploaded_file_object is None:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        """
         file_name = uploaded_file_object.name
         start = file_name.rfind('.')
-        allowed_formats = [".png", ".jpeg", ".jpg", ".webp"]
+        allowed_formats = [".png", ".jpeg", ".jpg", ".webp"] 
         if file_name[start:] not in allowed_formats:
-            return Response("File format is not allowed",status=status.HTTP_403_FORBIDDEN)
+            return Response("File format is not allowed",status=status.HTTP_406_NOT_ACCEPTABLE)
+        """
         # File size in Megabytes
         file_size = uploaded_file_object.size / (1024*1024)
         if file_size > 2:
