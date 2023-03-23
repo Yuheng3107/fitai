@@ -536,6 +536,16 @@ class MediaUpdateView(APIView):
         if uploaded_file_object is None:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
 
+        file_name = uploaded_file_object.name
+        start = file_name.rfind('.')
+        allowed_formats = [".png", ".jpeg", ".jpg", ".webp", ".mp4", ".mov", ".webm", ".gif"] 
+        if file_name[start:] not in allowed_formats:
+            return Response("File format is not allowed",status=status.HTTP_406_NOT_ACCEPTABLE)
+        # File size in Megabytes
+        file_size = uploaded_file_object.size / (1024*1024)
+        if file_size > 2:
+            return Response("File size greater than 2MB", status=status.HTTP_400_BAD_REQUEST)
+
         post.media = uploaded_file_object
         post.save()
         return Response()
