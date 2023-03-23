@@ -2,12 +2,15 @@
 import { IonButton } from '@ionic/react';
 import React, { useState, useRef } from 'react';
 import Cropper, { Area } from 'react-easy-crop';
+import {useHistory} from 'react-router-dom';
 
 import { backend } from '../../App';
 
 import cropImage from '../../utils/crop';
 
 const UpdateProfilePic = () => {
+    const history = useHistory();
+
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
     const [image, setImage] = useState();
@@ -54,6 +57,7 @@ const UpdateProfilePic = () => {
             })
                 .then((response) => {
                     // do something with response
+                    history.push('/profile');
                     console.log(response);
                 })
                 .catch((err) => {

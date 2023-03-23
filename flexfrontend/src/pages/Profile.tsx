@@ -67,8 +67,7 @@ const Tab3: React.FC = () => {
       <IonContent fullscreen>
         {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
           <ProfileInfo profileData={profileData} />}
-        <UpdateProfile />
-        <IonButton routerLink="/profile/create" routerDirection="forward">Profile Create Page</IonButton>
+        <IonButton routerLink="/profile/create" routerDirection="forward">Edit Profile</IonButton>
       </IonContent>
     </IonPage>
   );

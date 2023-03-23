@@ -19,11 +19,11 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
             setImageUrl(backend.concat(profileData.profile_photo));
         }
     }, [profileData?.profile_photo])
-    
+
     console.log(profileData?.username);
     return <div>
-        <img src={imageUrl} />
-        <p>{profileData?.email}</p>
+        <img className='rounded-full border border-indigo-500' src={imageUrl} />
+        <p>{profileData?.username}</p>
     </div>
 }
 
