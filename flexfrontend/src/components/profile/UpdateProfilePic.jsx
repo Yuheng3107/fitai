@@ -40,6 +40,7 @@ const UpdateProfilePic = () => {
         cropImage(imageString, cropAreaBuffer, (croppedBlob) => {
             console.log("this is running properly");
             console.log(croppedBlob);
+            setCroppedImage(croppedBlob);
             profilePhotoFormData.append("photo", croppedBlob);
             fetch(`${backend}/users/user/update/profile_photo`, {
                 method: "POST",
