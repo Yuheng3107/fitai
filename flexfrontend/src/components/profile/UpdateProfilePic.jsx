@@ -10,17 +10,12 @@ import cropImage from '../../utils/crop';
 const UpdateProfilePic = () => {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
-    const [image, setImage] = useState<string | Blob>("");
-    const [imageString, setImageString] = useState<string>("");
-    const [cropAreaBuffer, setCropAreaBuffer] = useState<Area>({
-        x: 0, // x/y are the coordinates of the top/left corner of the cropped area
-        y: 0,
-        width: 0, // width of the cropped area
-        height: 0, // height of the cropped area
-    });
-    const [croppedImage, setCroppedImage] = useState<string>("");
+    const [image, setImage] = useState();
+    const [imageString, setImageString] = useState("");
+    const [cropAreaBuffer, setCropAreaBuffer] = useState({});
+    const [croppedImage, setCroppedImage] = useState();
 
-    const imageInputRef = useRef<HTMLInputElement>(null);
+    const imageInputRef = useRef(null);
     let profilePhotoFormData = new FormData();
 
     //When the image file is chosen, it's made into a string for the Cropper component
@@ -33,21 +28,18 @@ const UpdateProfilePic = () => {
     }
 
     //Whenever the crop changes, the new cropped image is appended to the formData
-    function onCropComplete(croppedArea: Area, croppedAreaPixels: Area) {
+    function onCropComplete(croppedArea, croppedAreaPixels) {
         setCropAreaBuffer(croppedAreaPixels);
         console.log(croppedAreaPixels);
     }
-
-    let variable:string |number = "what";
-    let var2: number | null = 43;
-    variable = var2;
 
 
     //When the save button is clicked, send POST req to backend
     function sendImageHandler() {
         //The last param of the cropImage function is actually a callback which acts on the cropped image (that is now a blob)
         cropImage(imageString, cropAreaBuffer, (croppedBlob) => {
-            console.log(image);
+            console.log("this is running properly");
+            console.log(croppedBlob);
             profilePhotoFormData.append("photo", croppedBlob);
             fetch(`${backend}/users/user/update/profile_photo`, {
                 method: "POST",

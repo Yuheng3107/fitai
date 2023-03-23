@@ -24,7 +24,7 @@ import {
 import UpdateProfile from "../components/login/UpdateProfile";
 import Login from "../components/login/Login";
 import ProfileInfo from "../components/profile/ProfileInfo";
-import UpdateProfilePic from "../components/profile/UpdateProfilePic";
+import UpdateProfilePic from "../components/profile/UpdateProfilePic.jsx";
 import EditProfile from "./EditProfile";
 
 import { backend } from "../App";
@@ -68,8 +68,7 @@ const Tab3: React.FC = () => {
         {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
           <ProfileInfo profileData={profileData} />}
         <UpdateProfile />
-          <IonButton routerLink="/profile/create" routerDirection="forward">Profile Create Page</IonButton>
-        <UpdateProfilePic />
+        <IonButton routerLink="/profile/create" routerDirection="forward">Profile Create Page</IonButton>
       </IonContent>
     </IonPage>
   );

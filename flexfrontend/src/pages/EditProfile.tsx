@@ -13,7 +13,7 @@ import {
 } from '@ionic/react';
 
 //Component imports
-import UpdateProfilePic from '../components/profile/UpdateProfilePic';
+import UpdateProfilePic from '../components/profile/UpdateProfilePic.jsx';
 
 function EditProfile() {
     return <IonPage>
