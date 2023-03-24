@@ -13,7 +13,7 @@ import {
 } from '@ionic/react';
 
 //Component imports
-import UpdateProfilePic from '../components/profile/UpdateProfilePic.jsx';
+import UpdateProfilePic from '../components/profile/UpdateProfilePic';
 import TextInput from '../components/ui/TextInput';
 
 import { backend } from '../App';

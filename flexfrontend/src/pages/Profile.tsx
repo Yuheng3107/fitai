@@ -24,8 +24,6 @@ import {
 import UpdateProfile from "../components/login/UpdateProfile";
 import Login from "../components/login/Login";
 import ProfileInfo from "../components/profile/ProfileInfo";
-import UpdateProfilePic from "../components/profile/UpdateProfilePic.jsx";
-import EditProfile from "./EditProfile";
 
 import { backend } from "../App";
 

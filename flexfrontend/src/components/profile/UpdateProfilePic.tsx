@@ -14,18 +14,25 @@ import { IonButton, IonImg } from '@ionic/react';
 import cropImage from '../../utils/crop';
 import getProfileData from '../../utils/getProfileData';
 
+//types import
+import { profileData, emptyProfileData } from '../../types/stateTypes';
+
 //functional component
 const UpdateProfilePic = () => {
     const history = useHistory();
-
 
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
     const [image, setImage] = useState();
     const [imageString, setImageString] = useState("");
-    const [cropAreaBuffer, setCropAreaBuffer] = useState({});
-    const [croppedImage, setCroppedImage] = useState();
-    const [profileData, setProfileData] = useState();
+    const [cropAreaBuffer, setCropAreaBuffer] = useState<Area>({
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0,
+    });
+    const [croppedImage, setCroppedImage] = useState<Blob | null>();
+    const [profileData, setProfileData] = useState<profileData>(emptyProfileData);
 
     //Using getProfileData to get the current profilePic
     useEffect(() => {
@@ -33,20 +40,22 @@ const UpdateProfilePic = () => {
     }, [getProfileData])
 
 
-    const imageInputRef = useRef(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
     let profilePhotoFormData = new FormData();
 
     //When the image file is chosen, it's made into a string for the Cropper component
     function imageInputHandler() {
-        console.log(typeof imageInputRef.current?.files?.[0]);
-        if (imageInputRef.current?.files?.[0]) {
-            setImageString(URL.createObjectURL(imageInputRef.current?.files?.[0]));
+        // console.log(typeof imageInputRef.current?.files?.[0]);
+        // if (imageInputRef.current?['files'][0] !== null) {
+        //     setImageString(URL.createObjectURL(imageInputRef.current?['files']?.[0] ));
+        // }
+        if (imageInputRef.current !== null && imageInputRef.current.files !== null && imageInputRef.current.files[0] !== null) {
+            setImageString(URL.createObjectURL(imageInputRef.current.files[0]));
         }
-
     }
 
     //Whenever the crop changes, the new cropped image is appended to the formData
-    function onCropComplete(croppedArea, croppedAreaPixels) {
+    function onCropComplete(croppedArea: Area, croppedAreaPixels: Area) {
         setCropAreaBuffer(croppedAreaPixels);
         console.log(croppedAreaPixels);
     }
@@ -57,9 +66,10 @@ const UpdateProfilePic = () => {
         //The last param of the cropImage function is actually a callback which acts on the cropped image (that is now a blob)
         cropImage(imageString, cropAreaBuffer, (croppedBlob) => {
             console.log("this is running properly");
-            console.log(croppedBlob);
             setCroppedImage(croppedBlob);
-            profilePhotoFormData.append("photo", croppedBlob);
+            if (croppedBlob !== null) {
+                profilePhotoFormData.append("photo", croppedBlob);
+            }
             fetch(`${backend}/users/user/update/profile_photo`, {
                 method: "POST",
                 headers: {
@@ -100,7 +110,6 @@ const UpdateProfilePic = () => {
             />
             <IonButton onClick={sendImageHandler}>Save</IonButton>
         </div>
-        {croppedImage && <img src={croppedImage} alt="showing cropped image" />}
     </div>
 }
 
