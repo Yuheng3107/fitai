@@ -1,4 +1,4 @@
-export type profileData = {
+export type ProfileData = {
     achievements: string[];
     email: string;
     profile_photo: string;

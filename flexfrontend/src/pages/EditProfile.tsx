@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { SyntheticEvent, useRef, useEffect, useState } from 'react';
 
 //Ionic Imports
 import {
@@ -16,13 +16,29 @@ import {
 //Component imports
 import UpdateProfilePic from '../components/profile/UpdateProfilePic';
 import TextInput from '../components/ui/TextInput';
+import TextAreaInput from '../components/ui/TextAreaInput';
 
 import { backend } from '../App';
+import Button from '../components/ui/Button';
+
+//utils imports
+import getProfileData from '../utils/getProfileData';
+
+
+//types import
+import { ProfileData, emptyProfileData } from '../types/stateTypes';
 
 function EditProfile() {
     const usernameInputRef = useRef<HTMLInputElement>(null);
-    function usernameFormHandler(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
+    const bioInputRef = useRef<HTMLTextAreaElement>(null);
+
+    const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
+
+    useEffect(() => {
+        getProfileData(setProfileData);
+    }, [getProfileData])
+
+    function usernameFormHandler(event: SyntheticEvent) {
         fetch(`${backend}/users/user/update`, {
             method: "POST",
             headers: {
@@ -40,6 +56,7 @@ function EditProfile() {
             console.log(response);
         });
     }
+
     return <IonPage>
         <IonHeader>
             <IonToolbar>
@@ -52,13 +69,12 @@ function EditProfile() {
         <IonContent >
             <div className="p-10">
                 <UpdateProfilePic />
-                <form onSubmit={usernameFormHandler}>
-                    {/* <input type="text" ref={usernameInputRef} placeholder='username' /> */}
+                <TextInput defaultValue={profileData.username} ref={usernameInputRef} inputName="username" label="Username" />
+                <TextAreaInput className="mt-3" ref={bioInputRef} inputName="bio" label="Bio" ></TextAreaInput>
+                <div className="flex flex-row justify-end">
+                    <Button onClick={usernameFormHandler} className={`mt-3 bg-blue-500 text-white w-5/12`} type="submit">Update Profile</Button>
+                </div>
 
-                    <TextInput ref={usernameInputRef} inputName="placeholder" label="Username" />
-                    <IonButton type="submit">Save</IonButton>
-
-                </form>
             </div>
 
 

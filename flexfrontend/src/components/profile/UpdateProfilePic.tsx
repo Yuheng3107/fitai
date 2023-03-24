@@ -8,19 +8,19 @@ import { useHistory } from 'react-router-dom';
 import { backend } from '../../App';
 
 //ionic imports
-import { IonButton, IonIcon, IonImg } from '@ionic/react';
-import { create } from 'ionicons/icons';
 
 //utils import
 import cropImage from '../../utils/crop';
 import getProfileData from '../../utils/getProfileData';
 
 //types import
-import { profileData, emptyProfileData } from '../../types/stateTypes';
+import { ProfileData, emptyProfileData } from '../../types/stateTypes';
 
 //assets
-import editIcon from '../../assets/svg/edit_square_FILL0_wght400_GRAD0_opsz48.svg'
 import EditSquareIcon from '../../assets/svg/editSquareIcon';
+
+//component imports
+import Button from '../ui/Button';
 
 //functional component
 const UpdateProfilePic = () => {
@@ -37,7 +37,8 @@ const UpdateProfilePic = () => {
         y: 0,
     });
     const [croppedImage, setCroppedImage] = useState<Blob | null>();
-    const [profileData, setProfileData] = useState<profileData>(emptyProfileData);
+    const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
+    const [edittingNewImage, setEdittingNewImage] = useState(false);
 
 
     const imageInputRef = useRef<HTMLInputElement>(null);
@@ -52,12 +53,14 @@ const UpdateProfilePic = () => {
 
     //When the image file is chosen, it's made into a string for the Cropper component
     function imageInputHandler() {
-        // console.log(typeof imageInputRef.current?.files?.[0]);
-        // if (imageInputRef.current?['files'][0] !== null) {
-        //     setImageString(URL.createObjectURL(imageInputRef.current?['files']?.[0] ));
-        // }
-        if (imageInputRef.current !== null && imageInputRef.current.files !== null && imageInputRef.current.files[0] !== null) {
+
+        if (imageInputRef.current !== null &&
+            imageInputRef.current.files !== null &&
+            imageInputRef.current.files.length !== 0 &&
+            imageInputRef.current.files[0] !== null) {
+            console.log(imageInputRef.current.files)
             setImageString(URL.createObjectURL(imageInputRef.current.files[0]));
+            setEdittingNewImage(true);
         }
     }
 
@@ -73,7 +76,6 @@ const UpdateProfilePic = () => {
         //The last param of the cropImage function is actually a callback which acts on the cropped image (that is now a blob)
         cropImage(imageString, cropAreaBuffer, (croppedBlob) => {
             console.log("this is running properly");
-            setCroppedImage(croppedBlob);
             if (croppedBlob !== null) {
                 profilePhotoFormData.append("photo", croppedBlob);
             }
@@ -101,30 +103,47 @@ const UpdateProfilePic = () => {
 
     return <div>
         <div className="relative aspect-square">
-            <img className="rounded-full" src={backend.concat(profileData.profile_photo)}/>
+            {/* This displays the current profile photo, which will be hidden away once the new profile pic is chosen */}
+            <img className={`rounded-full ${edittingNewImage && "hidden"} border-4 border-sky-300 p-2`} src={backend.concat(profileData.profile_photo)} />
             <input id="selectImageFile" className="hidden" ref={imageInputRef} type="file" onChange={imageInputHandler}
                 accept=".png, .jpeg, .jpg, .webp" />
-            <button role="button" className="z-40 absolute right-3 bottom-3 aspect-square rounded-full bg-zinc-300 h-12 w-12" onClick={() => {
-                if (imageInputRef.current !== null) {
-                    imageInputRef.current.click();
-                }
-            }}>
+            <button role="button"
+                className={`${edittingNewImage && "hidden"} z-40 absolute right-3 bottom-3 aspect-square rounded-full bg-zinc-300 h-12 w-12`}
+                onClick={() => {
+                    if (imageInputRef.current !== null) {
+                        imageInputRef.current.click();
+                    }
+                }}>
                 {/* <img className="fill-slate-50 h-10" src={editIcon}></img> */}
-                <EditSquareIcon className="h-8 w-8 absolute top-1 left-2"/>
+                <EditSquareIcon className="h-8 w-8 absolute top-1 left-2" />
             </button>
+            {/* Cropper is positioned absolutely */}
             <Cropper
+                objectFit='auto-cover'
                 image={imageString}
                 crop={crop}
                 zoom={zoom}
                 aspect={1}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
-                cropShape="round"
+                cropShape='round'
                 showGrid={true}
                 onCropComplete={onCropComplete}
             />
         </div>
-        <IonButton onClick={sendImageHandler}>Save</IonButton>
+        <div className={`${edittingNewImage ? "" : "hidden"} flex flex-row justify-between mt-3`}>
+            <Button role="button"
+                className={`w-5/12 border border-zinc-300 border-solid`}
+                onClick={() => {
+                    if (imageInputRef.current !== null) {
+                        imageInputRef.current.click();
+                    }
+                }}>
+                Change Image
+            </Button>
+            <Button className={`w-5/12 bg-blue-500 text-white`} onClick={sendImageHandler}>Update Image</Button>
+        </div>
+
     </div>
 }
 
