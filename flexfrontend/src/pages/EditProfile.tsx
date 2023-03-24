@@ -8,7 +8,8 @@ import {
     IonToolbar,
     IonBackButton,
     IonTitle,
-    IonButtons
+    IonButtons,
+    IonButton
 
 } from '@ionic/react';
 
@@ -48,18 +49,21 @@ function EditProfile() {
                 <IonTitle>Edit Profile</IonTitle>
             </IonToolbar>
         </IonHeader>
-        <IonContent>
-            <UpdateProfilePic />
-            <form onSubmit={usernameFormHandler}>
-                {/* <input type="text" ref={usernameInputRef} placeholder='username' /> */}
+        <IonContent >
+            <div className="p-10">
+                <UpdateProfilePic />
+                <form onSubmit={usernameFormHandler}>
+                    {/* <input type="text" ref={usernameInputRef} placeholder='username' /> */}
 
-                <TextInput ref={usernameInputRef} inputName="placeholder" label="test input" />
-                <input type="submit" />
+                    <TextInput ref={usernameInputRef} inputName="placeholder" label="Username" />
+                    <IonButton type="submit">Save</IonButton>
 
-            </form>
+                </form>
+            </div>
+
 
         </IonContent>
-    </IonPage>
+    </IonPage >
 }
 
 export default EditProfile;

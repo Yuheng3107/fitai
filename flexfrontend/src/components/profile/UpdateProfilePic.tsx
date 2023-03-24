@@ -8,7 +8,8 @@ import { useHistory } from 'react-router-dom';
 import { backend } from '../../App';
 
 //ionic imports
-import { IonButton, IonImg } from '@ionic/react';
+import { IonButton, IonIcon, IonImg } from '@ionic/react';
+import { create } from 'ionicons/icons';
 
 //utils import
 import cropImage from '../../utils/crop';
@@ -16,6 +17,10 @@ import getProfileData from '../../utils/getProfileData';
 
 //types import
 import { profileData, emptyProfileData } from '../../types/stateTypes';
+
+//assets
+import editIcon from '../../assets/svg/edit_square_FILL0_wght400_GRAD0_opsz48.svg'
+import EditSquareIcon from '../../assets/svg/editSquareIcon';
 
 //functional component
 const UpdateProfilePic = () => {
@@ -34,14 +39,16 @@ const UpdateProfilePic = () => {
     const [croppedImage, setCroppedImage] = useState<Blob | null>();
     const [profileData, setProfileData] = useState<profileData>(emptyProfileData);
 
+
+    const imageInputRef = useRef<HTMLInputElement>(null);
+
+    let profilePhotoFormData = new FormData();
+
     //Using getProfileData to get the current profilePic
     useEffect(() => {
         getProfileData(setProfileData);
     }, [getProfileData])
 
-
-    const imageInputRef = useRef<HTMLInputElement>(null);
-    let profilePhotoFormData = new FormData();
 
     //When the image file is chosen, it's made into a string for the Cropper component
     function imageInputHandler() {
@@ -93,10 +100,18 @@ const UpdateProfilePic = () => {
     }
 
     return <div>
-        <p>update profile pic</p>
-        <input ref={imageInputRef} type="file" onChange={imageInputHandler} />
-        <div className="relative h-1/2 aspect-square">
-            <IonImg src={backend.concat(profileData.profile_photo)}></IonImg>
+        <div className="relative aspect-square">
+            <img className="rounded-full" src={backend.concat(profileData.profile_photo)}/>
+            <input id="selectImageFile" className="hidden" ref={imageInputRef} type="file" onChange={imageInputHandler}
+                accept=".png, .jpeg, .jpg, .webp" />
+            <button role="button" className="z-40 absolute right-3 bottom-3 aspect-square rounded-full bg-zinc-300 h-12 w-12" onClick={() => {
+                if (imageInputRef.current !== null) {
+                    imageInputRef.current.click();
+                }
+            }}>
+                {/* <img className="fill-slate-50 h-10" src={editIcon}></img> */}
+                <EditSquareIcon className="h-8 w-8 absolute top-1 left-2"/>
+            </button>
             <Cropper
                 image={imageString}
                 crop={crop}
@@ -108,8 +123,8 @@ const UpdateProfilePic = () => {
                 showGrid={true}
                 onCropComplete={onCropComplete}
             />
-            <IonButton onClick={sendImageHandler}>Save</IonButton>
         </div>
+        <IonButton onClick={sendImageHandler}>Save</IonButton>
     </div>
 }
 
