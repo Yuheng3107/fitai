@@ -14,6 +14,7 @@ import {
 
 //Component imports
 import UpdateProfilePic from '../components/profile/UpdateProfilePic.jsx';
+import TextInput from '../components/ui/TextInput';
 
 import { backend } from '../App';
 
@@ -50,9 +51,13 @@ function EditProfile() {
         <IonContent>
             <UpdateProfilePic />
             <form onSubmit={usernameFormHandler}>
-                <input type="text" ref={usernameInputRef} placeholder='username' />
+                {/* <input type="text" ref={usernameInputRef} placeholder='username' /> */}
+
+                <TextInput ref={usernameInputRef} inputName="placeholder" label="test input" />
                 <input type="submit" />
+
             </form>
+
         </IonContent>
     </IonPage>
 }
