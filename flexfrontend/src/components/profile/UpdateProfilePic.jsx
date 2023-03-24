@@ -1,15 +1,23 @@
 
-import { IonButton } from '@ionic/react';
-import React, { useState, useRef } from 'react';
+
+//dependencies
+import React, { useState, useRef, useEffect } from 'react';
 import Cropper, { Area } from 'react-easy-crop';
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import { backend } from '../../App';
 
-import cropImage from '../../utils/crop';
+//ionic imports
+import { IonButton, IonImg } from '@ionic/react';
 
+//utils import
+import cropImage from '../../utils/crop';
+import getProfileData from '../../utils/getProfileData';
+
+//functional component
 const UpdateProfilePic = () => {
     const history = useHistory();
+
 
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
@@ -17,6 +25,13 @@ const UpdateProfilePic = () => {
     const [imageString, setImageString] = useState("");
     const [cropAreaBuffer, setCropAreaBuffer] = useState({});
     const [croppedImage, setCroppedImage] = useState();
+    const [profileData, setProfileData] = useState();
+
+    //Using getProfileData to get the current profilePic
+    useEffect(() => {
+        getProfileData(setProfileData);
+    }, [getProfileData])
+
 
     const imageInputRef = useRef(null);
     let profilePhotoFormData = new FormData();
@@ -71,6 +86,7 @@ const UpdateProfilePic = () => {
         <p>update profile pic</p>
         <input ref={imageInputRef} type="file" onChange={imageInputHandler} />
         <div className="relative h-1/2 aspect-square">
+            <IonImg src={backend.concat(profileData.profile_photo)}></IonImg>
             <Cropper
                 image={imageString}
                 crop={crop}
