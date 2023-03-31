@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { Component } from "react";
 import { isMobile, isSafari, isFirefox } from "react-device-detect";
 import Webcam from "react-webcam";
 
@@ -8,7 +8,9 @@ import Button from "../ui/Button";
 import TextBox from "../ui/TextBox";
 
 //assets
-import expandIcon from "../../assets/svg/expand-icon.svg";
+import expandIcon from '../../assets/svg/expand-icon.svg'
+import PlayIcon from "../../assets/svgComponents/playIcon";
+import StopIcon from "../../assets/svgComponents/stopIcon";
 
 //MoveNet
 import * as poseDetection from "@tensorflow-models/pose-detection";
@@ -33,7 +35,8 @@ class VideoFeed extends Component {
       repFeedback: "sample feedback for Rep 1",
       repFeedbackLog: "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
       generalFeedback: "some stuff general feedback sample",
-      feedbackLogShowing: false
+      feedbackLogShowing: false,
+      startButton: true,
     };
 
     this.webcam = React.createRef();
@@ -61,24 +64,8 @@ class VideoFeed extends Component {
 
   render = () => {
     return (
-      <React.Fragment>
+      <div className="relative h-full">
         <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
-        <div className="mt-5">
-          <Button
-            onClick={() => this.start()}
-            className="bg-green-300 w-16 mx-2 text-zinc-900 
-            dark:bg-lime-700 dark:hover:bg-lime-500 dark:text-zinc-100"
-          >
-            Start
-          </Button>
-          <Button
-            onClick={() => this.end()}
-            className="bg-amber-200 w-16 mx-2 text-zinc-900 
-          dark:bg-yellow-600 dark:hover:bg-amber-500 dark:text-zinc-100 "
-          >
-            End
-          </Button>
-        </div>
         {/* <form className="flex flex-row items-center justify-center mt-3 " id="changeExercise">
           <Select className="form-select" name="exerciseId" id="changeExercise">
             <option selected value="0">
@@ -94,21 +81,52 @@ class VideoFeed extends Component {
           </Button>
         </form> */}
         <div className="exercise-feedback flex flex-col items-center p-5 w-full">
-          <span className="flex flex-col justify-center items-center text-7xl pb-2 text-zinc-100 
-          aspect-square w-1/2 border-8 border-sky-700 rounded-full">
-            {this.state.repCount}
-          </span>
-          <TextBox className="bg-zinc-500 p-3 w-4/5 mt-3">{this.state.feedbackLogShowing}{this.state.repFeedback}</TextBox>
+          <div className="flex justify-center items-center text-6xl pb-2 text-zinc-900 font-medium
+          aspect-square w-28 border-8 border-sky-700 rounded-full">
+            <span className="block p-0 m-0">{this.state.repCount}</span>
+          </div>
+          <TextBox className="flex flex-col justify-between bg-zinc-100 pt-3 pb-0 w-4/5 mt-3">
+            {this.state.feedbackLogShowing}{this.state.repFeedback}
+            <button onClick={this.toggleFeedbackLog} className="flex flex-row items-center justify-center" id="show-log-button">
+              <span className="text-zinc-400">Show Feedback Log</span>
+              <img className={`${this.state.feedbackLogShowing && "rotate-180"} `} src={expandIcon} alt="expand icon" height="36" width="36" />
+            </button>
+            {this.state.feedbackLogShowing && <span className="mt-1">{this.state.repFeedbackLog}</span>}
+          </TextBox>
 
-          <button onClick={this.toggleFeedbackLog} className="flex flex-row items-center justify-center" id="show-log-button">
-            <span>Show Feedback Log</span>
-            <img className={`${this.state.feedbackLogShowing && "rotate-180"}`} src={expandIcon} alt="expand icon" height="24" width="24" />
-          </button>
-          {this.state.feedbackLogShowing && <TextBox className="bg-zinc-700 p-3 w-4/5 mt-1">{this.state.repFeedbackLog}</TextBox>}
-          <TextBox className="bg-zinc-500 p-3 w-4/5 mt-3">{this.state.generalFeedback}</TextBox>
+
+
+          <TextBox className="bg-zinc-100 p-3 w-4/5 mt-3">{this.state.generalFeedback}</TextBox>
+
+
         </div>
-        <img src="" alt="" ref={this.image} />
-      </React.Fragment>
+        <div id="button-container" className="absolute bottom-10 w-screen flex justify-center">
+          <Button
+            onClick={() => {
+              this.start();
+              this.setState({
+                startButton: false
+              })
+            }}
+            className={`${this.state.startButton ? "" : "hidden"} bg-blue-400 w-16 h-16 mx-2 text-zinc-900
+            flex justify-center items-center p-0 aspect-square`}
+          >
+            <PlayIcon className="h-14 w-14 fill-white" />
+          </Button>
+          <Button
+            onClick={() => {
+              this.end();
+              this.setState({
+                startButton: true
+              })
+            }}
+            className={`${this.state.startButton ? "hidden" : ""} bg-amber-300 w-16 mx-2 text-zinc-900
+            flex justify-center items-center p-0 aspect-square`}
+          >
+            <StopIcon className="h-14 w-14 fill-white" />
+          </Button>
+        </div>
+      </div>
     );
   };
 
@@ -175,7 +193,7 @@ class VideoFeed extends Component {
       feedback = newFeedback;
       frameCount += 1;
 
-    
+
     }
   };
 

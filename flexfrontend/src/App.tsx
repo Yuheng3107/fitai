@@ -103,7 +103,7 @@ const App: React.FC = () => {
             <IonTabButton tab="profile" href="/profile">
               {/* <IonIcon className="fill-red-600 stroke-red-600" aria-hidden="true" src={personUnfilled} /> */}
               {/* <IonIcon aria-hidden="true" icon={backend.concat(profileData.profile_photo)} /> */}
-              <img className={`rounded-full border border-sky-300 h-9`} src={backend.concat(profileData.profile_photo)} />
+              <img className={`rounded-full border border-neutral-800 h-9`} src={backend.concat(profileData.profile_photo)} />
             </IonTabButton>
           </IonTabBar>
         </IonTabs>

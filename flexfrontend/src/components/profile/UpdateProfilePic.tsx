@@ -17,7 +17,7 @@ import getProfileData from '../../utils/getProfileData';
 import { ProfileData, emptyProfileData } from '../../types/stateTypes';
 
 //assets
-import EditSquareIcon from '../../assets/svg/editSquareIcon';
+import EditSquareIcon from '../../assets/svgComponents/editSquareIcon';
 
 //component imports
 import Button from '../ui/Button';
