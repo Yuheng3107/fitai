@@ -37,6 +37,8 @@ class VideoFeed extends Component {
       generalFeedback: "some stuff general feedback sample",
       feedbackLogShowing: false,
       startButton: true,
+      offset: 0,
+      percentage: 0,
     };
 
     this.webcam = React.createRef();
@@ -45,18 +47,8 @@ class VideoFeed extends Component {
   }
 
   componentDidMount = async () => {
-    let stream = null;
-    const constraints = {
-      video: true
-    };
 
-    try {
-      stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('this webcam code is running');
-      /* use the stream */
-    } catch (err) {
-      /* handle the error */
-    }
+
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
@@ -97,6 +89,22 @@ class VideoFeed extends Component {
           aspect-square w-28 border-8 border-sky-700 rounded-full">
             <span className="block p-0 m-0">{this.state.repCount}</span>
           </div>
+          <svg className="w-28 h-28 -rotate-90">
+            <circle
+              className="stroke-current text-blue-500"
+              stroke="#4A5568"
+              strokeWidth="4"
+              fill="transparent"
+              r="20"
+              cx="24"
+              cy="24"
+              style={{
+                strokeDasharray: 2 * Math.PI * 20,
+                strokeDashoffset: (10-this.state.repCount)/10 * 2 * Math.PI * 20,
+                transition: 'stroke-dashoffset 1000ms linear',
+              }}
+            />
+          </svg>
           <TextBox className="flex flex-col justify-between bg-zinc-100 pt-3 pb-0 w-4/5 mt-3">
             {this.state.feedbackLogShowing}{this.state.repFeedback}
             <button onClick={this.toggleFeedbackLog} className="flex flex-row items-center justify-center" id="show-log-button">
@@ -138,6 +146,7 @@ class VideoFeed extends Component {
             <StopIcon className="h-14 w-14 fill-white" />
           </Button>
         </div>
+        <img src="" alt="" ref={this.image} />
       </div>
     );
   };
