@@ -45,6 +45,18 @@ class VideoFeed extends Component {
   }
 
   componentDidMount = async () => {
+    let stream = null;
+    const constraints = {
+      video: true
+    };
+
+    try {
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('this webcam code is running');
+      /* use the stream */
+    } catch (err) {
+      /* handle the error */
+    }
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
@@ -120,7 +132,7 @@ class VideoFeed extends Component {
                 startButton: true
               })
             }}
-            className={`${this.state.startButton ? "hidden" : ""} bg-amber-300 w-16 mx-2 text-zinc-900
+            className={`${this.state.startButton ? "hidden" : ""} bg-amber-300 w-16 h-16 mx-2 text-zinc-900
             flex justify-center items-center p-0 aspect-square`}
           >
             <StopIcon className="h-14 w-14 fill-white" />
