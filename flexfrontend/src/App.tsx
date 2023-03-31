@@ -1,4 +1,15 @@
-/* Tailwind styles */
+//React imports
+import { useEffect, useState } from 'react';
+
+
+//Util function imports
+import getProfileData from './utils/getProfileData';
+
+//type import
+import { ProfileData, emptyProfileData } from './types/stateTypes';
+
+
+// tailwind imports
 import "./theme/tailwind.css";
 
 
@@ -50,6 +61,11 @@ setupIonicReact();
 const backend = " http://localhost:8000";
 
 const App: React.FC = () => {
+  const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
+  useEffect(() => {
+    getProfileData(setProfileData);
+  }, [getProfileData, setProfileData])
+
   return (
     <IonApp>
       <IonReactRouter>
@@ -86,7 +102,8 @@ const App: React.FC = () => {
             </IonTabButton>
             <IonTabButton tab="profile" href="/profile">
               {/* <IonIcon className="fill-red-600 stroke-red-600" aria-hidden="true" src={personUnfilled} /> */}
-              <IonIcon aria-hidden="true" icon={person} />
+              {/* <IonIcon aria-hidden="true" icon={backend.concat(profileData.profile_photo)} /> */}
+              <img className={`rounded-full border border-sky-300 h-9`} src={backend.concat(profileData.profile_photo)} />
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
