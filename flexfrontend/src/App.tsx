@@ -57,7 +57,7 @@ import "@ionic/react/css/display.css";
 
 setupIonicReact();
 
-const backend = " https://localhost:8000";
+const backend = " http://localhost:8000";
 
 const App: React.FC = () => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
