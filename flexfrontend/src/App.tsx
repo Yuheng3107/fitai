@@ -1,15 +1,24 @@
-/* Tailwind styles */
+//React imports
+import { useEffect, useState } from 'react';
+
+
+//Util function imports
+import getProfileData from './utils/getProfileData';
+
+//type import
+import { ProfileData, emptyProfileData } from './types/stateTypes';
+
+
+// tailwind imports
 import "./theme/tailwind.css";
 
 
-import { Redirect, Route, useParams } from "react-router-dom";
+import { Redirect, Route } from "react-router-dom";
 
 //Ionic Imports
 import {
   IonApp,
   IonIcon,
-  IonLabel,
-  IonImg,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -25,9 +34,10 @@ import {
 
 //Pages Components imports
 import Home from "./pages/Home";
-import Exercise from "./pages/Exercise";
-import Profile from "./pages/Profile";
-import EditProfile from "./pages/EditProfile";
+import Exercise from "./pages/exercise/Exercise";
+import ChooseExercise from './pages/exercise/ChooseExercise';
+import Profile from "./pages/profile/Profile";
+import EditProfile from "./pages/profile/EditProfile";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -50,6 +60,11 @@ setupIonicReact();
 const backend = " http://localhost:8000";
 
 const App: React.FC = () => {
+  const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
+  useEffect(() => {
+    getProfileData(setProfileData);
+  }, [getProfileData, setProfileData])
+
   return (
     <IonApp>
       <IonReactRouter>
@@ -59,6 +74,9 @@ const App: React.FC = () => {
               <Home />
             </Route>
             <Route exact path="/exercise">
+              <ChooseExercise />
+            </Route>
+            <Route exact path="/exercise/placeholder">
               <Exercise />
             </Route>
             <Route exact path="/profile">
@@ -86,7 +104,8 @@ const App: React.FC = () => {
             </IonTabButton>
             <IonTabButton tab="profile" href="/profile">
               {/* <IonIcon className="fill-red-600 stroke-red-600" aria-hidden="true" src={personUnfilled} /> */}
-              <IonIcon aria-hidden="true" icon={person} />
+              {/* <IonIcon aria-hidden="true" icon={backend.concat(profileData.profile_photo)} /> */}
+              <img className={`rounded-full border border-neutral-800 h-9`} src={backend.concat(profileData.profile_photo)} />
             </IonTabButton>
           </IonTabBar>
         </IonTabs>

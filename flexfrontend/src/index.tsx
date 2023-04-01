@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 
 import './theme/tailwind.css';
 
+//Jems' clientID : 251115262243-96f07edno5mjnb3b74bo9r6lve83sddp.apps.googleusercontent.com
 
 //Google auth
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -14,7 +15,7 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId="908101547092-2cg5rblc0ppg7dvn8csk6l8p8ehc6crt.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="251115262243-96f07edno5mjnb3b74bo9r6lve83sddp.apps.googleusercontent.com">
       <App />
     </GoogleOAuthProvider>
   </React.StrictMode >
