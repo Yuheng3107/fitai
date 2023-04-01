@@ -27,12 +27,14 @@ class UserCreateView(APIView):
             user = User.objects.get(email=fields["email"])
             login(request, user)
             response.write("User already in database")
+            print("User already in database")
             return response
         except User.DoesNotExist:
             user = User.objects.create_user(**fields)
             user.save()
             login(request, user)
             response.write("User Successfully Registered")
+            print("User Successfully Registered")
         return response
 
 class UserAllowedView(APIView):

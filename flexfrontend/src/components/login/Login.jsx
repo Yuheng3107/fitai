@@ -87,8 +87,9 @@ function Login(props) {
             // do something with response
             // console.log(response);
             // props.setLoginStatus(true);
-            history.push("/profile/create");
-          });
+            console.log(response);
+            // history.push("/profile/create");
+          })
           // To use fetch API to send POST request to backend here
         })
         .catch((err) => {
