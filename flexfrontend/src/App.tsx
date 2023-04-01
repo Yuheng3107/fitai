@@ -13,14 +13,12 @@ import { ProfileData, emptyProfileData } from './types/stateTypes';
 import "./theme/tailwind.css";
 
 
-import { Redirect, Route, useParams } from "react-router-dom";
+import { Redirect, Route } from "react-router-dom";
 
 //Ionic Imports
 import {
   IonApp,
   IonIcon,
-  IonLabel,
-  IonImg,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -36,9 +34,10 @@ import {
 
 //Pages Components imports
 import Home from "./pages/Home";
-import Exercise from "./pages/Exercise";
-import Profile from "./pages/Profile";
-import EditProfile from "./pages/EditProfile";
+import Exercise from "./pages/exercise/Exercise";
+import ChooseExercise from './pages/exercise/ChooseExercise';
+import Profile from "./pages/profile/Profile";
+import EditProfile from "./pages/profile/EditProfile";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -75,6 +74,9 @@ const App: React.FC = () => {
               <Home />
             </Route>
             <Route exact path="/exercise">
+              <ChooseExercise />
+            </Route>
+            <Route exact path="/exercise/placeholder">
               <Exercise />
             </Route>
             <Route exact path="/profile">

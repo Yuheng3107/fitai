@@ -14,19 +14,19 @@ import {
 } from '@ionic/react';
 
 //Component imports
-import UpdateProfilePic from '../components/profile/UpdateProfilePic';
-import TextInput from '../components/ui/TextInput';
-import TextAreaInput from '../components/ui/TextAreaInput';
+import UpdateProfilePic from '../../components/profile/UpdateProfilePic';
+import TextInput from '../../components/ui/TextInput';
+import TextAreaInput from '../../components/ui/TextAreaInput';
 
-import { backend } from '../App';
-import Button from '../components/ui/Button';
+import { backend } from '../../App';
+import Button from '../../components/ui/Button';
 
 //utils imports
-import getProfileData from '../utils/getProfileData';
+import getProfileData from '../../utils/getProfileData';
 
 
 //types import
-import { ProfileData, emptyProfileData } from '../types/stateTypes';
+import { ProfileData, emptyProfileData } from '../../types/stateTypes';
 
 function EditProfile() {
     const usernameInputRef = useRef<HTMLInputElement>(null);

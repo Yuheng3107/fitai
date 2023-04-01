@@ -31,7 +31,7 @@ class VideoFeed extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      repCount: 0,
+      repCount: 14,
       repFeedback: "sample feedback for Rep 1",
       repFeedbackLog: "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
       generalFeedback: "some stuff general feedback sample",
@@ -85,26 +85,27 @@ class VideoFeed extends Component {
           </Button>
         </form> */}
         <div className="exercise-feedback flex flex-col items-center p-5 w-full">
-          <div className="flex justify-center items-center text-6xl pb-2 text-zinc-900 font-medium
-          aspect-square w-28 border-8 border-sky-700 rounded-full">
-            <span className="block p-0 m-0">{this.state.repCount}</span>
+          <div id="rep-count-container" className="relative bg-green-300">
+            <svg className="w-32 h-32 -rotate-90" viewBox="0 0 200 200">
+              <circle
+                className="stroke-current text-blue-500"
+                stroke="#4A5568"
+                strokeWidth="14"
+                fill="transparent"
+                r="80"
+                cx="50%"
+                cy="50%"
+                style={{
+                  strokeDasharray: `${2 * Math.PI * 80}`,
+                  strokeDashoffset: (10-this.state.repCount)/10 * 2 * Math.PI * 80,
+                  transition: 'stroke-dashoffset 1000ms linear',
+                  strokeLinecap: "round"
+                }}
+              />
+            </svg>
+            <span className="text-6xl p-0 m-0 flex justify-center items-center absolute left-0 top-0 w-32 h-32">{this.state.repCount}</span>
           </div>
-          <svg className="w-28 h-28 -rotate-90">
-            <circle
-              className="stroke-current text-blue-500"
-              stroke="#4A5568"
-              strokeWidth="4"
-              fill="transparent"
-              r="20"
-              cx="24"
-              cy="24"
-              style={{
-                strokeDasharray: 2 * Math.PI * 20,
-                strokeDashoffset: (10-this.state.repCount)/10 * 2 * Math.PI * 20,
-                transition: 'stroke-dashoffset 1000ms linear',
-              }}
-            />
-          </svg>
+
           <TextBox className="flex flex-col justify-between bg-zinc-100 pt-3 pb-0 w-4/5 mt-3">
             {this.state.feedbackLogShowing}{this.state.repFeedback}
             <button onClick={this.toggleFeedbackLog} className="flex flex-row items-center justify-center" id="show-log-button">

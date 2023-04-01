@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 
 //utils imports
-import checkLoginStatus from "../utils/checkLogin";
-import getProfileData from "../utils/getProfileData";
+import checkLoginStatus from "../../utils/checkLogin";
+import getProfileData from "../../utils/getProfileData";
 
 import { googleLogout } from "@react-oauth/google";
 
@@ -21,11 +21,11 @@ import {
 } from "@ionic/react";
 
 //component imports
-import UpdateProfile from "../components/login/UpdateProfile";
-import Login from "../components/login/Login";
-import ProfileInfo from "../components/profile/ProfileInfo";
+import UpdateProfile from "../../components/login/UpdateProfile";
+import Login from "../../components/login/Login";
+import ProfileInfo from "../../components/profile/ProfileInfo";
 
-import { backend } from "../App";
+import { backend } from "../../App";
 
 const Tab3: React.FC = () => {
 
