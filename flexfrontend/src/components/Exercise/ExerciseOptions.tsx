@@ -7,24 +7,12 @@ import UpDownButton from "./UpDownButton";
 
 type Props = {
     startExerciseHandler: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    repDecrementHandler: (event: React.MouseEvent<HTMLButtonElement>)=> void;
+    repIncrementHandler: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    repCountInput: number;
 }
 
-function ExerciseOptions({ startExerciseHandler }: Props) {
-    const [repCountInput, setRepCountInput] = useState(1);
-
-    const repIncrementHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setRepCountInput((prevState) => {
-            return (prevState + 1);
-        })
-    }
-
-    const repDecrementHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
-        if (repCountInput > 1) {
-            setRepCountInput((prevState) => {
-                return (prevState - 1);
-            })
-        }
-    }
+function ExerciseOptions({ startExerciseHandler, repIncrementHandler, repDecrementHandler, repCountInput }: Props) {
 
     return <div className="h-full flex flex-col justify-between">
         <span>These are the exercise options</span>

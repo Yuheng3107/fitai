@@ -31,7 +31,7 @@ class VideoFeed extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      repCount: 14,
+      repCount: 0,
       repFeedback: "sample feedback for Rep 1",
       repFeedbackLog: "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
       generalFeedback: "some stuff general feedback sample",
@@ -85,7 +85,7 @@ class VideoFeed extends Component {
           </Button>
         </form> */}
         <div className="exercise-feedback flex flex-col items-center p-5 w-full">
-          <div id="rep-count-container" className="relative bg-green-300">
+          <div id="rep-count-container" className="relative">
             <svg className="w-32 h-32 -rotate-90" viewBox="0 0 200 200">
               <circle
                 className="stroke-current text-blue-500"
@@ -97,7 +97,8 @@ class VideoFeed extends Component {
                 cy="50%"
                 style={{
                   strokeDasharray: `${2 * Math.PI * 80}`,
-                  strokeDashoffset: (10-this.state.repCount)/10 * 2 * Math.PI * 80,
+                  //This line tells us how much of the ring should be blank
+                  strokeDashoffset: (this.props.repCountInput - this.state.repCount) / this.props.repCountInput * 2 * Math.PI * 80,
                   transition: 'stroke-dashoffset 1000ms linear',
                   strokeLinecap: "round"
                 }}
