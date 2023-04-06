@@ -35,6 +35,12 @@ class ExerciseDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 class ExerciseListView(APIView):
+    def get(self, request):
+        """Get all the exercises"""
+        qs = Exercise.objects.all()
+        serializer = ExerciseSerializer(qs, many=True)
+        return Response(serializer.data)
+
     def post(self, request):
         if "exercises" not in request.data:
             return Response(status=status.HTTP_400_BAD_REQUEST)
