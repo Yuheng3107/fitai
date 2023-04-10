@@ -10,6 +10,7 @@ class Exercise(FeedPost):
     name = models.CharField(max_length=50)
     # To gauge popularity
     perfect_reps = models.PositiveIntegerField(default=0)
+    total_reps = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -21,6 +22,7 @@ class ExerciseStatistics(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     exercise = models.ForeignKey('Exercise', on_delete=models.CASCADE)
     perfect_reps = models.PositiveIntegerField(default=0)
+    total_reps = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.user} stats for {self.exercise}"

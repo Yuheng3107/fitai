@@ -9,7 +9,7 @@ window.onload = async () => {
     const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
     const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
     // get from backend
-    let exercise = getExercise(-1);
+    let exercise = getExercise(4);
 
     // initialise form correction
     init(
@@ -31,7 +31,7 @@ window.onload = async () => {
 }
 
 function getExercise(x) {
-    if (x == -1) return {
+    if (x === -1) return {
         evalPoses: [
             new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ]),
         ],
@@ -47,13 +47,13 @@ function getExercise(x) {
             ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
         ]],
       };
-    if (x == 0) return {
+    if (x === 0) return {
         evalPoses: [new Float32Array([0, 0, 0, 0, 0, 0, 1.378, 0, 0, 0, 0, 0, 0.639, 0, 0, 0])],
         scoreThreshold: 0.7,
         scoreDeviation: 0.02,
         angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0]),
         angleThresholds: [[
-            new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),Float32Array(2),new Float32Array(2),
+            new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
             new Float32Array([0.15, 0.15]),
             new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
             new Float32Array([0.15, 0]),
@@ -68,7 +68,7 @@ function getExercise(x) {
             ["", ""],["", ""],["", ""],
         ]]
       };
-    if (x == 1) return {
+    if (x === 1) return {
         evalPoses: [new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 2.466, 0, 0, 2.430, 0, 0, 0, 0]),new Float32Array(2),new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 2.639, 0, 0, 0, 0, 0, 0, 0,])],
         scoreThreshold: 0.9,
         scoreDeviation: 0.02,
@@ -99,7 +99,7 @@ function getExercise(x) {
         ]
     ],
       };
-    if (x == 2) return {
+    if (x === 2) return {
         evalPoses: [
             new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.702, 0, 0, 1.650]),
         ],
@@ -120,6 +120,54 @@ function getExercise(x) {
             ["", "Sagging back"],
             ["", ""],["", ""],
             ["Not going low enough", ""],
+        ]],
+      };
+    if (x === 3) return {
+        evalPoses: [
+            new Float32Array([0, 0, 0, 0, 0, 0, 1.929, 0, 0, 0, 0, 0, 0.659, 0, 0, 0, ]),
+        ],
+        scoreThreshold: 0.8,
+        scoreDeviation: 0.03,
+        angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0]),
+        angleThresholds: [[
+            new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
+            new Float32Array([0.1, 0.1]),
+            new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
+            new Float32Array([0.1, 0]),
+            new Float32Array(2),new Float32Array(2),new Float32Array(2),
+        ],],
+        minRepTime: 2500,
+        glossary: [
+          [
+            ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
+            ["not low enough", "too low"],
+            ["", ""],["", ""],["", ""],["", ""],["", ""],
+            ["Leaning forward too much", ""],
+            ["", ""],["", ""],["", ""],
+        ]],
+      };
+      if (x === 4) return {
+        evalPoses: [
+            new Float32Array([0, 0, 0, 0, 0, 0, 0, 1.929, 0, 0, 0, 0, 0, 0.659, 0, 0, ]),
+        ],
+        scoreThreshold: 0.8,
+        scoreDeviation: 0.03,
+        angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0]),
+        angleThresholds: [[
+            new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
+            new Float32Array([0.1, 0.1]),
+            new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
+            new Float32Array([0.1, 0]),
+            new Float32Array(2),new Float32Array(2),new Float32Array(2),
+        ],],
+        minRepTime: 2500,
+        glossary: [
+          [
+            ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
+            ["not low enough", "too low"],
+            ["", ""],["", ""],["", ""],
+            ["Leaning forward too much", ""],
+            ["", ""],["", ""],["", ""],
         ]],
       };
   }

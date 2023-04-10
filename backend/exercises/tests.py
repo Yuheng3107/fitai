@@ -227,13 +227,18 @@ class ExerciseStatisticsUpdateViewTests(APITestCase):
     def test_update_exercise_statistics(self):
         """Test that we can update exercise statistics"""
         exercise = baker.make(Exercise)
+        global_perfect_reps = exercise.perfect_reps
+        global_total_reps = exercise.total_reps
+
         url = reverse('update_exercise_statistics')
         user = baker.make('users.AppUser')
         user.exercises.add(exercise)
         perfect_reps_increase = 20
+        total_reps_increase = 10
         data = {
             "exercise_id": exercise.id,
-            "perfect_reps": perfect_reps_increase
+            "perfect_reps": perfect_reps_increase,
+            "total_reps": total_reps_increase
         }
         # Check that data cannot be accessed if you are not logged in
         response = self.client.post(url, data, format='json')
@@ -242,6 +247,10 @@ class ExerciseStatisticsUpdateViewTests(APITestCase):
         # Check that perfect reps change once user is authenticated
         response = self.client.post(url, data, format='json')
         self.assertEqual(ExerciseStatistics.objects.filter(user=user.id).filter(exercise=exercise.id)[0].perfect_reps, perfect_reps_increase)
+        self.assertEqual(ExerciseStatistics.objects.filter(user=user.id).filter(exercise=exercise.id)[0].total_reps, total_reps_increase)
+        exercise = Exercise.objects.get(pk=exercise.id)
+        self.assertEqual(exercise.perfect_reps, perfect_reps_increase + global_perfect_reps)
+        self.assertEqual(exercise.total_reps, total_reps_increase + global_total_reps)
         # Check that view denies malformed requests
         data = {}
         response = self.client.post(url, data, format='json')

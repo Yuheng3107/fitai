@@ -73,14 +73,28 @@ class ExerciseStatisticsUpdateView(APIView):
         if user_id is None or exercise_id is None:
             return Response("Please put user_id and exercise_id",status=status.HTTP_400_BAD_REQUEST)
         perfect_reps = data.get("perfect_reps", None)
-        if perfect_reps is None:
+        total_reps = data.get("total_reps", None)
+        if perfect_reps is None and total_reps is None:
             return Response("Please put number of perfect reps done",status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            exercise = Exercise.objects.get(pk=exercise_id)
+        except Exercise.DoesNotExist:
+            return Response("Please put a valid exercise id", status=status.HTTP_400_BAD_REQUEST)
+
         exercise_statistics = ExerciseStatistics.objects.filter(user=user_id).filter(exercise=exercise_id)
         if not exercise_statistics.exists():
             return Response("Entry does not exist.", status=status.HTTP_400_BAD_REQUEST)
         exercise_statistics = exercise_statistics[0]
-        exercise_statistics.perfect_reps += perfect_reps
+
+        if perfect_reps is not None:
+            exercise_statistics.perfect_reps += perfect_reps
+            exercise.perfect_reps += perfect_reps
+        if total_reps is not None:
+            exercise_statistics.total_reps += total_reps
+            exercise.total_reps += total_reps
         exercise_statistics.save()
+        exercise.save()
         return Response()
     
 class ExerciseStatisticsCreateView(APIView):
