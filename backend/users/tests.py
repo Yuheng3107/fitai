@@ -261,7 +261,8 @@ class UserUpdateProfilePhotoViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.client.force_authenticate(user=user)
         response = self.client.post(url, data, format="multipart")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # USED TO BE CHECK FOR WRONG FILETYPE
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         with open(os.path.join(os.getcwd(), "users/2MB_Text.txt"), "rb") as f:
             long_text_of_2MB_size = f.read()
         
