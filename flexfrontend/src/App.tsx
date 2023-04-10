@@ -33,7 +33,7 @@ import {
 } from "ionicons/icons";
 
 //Pages Components imports
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import Exercise from "./pages/exercise/Exercise";
 import ChooseExercise from './pages/exercise/ChooseExercise';
 import Profile from "./pages/profile/Profile";

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 //ionic imports
 import {
@@ -11,7 +11,15 @@ import VideoFeed from "../../components/Exercise/video";
 import { backend } from "../../App";
 import ExerciseCard from "../../components/Exercise/ExerciseCard";
 
+
 const ChooseExercise = () => {
+
+  const [exerciseCardArray, setExerciseCardArray] = useState([
+    { title: "Squats" },
+    { title: "Pushups" },
+    { title: "humping" }
+  ])
+
   useEffect(() => {
     console.log("useEffect running");
     async function getExercises() {
@@ -39,7 +47,12 @@ const ChooseExercise = () => {
         </IonItem>
         <section id="Exercises-container">
           <p>Exercises</p>
-          <ExerciseCard title="Squats"></ExerciseCard>
+          <div className="flex flex-row">
+            {exerciseCardArray.map((cardInfo) => (
+              <ExerciseCard title={cardInfo.title} />
+            ))}
+          </div>
+
         </section>
       </IonContent>
     </IonPage>

@@ -3,6 +3,9 @@
 //Ionic imports
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 
+//Component imports
+import Feed from '../../components/Feed/Feed';
+
 const Tab1: React.FC = () => {
 
   console.log(process.env.REACT_APP_CLIENTID)
@@ -15,6 +18,7 @@ const Tab1: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="relative">
+        <Feed />
       </IonContent>
     </IonPage>
   );
