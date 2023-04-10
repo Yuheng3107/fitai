@@ -35,14 +35,15 @@ class ExerciseDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 class ExerciseListView(APIView):
-    # def get(self, request):
-    #     """Get all the exercises"""
-    #     qs = Exercise.objects.all()
-    #     serializer = ExerciseSerializer(qs, many=True)
-    #     return Response(serializer.data)
     def get(self, request):
-        """Return a message when a GET request is received"""
+        """Get all the exercises"""
+        qs = Exercise.objects.all()
+        serializer = ExerciseSerializer(qs, many=True)
+        return Response(serializer.data)
+    """
+    def get(self, request):
         return Response({"message": "get request received"})
+    """
     
     def post(self, request):
         if "exercises" not in request.data:

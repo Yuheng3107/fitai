@@ -11,7 +11,7 @@ const poseThreshold = 0.4;
 * Storage for frames
 * @type {Array(n,x)}
 * @param n number of selected frames
-* @param x key angles (11)
+* @param x key angles (16)
 */
 let frameArray;
 
@@ -71,7 +71,7 @@ let keypoints;
 * The correct poses. 
 * @type {Array(3,x)}
 * @param three 0: keypose, 1: start->mid, 2: mid->end
-* @param x key angles (11)
+* @param x key angles (16)
 */
 let evalPoses;
 
@@ -79,7 +79,7 @@ let evalPoses;
 * Text descriptions of each angle mistake
 * @type {Array(3,x,2)}
 * @param three 0: keypose, 1: start->mid, 2: mid->end
-* @param x key angles (11)
+* @param x key angles (16)
 * @param two too large (0) or too small (1)
 */
 let glossary;
@@ -107,7 +107,7 @@ let angleWeights;
 * Differences in angle required for feedback to be given
 * @type {Float32Array(3,x,2)}
 * @param three 0: keypose, 1: start->mid, 2: mid->end
-* @param x key angles (11)
+* @param x key angles (16)
 * @param two too large (0) or too small (1)
 */
 let angleThresholds;
@@ -137,7 +137,7 @@ let repTimeError;
 * Number of times angle was too small
 * @type {Array(3,x)} 
 * @param three 0: keypose, 1: start->mid, 2: mid->end
-* @param x key angles (11)
+* @param x key angles (16)
 */
 let smallErrorCount;
 
@@ -145,7 +145,7 @@ let smallErrorCount;
 * Number of times angle was too large
 * @type {Array(3,x)}
 * @param three 0: keypose, 1: start->mid, 2: mid->end
-* @param x key angles (11)
+* @param x key angles (16)
 */
 let largeErrorCount;
 
@@ -617,27 +617,32 @@ function processData (keypoints) {
 
   // rightHip-rightShoulder-rightElbow
   curPose[0] = calcAngle(negative(lines[6]),lines[2]);
+  curPose[1] = calcAngle(negative(lines[5]),lines[1]);
   // Avg(hip-shoulder-elbow)
-  curPose[1] = calcAvg(curPose[0],calcAngle(negative(lines[5]),lines[1]));
+  curPose[2] = calcAvg(curPose[0],curPose[1]);
   // rightShoulder-rightElbow-rightWrist
-  curPose[2] = calcAngle(lines[2],lines[4]);
+  curPose[3] = calcAngle(lines[2],lines[4]);
+  curPose[4] = calcAngle(lines[1],lines[3]);
   // Avg(shoulder-elbow-wrist)
-  curPose[3] = calcAvg(curPose[2],calcAngle(lines[1],lines[3]));
+  curPose[5] = calcAvg(curPose[3],curPose[4]);
 
   // rightShoulder-rightHip-rightKnee
-  curPose[4] = calcAngle(lines[6],lines[8]);
+  curPose[6] = calcAngle(lines[6],lines[8]);
+  curPose[7] = calcAngle(lines[5],lines[7]);
   // Avg(shoulder-hip-knee)
-  curPose[5] = calcAvg(curPose[4],calcAngle(lines[5],lines[7]));
+  curPose[8] = calcAvg(curPose[6],curPose[7]);
   // rightHip-rightKnee-rightAnkle
-  curPose[6] = calcAngle(lines[8],lines[10]);
+  curPose[9] = calcAngle(lines[8],lines[10]);
+  curPose[10] = calcAngle(lines[7],lines[9]);
   // Avg(hip-knee-ankle)
-  curPose[7] = calcAvg(curPose[6],calcAngle(lines[7],lines[9]));
+  curPose[11] = calcAvg(curPose[9],curPose[10]);
   // vertical-rightHip-rightShoulder
-  curPose[8] = calcAngle(lines[0],negative(lines[6]));
+  curPose[12] = calcAngle(lines[0],negative(lines[6]));
+  curPose[13] = calcAngle(lines[0],negative(lines[5]));
   // Avg(vertical-hip-shoulder)
-  curPose[9] = calcAvg(curPose[8],calcAngle(lines[0],negative(lines[5])));
+  curPose[14] = calcAvg(curPose[12],curPose[13]);
   // vertical-rightHip-rightAnkle
-  curPose[10] = calcAngle(lines[0],lines[11]);
+  curPose[15] = calcAngle(lines[0],lines[11]);
   
   return curPose;
 }
@@ -791,7 +796,7 @@ function negative (x) {
 * @returns {Float32Array} Array with size keyAngles
 */
 function initArray() {
-  return new Float32Array(11);
+  return new Float32Array(16);
 }
 
 /**
@@ -799,7 +804,7 @@ function initArray() {
 * @returns {Int8Array} Array with size keyAngles
 */
 function initIntArray() {
-  return new Uint8Array(11);
+  return new Uint8Array(16);
 }
 
 /**
