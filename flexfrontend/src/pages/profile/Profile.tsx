@@ -59,13 +59,14 @@ const Tab3: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          {loginStatus === true && <button onClick={logOut}>logout</button>}
+          {loginStatus === true && <button onClick={logOut} className="">logout</button>}
+          <IonButton routerLink="/profile/create" routerDirection="forward">Edit Profile</IonButton>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
           <ProfileInfo profileData={profileData} />}
-        <IonButton routerLink="/profile/create" routerDirection="forward">Edit Profile</IonButton>
+        
       </IonContent>
     </IonPage>
   );
