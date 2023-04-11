@@ -6,21 +6,25 @@ import playIcon from '../../assets/svg/play_arrow_FILL1_wght400_GRAD0_opsz48.svg
 import Button from '../ui/Button';
 import PlayIcon from '../../assets/svgComponents/playIcon';
 
+import { backend } from '../../App';
 
-type ExerciseCardProps = {
+export type ExerciseCardProps = {
     className?: string;
-    title: string;
+    name: string;
+    likes: number;
+    media: string;
 }
 
 
-function ExerciseCard({ className, title }: ExerciseCardProps) {
+function ExerciseCard({ className, name, likes, media }: ExerciseCardProps) {
     return <div className={`${className} relative bg-zinc-200 rounded-xl m-3 flex flex-col justify-between h-56 w-44 overflow-hidden`} >
-        <img className="absolute w-full h-full object-cover z-0 grayscale contrast-75 brightness-75" alt="card background image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Marine_Corps_officer_candidate_participate_in_physical_training.jpg/1024px-Marine_Corps_officer_candidate_participate_in_physical_training.jpg"></img>
-        <p className="text-left p-3 text-2xl z-10 text-white">title</p>
+        <img className="absolute w-full h-full object-cover z-0 grayscale contrast-75 brightness-75" alt="card background image"
+            src={backend.concat(media)}></img>
+        <p className="text-left p-3 text-2xl z-10 text-white">{name}</p>
         <div className="flex flex-row justify-between p-2 items-end z-10">
             <div className="flex flex-row items-center">
                 <img src={likeIcon} alt="like icon" className="w-8 h-8 aspect-square invert" />
-                <span className="text-white">42,069</span>
+                <span className="text-white">{likes}</span>
             </div>
             <button
                 className={` bg-blue-400 w-12 h-12 text-zinc-900
