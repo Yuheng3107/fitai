@@ -11,26 +11,35 @@ import VideoFeed from "../../components/Exercise/video";
 import { backend } from "../../App";
 import ExerciseCard from "../../components/Exercise/ExerciseCard";
 
+//type imports
+import { ExerciseCardProps } from "../../components/Exercise/ExerciseCard";
 
 const ChooseExercise = () => {
 
-  const [exerciseCardArray, setExerciseCardArray] = useState([
-    { title: "Squats" },
-    { title: "Pushups" },
-    { title: "humping" }
+  const [exerciseCardArray, setExerciseCardArray] = useState<ExerciseCardProps[]>([
+    {
+      name: "",
+      likes: 0,
+      media: ""
+    }
   ])
 
   useEffect(() => {
     console.log("useEffect running");
+    console.log(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1])
     async function getExercises() {
       try {
-        const response = await fetch(backend.concat('/exericse/list'), {
+        const response = await fetch(backend.concat('/exercises/exercise/list'), {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
-          }
+            "Content-Type": "application/json",
+            "X-CSRFToken": String(
+              document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
+            ),
+          },
         });
         const data = await response.json();
+        setExerciseCardArray(data);
         console.log(data);
       } catch (error) {
         console.error(error);
@@ -49,7 +58,7 @@ const ChooseExercise = () => {
           <p>Exercises</p>
           <div className="flex flex-row">
             {exerciseCardArray.map((cardInfo) => (
-              <ExerciseCard title={cardInfo.title} />
+              <ExerciseCard name={cardInfo.name} likes={cardInfo.likes} media={cardInfo.media} />
             ))}
           </div>
 
