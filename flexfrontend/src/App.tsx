@@ -76,9 +76,9 @@ const App: React.FC = () => {
             <Route exact path="/exercise">
               <ChooseExercise />
             </Route>
-            <Route exact path="/exercise/:exerciseId">
-              <Exercise />
-            </Route>
+            <Route exact path="/exercise/:exerciseId" render={(props) => {
+              return <Exercise {...props} />;
+            }} />
             <Route exact path="/profile">
               <Profile />
             </Route>
@@ -110,7 +110,7 @@ const App: React.FC = () => {
           </IonTabBar>
         </IonTabs>
       </IonReactRouter>
-    </IonApp>
+    </IonApp >
   );
 };
 

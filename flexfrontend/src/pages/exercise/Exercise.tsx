@@ -9,9 +9,16 @@ import {
 //component imports
 import ExerciseOptions from "../../components/Exercise/ExerciseOptions";
 import VideoFeed from "../../components/Exercise/video";
+import { RouteComponentProps } from "react-router";
 
+interface ExercisePageProps
+  extends RouteComponentProps<{
+    exerciseId: string;
+  }> { }
 
-const Tab2: React.FC = () => {
+const ExercisePage: React.FC<ExercisePageProps> = ({ match }) => {
+
+  console.log(match.params.exerciseId);
   const [isExercising, setIsExercising] = useState(false)
   const [repCountInput, setRepCountInput] = useState<number>(1);
 
@@ -45,4 +52,4 @@ const Tab2: React.FC = () => {
   );
 };
 
-export default Tab2;
+export default ExercisePage;
