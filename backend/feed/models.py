@@ -12,7 +12,7 @@ class Post(models.Model):
     posted_at = models.DateTimeField(auto_now=True)
     #likes
     likes = models.PositiveIntegerField(default=0)
-    likers = models.ManyToManyField(User, related_name='%(class)s_likers')
+    likers = models.ManyToManyField(User, related_name='%(class)s_likers', blank=True)
     comments = GenericRelation('feed.Comment', content_type_field='parent_type', object_id_field='parent_id')
 
     class Meta:
