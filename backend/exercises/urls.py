@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ExerciseDetailView, ExerciseUpdateView, ExerciseListView, ExerciseListViewAll, ExerciseStatisticsDetailView, ExerciseStatisticsUpdateView, ExerciseStatisticsCreateView, ExerciseRegimeDetailView, ExerciseRegimeDeleteView, ExerciseRegimeCreateView, ExerciseRegimeUpdateView
+from .views import ExerciseDetailView, ExerciseUpdateView, ExerciseListView, ExerciseStatisticsDetailView, ExerciseStatisticsUpdateView, ExerciseStatisticsCreateView, ExerciseRegimeDetailView, ExerciseRegimeDeleteView, ExerciseRegimeCreateView, ExerciseRegimeUpdateView
 from .views import ExerciseLikesUpdateView, ExerciseLikesDeleteView, ExerciseTagsUpdateView, ExerciseTagsDeleteView, ExerciseShareUpdateView, ExerciseShareDeleteView, ExerciseMediaUpdateView, ExerciseMediaDeleteView
 from .views import ExerciseRegimeLikesUpdateView, ExerciseRegimeLikesDeleteView, ExerciseRegimeTagsUpdateView, ExerciseRegimeTagsDeleteView, ExerciseRegimeShareUpdateView, ExerciseRegimeShareDeleteView, ExerciseRegimeMediaUpdateView, ExerciseRegimeMediaDeleteView
 urlpatterns = [
@@ -7,7 +7,6 @@ urlpatterns = [
     path('exercise/update', ExerciseUpdateView.as_view(), name='update_exercise'),
     path('exercise/<int:pk>', ExerciseDetailView.as_view(), name='exercise_detail'),
     path('exercise/list', ExerciseListView.as_view(), name='exercise_list'),
-    path('exercise/list/all', ExerciseListViewAll.as_view(), name='exercise_list_all'),
     path('exercise/update/tags', ExerciseTagsUpdateView.as_view(), name='update_exercise_tags'),
     path('exercise/update/likes', ExerciseLikesUpdateView.as_view(), name='update_exercise_likes'),
     path('exercise/delete/tags/<int:pk_post>/<slug:tag_name>', ExerciseTagsDeleteView.as_view(), name='delete_exercise_tags'),

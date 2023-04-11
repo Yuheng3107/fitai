@@ -196,11 +196,9 @@ class ExerciseListViewTests(APITestCase):
             self.assertEquals(exercise.id, retrieved_exercise["id"])
             self.assertEquals(exercise.text, retrieved_exercise["text"])
             self.assertEquals(exercise.name, retrieved_exercise["name"])
-
-class ExerciseListAllViewTests(APITestCase):
     def test_get_exercise_all(self):
-        url = reverse('exercise_list_all')
-        exercise_no = 3
+        url = reverse('exercise_list')
+        exercise_no = 2
         exercises = [baker.make(Exercise) for i in range(exercise_no)]
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -210,6 +208,7 @@ class ExerciseListAllViewTests(APITestCase):
             self.assertEquals(exercise.id, retrieved_exercise["id"])
             self.assertEquals(exercise.text, retrieved_exercise["text"])
             self.assertEquals(exercise.name, retrieved_exercise["name"])
+
             
 class ExerciseStatisticsDetailViewTests(APITestCase):
     def test_get_exercise_statistics(self):

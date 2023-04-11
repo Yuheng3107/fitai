@@ -34,7 +34,6 @@ class UserCreateView(APIView):
             user.save()
             login(request, user)
             response.write("User Successfully Registered")
-            print("User Successfully Registered")
         return response
 
 class UserAllowedView(APIView):

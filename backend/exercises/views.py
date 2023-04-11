@@ -4,7 +4,7 @@ from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseS
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from feed.views import TagsUpdateView, TagsDeleteView, LikesUpdateView, LikesDeleteView, ShareUpdateView, ShareDeleteView, MediaUpdateView, MediaDeleteView
+from feed.views import TagsUpdateView, TagsDeleteView, LikesUpdateView, LikesDeleteView, ShareUpdateView, ShareDeleteView, MediaUpdateView, MediaDeleteView #type: ignore
 # Create your views here.
 
 class ExerciseUpdateView(APIView):
@@ -41,14 +41,12 @@ class ExerciseListView(APIView):
         exercises = Exercise.objects.filter(pk__in=request.data["exercises"])
         serializer = ExerciseSerializer(exercises, many=True)
         return Response(serializer.data)
-
-class ExerciseListViewAll(APIView):
+    
     def get(self, request):
-        """Get all the exercises"""
         qs = Exercise.objects.all()
         serializer = ExerciseSerializer(qs, many=True)
-        return Response(serializer.data)    
-    
+        return Response(serializer.data)
+
 class ExerciseStatisticsDetailView(APIView):
     def get(self, request, pk):
         if not request.user.is_authenticated:
