@@ -7,22 +7,28 @@ import {
   IonItem
 } from "@ionic/react";
 
-import VideoFeed from "../../components/Exercise/video";
 import { backend } from "../../App";
 import ExerciseCard from "../../components/Exercise/ExerciseCard";
 
-//type imports
-import { ExerciseCardProps } from "../../components/Exercise/ExerciseCard";
+type ExerciseInfo = {
+  id: number;
+  likers: number[];
+  likes:number;
+  media: string;
+  name: string;
+  perfect_reps: number;
+  posted_at: "string";
+  poster: number;
+  shared_id: number;
+  shared_type: number;
+  tags: string[];
+  text: string;
+  total_reps: number;
+}
 
 const ChooseExercise = () => {
 
-  const [exerciseCardArray, setExerciseCardArray] = useState<ExerciseCardProps[]>([
-    {
-      name: "",
-      likes: 0,
-      media: ""
-    }
-  ])
+  const [exerciseCardArray, setExerciseCardArray] = useState<ExerciseInfo[]>([])
 
   useEffect(() => {
     console.log("useEffect running");
@@ -40,6 +46,7 @@ const ChooseExercise = () => {
         });
         const data = await response.json();
         setExerciseCardArray(data);
+
         console.log(data);
       } catch (error) {
         console.error(error);
@@ -48,6 +55,11 @@ const ChooseExercise = () => {
 
     getExercises();
   }, [backend])
+
+
+  for (let card of exerciseCardArray) {
+    console.log(card)
+  }
   return (
     <IonPage>
       <IonContent fullscreen>
@@ -58,7 +70,7 @@ const ChooseExercise = () => {
           <p>Exercises</p>
           <div className="flex flex-row">
             {exerciseCardArray.map((cardInfo) => (
-              <ExerciseCard name={cardInfo.name} likes={cardInfo.likes} media={cardInfo.media} />
+              <ExerciseCard name={cardInfo.name} likes={cardInfo.likes} media={cardInfo.media} exerciseId={cardInfo.id} />
             ))}
           </div>
 

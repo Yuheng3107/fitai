@@ -6,6 +6,7 @@ import Webcam from "react-webcam";
 //components
 import Button from "../ui/Button";
 import TextBox from "../ui/TextBox";
+import StartEndButton from "./StartEndButton";
 
 //assets
 import expandIcon from '../../assets/svg/expand-icon.svg'
@@ -20,6 +21,7 @@ import "@tensorflow/tfjs-backend-webgl";
 
 //formCorrection
 import * as formCorrection from "../../utils/formCorrection";
+import getExercise from "../../utils/ExerciseAlgo/exericseAlgo";
 
 let feedback = new Array();
 let isActive = false;
@@ -70,20 +72,6 @@ class VideoFeed extends Component {
     return (
       <div className="relative h-full">
         <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
-        {/* <form className="flex flex-row items-center justify-center mt-3 " id="changeExercise">
-          <Select className="form-select" name="exerciseId" id="changeExercise">
-            <option selected value="0">
-              Squat (Right Side)
-            </option>
-            <option value="1">Squat (Front)</option>
-            <option value="2">Push-Up (Right Side)</option>
-          </Select>
-          <Button className=" dark:border dark:border-zinc-100"
-            type="submit"
-            value="Start Exercise">
-            Start Exercise
-          </Button>
-        </form> */}
         <div className="exercise-feedback flex flex-col items-center p-5 w-full">
           <div id="rep-count-container" className="relative">
             <svg className="w-32 h-32 -rotate-90" viewBox="0 0 200 200">
@@ -122,32 +110,7 @@ class VideoFeed extends Component {
 
 
         </div>
-        <div id="button-container" className="absolute bottom-10 w-screen flex justify-center">
-          <Button
-            onClick={() => {
-              this.start();
-              this.setState({
-                startButton: false
-              })
-            }}
-            className={`${this.state.startButton ? "" : "hidden"} bg-blue-400 w-16 h-16 mx-2 text-zinc-900
-            flex justify-center items-center p-0 aspect-square`}
-          >
-            <PlayIcon className="h-14 w-14 fill-white" />
-          </Button>
-          <Button
-            onClick={() => {
-              this.end();
-              this.setState({
-                startButton: true
-              })
-            }}
-            className={`${this.state.startButton ? "hidden" : ""} bg-amber-300 w-16 h-16 mx-2 text-zinc-900
-            flex justify-center items-center p-0 aspect-square`}
-          >
-            <StopIcon className="h-14 w-14 fill-white" />
-          </Button>
-        </div>
+        <StartEndButton start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} />
         <img src="" alt="" ref={this.image} />
       </div>
     );
@@ -183,7 +146,7 @@ class VideoFeed extends Component {
     feedback = ["", ""];
 
     // get from backend
-    let exercise = getExercise(0);
+    let exercise = getExercise(1);
 
     // initialise form correction
     formCorrection.init(
@@ -280,146 +243,6 @@ const textToSpeech = () => {
  * @param {Object} x
  * @returns Exercise Parameters
  */
-function getExercise(x) {
-  if (x === -1) return {
-      evalPoses: [
-          new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ]),
-      ],
-      scoreThreshold: 0.6,
-      scoreDeviation: 0.005,
-      angleWeights: new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
-      angleThresholds: [[
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-      ],],
-      minRepTime: 1500,
-      glossary: [
-        [
-          ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
-      ]],
-    };
-  if (x === 0) return {
-      evalPoses: [new Float32Array([0, 0, 0, 0, 0, 0, 1.378, 0, 0, 0, 0, 0, 0.639, 0, 0, 0])],
-      scoreThreshold: 0.7,
-      scoreDeviation: 0.02,
-      angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0]),
-      angleThresholds: [[
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.15, 0.15]),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.15, 0]),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),
-      ]],
-      minRepTime: 2000,
-      glossary: [[
-          ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
-          ["Squat not low enough", "Squat too low"],
-          ["", ""],["", ""],["", ""],["", ""],["", ""],
-          ["Leaning forward too much", ""],
-          ["", ""],["", ""],["", ""],
-      ]]
-    };
-  if (x === 1) return {
-      evalPoses: [new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 2.466, 0, 0, 2.430, 0, 0, 0, 0]),new Float32Array(2),new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 2.639, 0, 0, 0, 0, 0, 0, 0,])],
-      scoreThreshold: 0.9,
-      scoreDeviation: 0.02,
-      angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0]),
-      angleThresholds: [[
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.2, 0]),
-          new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.25, 0.25]),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-      ],[],[
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0, 0.1]),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-      ]
-  ],
-      minRepTime: 2000,
-      glossary: [[
-          ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
-          ["Knees collapse inwards but its mid rep", ""],
-          ["", ""],["", ""],
-          ["Squat not low enough", "Squat too low"],
-          ["", ""],["", ""],["", ""],["", ""],
-      ],[],[
-          ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
-          ["", "Knees collapse inwards"],
-          ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
-      ]
-  ],
-    };
-  if (x === 2) return {
-      evalPoses: [
-          new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.702, 0, 0, 1.650]),
-      ],
-      scoreThreshold: 0.6,
-      scoreDeviation: 0.005,
-      angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 10]),
-      angleThresholds: [[
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0, 0.1]),
-          new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.1, 0]),
-      ],],
-      minRepTime: 1500,
-      glossary: [
-        [
-          ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
-          ["", "Sagging back"],
-          ["", ""],["", ""],
-          ["Not going low enough", ""],
-      ]],
-    };
-  if (x === 3) return {
-      evalPoses: [
-          new Float32Array([0, 0, 0, 0, 0, 0, 1.929, 0, 0, 0, 0, 0, 0.659, 0, 0, 0, ]),
-      ],
-      scoreThreshold: 0.8,
-      scoreDeviation: 0.03,
-      angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0]),
-      angleThresholds: [[
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.1, 0.1]),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.1, 0]),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),
-      ],],
-      minRepTime: 2500,
-      glossary: [
-        [
-          ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
-          ["not low enough", "too low"],
-          ["", ""],["", ""],["", ""],["", ""],["", ""],
-          ["Leaning forward too much", ""],
-          ["", ""],["", ""],["", ""],
-      ]],
-    };
-    if (x === 4) return {
-      evalPoses: [
-          new Float32Array([0, 0, 0, 0, 0, 0, 0, 1.929, 0, 0, 0, 0, 0, 0.659, 0, 0, ]),
-      ],
-      scoreThreshold: 0.8,
-      scoreDeviation: 0.03,
-      angleWeights: new Float32Array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0]),
-      angleThresholds: [[
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.1, 0.1]),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),new Float32Array(2),
-          new Float32Array([0.1, 0]),
-          new Float32Array(2),new Float32Array(2),new Float32Array(2),
-      ],],
-      minRepTime: 2500,
-      glossary: [
-        [
-          ["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],["", ""],
-          ["not low enough", "too low"],
-          ["", ""],["", ""],["", ""],
-          ["Leaning forward too much", ""],
-          ["", ""],["", ""],["", ""],
-      ]],
-    };
-}
+
 
 export default VideoFeed;

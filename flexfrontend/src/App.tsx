@@ -76,7 +76,7 @@ const App: React.FC = () => {
             <Route exact path="/exercise">
               <ChooseExercise />
             </Route>
-            <Route exact path="/exercise/placeholder">
+            <Route exact path="/exercise/:exerciseId">
               <Exercise />
             </Route>
             <Route exact path="/profile">
