@@ -7,4 +7,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         fields = ['username', 'email', 'profile_photo', 'achievements']
-        
+
