@@ -106,7 +106,7 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
       </div>
     </div>
   ) : (
-    <div>
+    <div className="flex flex-col items-center justify-evenly">
       <ToggleBar isTrend={isTrend} setTrend={setTrend}></ToggleBar>
     </div>
   );
