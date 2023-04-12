@@ -7,6 +7,7 @@ User = get_user_model()
 # Create your models here.
 
 class Exercise(FeedPost):
+    title = None
     name = models.CharField(max_length=50)
     # To gauge popularity
     perfect_reps = models.PositiveIntegerField(default=0)

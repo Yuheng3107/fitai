@@ -12,7 +12,7 @@ from rest_framework.test import APITestCase
 import json
 
 from .models import UserPost, CommunityPost, Comment, Tags
-from exercises.models import Exercise
+from exercises.models import Exercise # type: ignore
 # Create your tests here.
 
 
@@ -217,9 +217,11 @@ class UserPostCreateViewTests(APITestCase):
         user = User.objects.create_user(
             email='testuser@gmail.com', password='12345')
         text = "Test UserPost Content"
+        title = "Test Title"
         data = {
             "text": text,
             "privacy_level": 1,
+            "title": title
         }
         # Check that data cannot be accessed if you are not logged in
         response = self.client.post(url, data, format='json')

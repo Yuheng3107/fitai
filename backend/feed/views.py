@@ -14,7 +14,7 @@ class UserPostCreateView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
-        check_fields = ["text"]
+        check_fields = ["text", "title"]
         # Check that all the required data is in the post request
         for field in check_fields:
             if field not in request.data:
@@ -24,7 +24,7 @@ class UserPostCreateView(APIView):
             # Check for media type
             # if request.data["media"]
         
-        create_fields = ["text", "shared_id", "privacy_level"]
+        create_fields = ["text", "shared_id", "privacy_level", "title"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in UserPost
         UserPost.objects.create(poster=request.user, **fields)
@@ -53,7 +53,7 @@ class UserPostUpdateView(APIView):
             return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED) 
 
         # Check for valid content type
-        update_fields = ["text", "privacy_level"]
+        update_fields = ["text", "privacy_level", "title"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to update in UserPost
         UserPost.objects.filter(pk=request.data["id"]).update(**fields)
