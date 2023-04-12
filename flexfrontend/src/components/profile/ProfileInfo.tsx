@@ -4,6 +4,9 @@ import { backend } from "../../App";
 
 import ToggleBar from "./ToggleBar";
 import Achievements from "./Achievements";
+import KeyStats from "./KeyStats";
+import ProfilePic from "./ProfilePic";
+
 type ProfileInfoProps = {
   profileData: {
     achievements: any[];
@@ -26,33 +29,15 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
   console.log(profileData?.username);
   return isTrend ? (
     <div id="userInfo" className="flex flex-col items-center justify-evenly">
-      <img className="rounded-full w-1/3 mt-2 p-1" src={imageUrl} />
+      <ProfilePic imageUrl={imageUrl}></ProfilePic>
       <span id="username" className="text-3xl">
         {profileData?.username}
       </span>
 
       <Achievements achievements={profileData?.achievements}></Achievements>
-      <div
-        id="user-stats"
-        className="flex flex-row items-center justify-evenly w-full"
-      >
-        <div id="reps" className="flex flex-col items-center justify-evenly">
-          <span className="text-xl font-semibold m-0">12.4k</span>
-          <span className="text-l m-0">Repetitions</span>
-        </div>
-        <div id="perfect" className="flex flex-col items-center justify-evenly">
-          <span className="text-xl font-semibold">94%</span>
-          <span className="text-l">Perfect</span>
-        </div>
-        <div
-          id="followers"
-          className="flex flex-col items-center justify-evenly"
-        >
-          <span className="text-xl font-semibold">69</span>
-          <span className="text-l">Followers</span>
-        </div>
-      </div>
+      <KeyStats></KeyStats>
       <ToggleBar isTrend={isTrend} setTrend={setTrend}></ToggleBar>
+
       <div
         id="exercise-stats"
         className="flex flex-col justify-start w-full mt-2 h-screen px-10"
