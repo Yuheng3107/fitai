@@ -38,6 +38,7 @@ import Exercise from "./pages/exercise/Exercise";
 import ChooseExercise from './pages/exercise/ChooseExercise';
 import Profile from "./pages/profile/Profile";
 import EditProfile from "./pages/profile/EditProfile";
+import CreatePost from './pages/post/CreatePost';
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -72,6 +73,9 @@ const App: React.FC = () => {
           <IonRouterOutlet>
             <Route exact path="/home">
               <Home />
+            </Route>
+            <Route exact path="/post/create">
+              <CreatePost />
             </Route>
             <Route exact path="/exercise">
               <ChooseExercise />
