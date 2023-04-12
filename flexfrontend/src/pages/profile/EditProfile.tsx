@@ -49,7 +49,8 @@ function EditProfile() {
             },
             credentials: "include",
             body: JSON.stringify({
-                username: usernameInputRef.current?.value
+                username: usernameInputRef.current?.value,
+                bio: bioInputRef.current?.value
             }),
         }).then((response) => {
             // do something with response

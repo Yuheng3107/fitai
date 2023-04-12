@@ -24,13 +24,19 @@ import {
 import UpdateProfile from "../../components/login/UpdateProfile";
 import Login from "../../components/login/Login";
 import ProfileInfo from "../../components/profile/ProfileInfo";
+import ToggleBar from "../../components/profile/ToggleBar";
+import Trend from "../../components/profile/Trend";
+import UserFeed from "../../components/profile/UserFeed";
 
 import { backend } from "../../App";
+import { profile } from "console";
 
-const Tab3: React.FC = () => {
-
-  const [loginStatus, setLoginStatus] = useState(false);
+const Tab3: React.FC = () => {  
   const [profileData, setProfileData] = useState(null);
+  const [trendData, setTrendData] = useState(null);
+  const [userFeedData, setUserFeedData] = useState(null);
+  const [loginStatus, setLoginStatus] = useState(false);
+  const [isTrend, setTrend] = useState(true);
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
@@ -40,6 +46,7 @@ const Tab3: React.FC = () => {
     if (loginStatus && profileData === null) {
       getProfileData(setProfileData);
     }
+    
   }, [
     loginStatus,
     setLoginStatus,
@@ -62,7 +69,12 @@ const Tab3: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen>
         {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
-          <ProfileInfo profileData={profileData} />}
+          <div>
+            <ProfileInfo profileData={profileData} isTrend={isTrend}/>
+            <ToggleBar isTrend={isTrend} setTrend={setTrend} />
+            {isTrend === true ? <Trend trendData={trendData}/> : <UserFeed userFeedData={userFeedData}/>}
+          </div>
+        }
         <IonButton routerLink="/profile/create" routerDirection="forward">Edit Profile</IonButton>
       </IonContent>
     </IonPage>

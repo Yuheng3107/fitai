@@ -8,7 +8,7 @@ from .managers import AppUserManager
 class AppUser(AbstractUser):
 
     # Sets username to anything the user sets to be, blank=True makes username optional in forms
-    username = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    username = models.CharField(max_length=50, blank=True, unique=True, null=True)
     # Removes need to put password as auth is done using Social Login
     email = models.EmailField(_('email address'), max_length=100, unique=True)
     profile_photo = models.ImageField(blank=True, null=True)
@@ -18,6 +18,7 @@ class AppUser(AbstractUser):
     USERNAME_FIELD = 'email'
     # Makes username required when making superuser
     REQUIRED_FIELDS = ['username']
+    bio = models.CharField(max_length=1000, blank=True)
 
     ########
     # Relations

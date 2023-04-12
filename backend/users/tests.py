@@ -133,7 +133,7 @@ class UserCreateViewTests(APITestCase):
         data = {
             "first_name": "User",
             "last_name": "Test",
-            "email": "testuser@gmail.com"
+            "email": "testuser@gmail.com",
         }
         response = self.client.post(url, data)
         User = get_user_model()
@@ -239,10 +239,12 @@ class UserUpdateViewTests(APITestCase):
         updated_username = "Updated Username"
         updated_privacy_level = 1
         updated_email = "test@testuser.com"
+        updated_bio = "IM SUPER GAY"
         data = {
             "username": updated_username,
             "privacy_level": updated_privacy_level,
-            "email": updated_email
+            "email": updated_email,
+            "bio": updated_bio
         }
         response = self.client.post(url, data)
         user = User.objects.get(pk=user.id)
@@ -250,6 +252,7 @@ class UserUpdateViewTests(APITestCase):
         self.assertEqual(user.username, updated_username)
         self.assertEqual(user.privacy_level, updated_privacy_level)
         self.assertEqual(user.email, updated_email)
+        self.assertEqual(user.bio, updated_bio)
         
 class UserUpdateProfilePhotoViewTest(APITestCase):
     def test_upload_photo(self):

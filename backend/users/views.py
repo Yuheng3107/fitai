@@ -65,7 +65,7 @@ class UserUpdateView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         if (len(request.data) == 0 or "id" in request.data):
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        fields = ["username", "privacy_level", "email"]
+        fields = ["username", "privacy_level", "email", "bio"]
         fields = {field: request.data[field] for field in fields if field in request.data}
         User = get_user_model()
         # Update the user with the new fields
