@@ -26,7 +26,7 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
   return (
     <div id="userInfo" className="flex flex-col items-center justify-evenly">
       <img
-        className="rounded-full border border-indigo-500 w-2/5"
+        className="rounded-full w-1/3 mt-2 p-1"
         src={imageUrl}
       />
       <span id="username" className="text-3xl">
