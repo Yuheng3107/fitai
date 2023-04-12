@@ -58,9 +58,7 @@ const Tab3: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          {loginStatus === true && <button onClick={logOut}>logout</button>}
-        </IonToolbar>
+
       </IonHeader>
       <IonContent fullscreen>
         {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
