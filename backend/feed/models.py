@@ -22,7 +22,7 @@ class FeedPost(Post):
     text = models.CharField(max_length=10000, default="")
     media = models.FileField(blank=True, null=True)
     tags = models.ManyToManyField('feed.Tags', blank=True)
-
+    title = models.CharField(max_length=1000)
     # Generic Foreign Key
     shared_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, default=None, blank=True, null=True)
     # Target Table must have a key that is a positive integer
