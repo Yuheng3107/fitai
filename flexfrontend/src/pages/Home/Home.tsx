@@ -6,9 +6,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/rea
 //Component imports
 import Feed from '../../components/Feed/Feed';
 
-const Tab1: React.FC = () => {
-
-  console.log(process.env.REACT_APP_CLIENTID)
+const Home: React.FC = () => {
 
   return (
     <IonPage>
@@ -24,4 +22,4 @@ const Tab1: React.FC = () => {
   );
 };
 
-export default Tab1;
+export default Home;
