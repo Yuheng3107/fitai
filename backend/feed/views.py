@@ -53,7 +53,7 @@ class UserPostUpdateView(APIView):
             return Response("Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED) 
 
         # Check for valid content type
-        update_fields = ["text", "privacy_level"]
+        update_fields = ["text", "privacy_level", "title"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to update in UserPost
         UserPost.objects.filter(pk=request.data["id"]).update(**fields)
