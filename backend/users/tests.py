@@ -278,7 +278,9 @@ class UserUpdateProfilePhotoViewTest(APITestCase):
         dir_path = os.path.join(dir_path, 'static/media')
         files = os.listdir(dir_path)
         for file in files:
-            os.remove(os.path.join(dir_path, file))
+            if file.endswith('.jpg'):
+                os.remove(os.path.join(dir_path, file))
+            
 
 class UserFollowingListView(APITestCase):
     def test_get_user_following_list(self):
