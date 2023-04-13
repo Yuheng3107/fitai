@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import {useHistory} from 'react-router-dom';
 
 import {
   googleLogout,
@@ -14,8 +13,6 @@ import googleIcon from "../../assets/svg/google-icon.svg";
 import { backend } from "../../App";
 
 function Login(props) {
-
-  const history = useHistory();
 
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
@@ -66,7 +63,6 @@ function Login(props) {
         )
         .then((res) => {
           console.log(res);
-          setProfile(res.data);
           let last_name = res.data.family_name;
           let first_name = res.data.given_name;
           let email = res.data.email;
@@ -84,11 +80,8 @@ function Login(props) {
             },
             body: JSON.stringify(data),
           }).then((response) => {
-            // do something with response
-            // console.log(response);
-            // props.setLoginStatus(true);
             console.log(response);
-            // history.push("/profile/create");
+            props.setUpdateProfileState(props.updateProfileState + 1);
           })
           // To use fetch API to send POST request to backend here
         })

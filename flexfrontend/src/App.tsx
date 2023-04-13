@@ -86,7 +86,7 @@ const App: React.FC = () => {
               return <Exercise {...props} />;
             }} />
             <Route exact path="/profile">
-              <Profile updateProfileState = {updateProfileState} />
+              <Profile updateProfileState = {updateProfileState} setUpdateProfileState = {setUpdateProfileState}/>
             </Route>
             <Route exact path='/profile/create/'>
               <EditProfile setUpdateProfileState = {setUpdateProfileState} updateProfileState = {updateProfileState} />
