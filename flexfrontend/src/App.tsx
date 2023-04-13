@@ -66,7 +66,7 @@ const App: React.FC = () => {
   useEffect(() => {
     console.log('getprofiledata running from App.tsx')
     getProfileData(setProfileData);
-  }, [getProfileData, setProfileData])
+  }, [getProfileData, setProfileData, updateProfileState])
 
   return (
     <IonApp>
