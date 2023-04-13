@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 import { backend } from "../../App";
-
+import PersonTextCard from "../Feed/PersonTextCard";
 type UserFeedProps = {
-  userFeedData: {
-
-  } | null;
+  userFeedData: {} | null;
 };
 
 const UserFeed = ({ userFeedData }: UserFeedProps) => {
@@ -14,11 +12,9 @@ const UserFeed = ({ userFeedData }: UserFeedProps) => {
       id="userFeed"
       className="flex flex-col justify-start w-full mt-2 h-full px-5"
     >
-      <div>
-        PLACEHOLDERS
-      </div>
+      <PersonTextCard></PersonTextCard>
     </div>
-  )
+  );
 };
 
 export default UserFeed;
