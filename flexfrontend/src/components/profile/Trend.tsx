@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-import { backend } from "../../App";
-
 import { TrendData } from "../../types/stateTypes";
+import { exercises } from "../../App";
 
 type TrendDataProps = {
   trendData: TrendData;
@@ -19,13 +18,13 @@ const Trend = ({ trendData }: TrendDataProps) => {
           className="flex flex-col border border-zinc-500 p-2 rounded-lg h-full w-5/12"
         >
           <span className="text-xs">Favourite Exercise</span>
-          <span className="text-2xl">Squats</span>
+          <span className="text-xl">{trendData?.favorite_exercise?.exercise === null ? "None" : exercises[trendData?.favorite_exercise?.exercise]}</span>
           <div>
-            <span className="text-sm font-semibold">9320</span>
+            <span className="text-sm font-semibold">{trendData?.favorite_exercise?.total_reps === null ? "0" : trendData?.favorite_exercise?.total_reps}</span>
             <span className="text-xs"> Reps</span>
           </div>
           <div>
-            <span className="text-sm font-semibold">89%</span>
+            <span className="text-sm font-semibold">{trendData?.favorite_exercise?.perfect_reps === null ? "0" : Math.round(trendData?.favorite_exercise?.perfect_reps / trendData?.favorite_exercise?.total_reps*100)}%</span>
             <span className="text-xs"> Perfect</span>
           </div>
         </div>
@@ -35,7 +34,7 @@ const Trend = ({ trendData }: TrendDataProps) => {
             className="flex flex-col border border-zinc-500 p-2 rounded-lg"
           >
             <span className="text-xs">Longest Streak&#9889;</span>
-            <span className="text-xl">324 days</span>
+            <span className="text-xl">{trendData?.streak} days</span>
           </div>
           <div
             id="calories"
@@ -56,7 +55,7 @@ const Trend = ({ trendData }: TrendDataProps) => {
           className="flex flex-col border border-zinc-500 p-2 rounded-lg w-full"
         >
           <span className="text-xs">Favourite Workout</span>
-          <span className="text-3xl">HIIT</span>
+          <span className="text-2xl">HIIT</span>
           <div>
             <span className="text-sm font-semibold">42</span>
             <span className="text-xs"> Times</span>

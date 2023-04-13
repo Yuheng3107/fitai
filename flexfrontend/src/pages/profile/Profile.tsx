@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
-import { getProfileDataAsync } from "../../utils/getProfileData";
+import { getProfileDataAsync, getFavoriteExerciseAsync } from "../../utils/getProfileData";
 
 import { googleLogout } from "@react-oauth/google";
 import { TrendData, emptyTrendData, ProfileData, emptyProfileData } from "../../types/stateTypes";
@@ -31,8 +31,6 @@ type ProfileProps = {
   updateProfileState: number;
   setUpdateProfileState: (arg: number) => void;
 }
-//used to prevent spam logging in on a loop
-let profileDataObtained = false;
 
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
@@ -47,21 +45,19 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
 
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
-      console.log(data);
-      console.log(profileData);
-      
-      setProfileData(data);
-      setTrendData({
-        calories_burnt: data?.calories_burnt,
-        exercise_regimes: data?.exercise_regimes,
-        exercises: data?.exercises,
-      });
+      data.favorite_exercise = await getFavoriteExerciseAsync(data.id);
+      if (profileData['username'] !== data.username ||
+        profileData['email'] !== data.email ||
+        profileData['profile_photo'] !== data['profile_photo'] ||
+        profileData['bio'] !== data.bio) {
+        setProfileData(data)
+      }
+      setTrendData(data);
     }
 
     
-    if (loginStatus && profileDataObtained === false) {
+    if (loginStatus) {
       obtainProfileData();
-      profileDataObtained = true;
     }
   }, [
     loginStatus,
