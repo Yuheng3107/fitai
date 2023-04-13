@@ -62,7 +62,9 @@ const backend = " http://localhost:8000";
 
 const App: React.FC = () => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
+  const [updateProfileState, setUpdateProfileState] = useState(0);
   useEffect(() => {
+    console.log('getprofiledata running from App.tsx')
     getProfileData(setProfileData);
   }, [getProfileData, setProfileData])
 
@@ -84,10 +86,10 @@ const App: React.FC = () => {
               return <Exercise {...props} />;
             }} />
             <Route exact path="/profile">
-              <Profile />
+              <Profile updateProfileState = {updateProfileState} />
             </Route>
             <Route exact path='/profile/create/'>
-              <EditProfile />
+              <EditProfile setUpdateProfileState = {setUpdateProfileState} updateProfileState = {updateProfileState} />
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />

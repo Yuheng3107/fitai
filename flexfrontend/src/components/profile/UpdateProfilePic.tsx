@@ -22,8 +22,13 @@ import EditSquareIcon from '../../assets/svgComponents/editSquareIcon';
 //component imports
 import Button from '../ui/Button';
 
+type UpdateProfilePicProps = {
+    setUpdateProfileState: (newState:number) => void;
+    updateProfileState: number;
+}
+
 //functional component
-const UpdateProfilePic = () => {
+const UpdateProfilePic = ({setUpdateProfileState, updateProfileState}: UpdateProfilePicProps) => {
     const history = useHistory();
 
     const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -95,8 +100,8 @@ const UpdateProfilePic = () => {
             })
                 .then((response) => {
                     // do something with response
+                    setUpdateProfileState(updateProfileState + 1);
                     history.push('/profile');
-                    console.log(response);
                 })
                 .catch((err) => {
                     console.log(err);

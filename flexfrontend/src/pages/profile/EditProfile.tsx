@@ -28,7 +28,12 @@ import getProfileData from '../../utils/getProfileData';
 //types import
 import { ProfileData, emptyProfileData } from '../../types/stateTypes';
 
-function EditProfile() {
+type EditProfileProps = {
+    setUpdateProfileState: (newState: number) => void;
+    updateProfileState: number;
+}
+
+function EditProfile({ setUpdateProfileState, updateProfileState }: EditProfileProps) {
     const usernameInputRef = useRef<HTMLInputElement>(null);
     const bioInputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -69,7 +74,7 @@ function EditProfile() {
         </IonHeader>
         <IonContent >
             <div className="p-10">
-                <UpdateProfilePic />
+                <UpdateProfilePic setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
                 <TextInput defaultValue={profileData.username} ref={usernameInputRef} inputName="username" label="Username" />
                 <TextAreaInput className="mt-3" ref={bioInputRef} inputName="bio" label="Bio" ></TextAreaInput>
                 <div className="flex flex-row justify-end">
