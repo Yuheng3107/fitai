@@ -1,4 +1,5 @@
 import React, { SyntheticEvent, useRef, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 //Ionic Imports
 import {
@@ -33,9 +34,11 @@ type EditProfileProps = {
     updateProfileState: number;
 }
 
+// Functional Component
 function EditProfile({ setUpdateProfileState, updateProfileState }: EditProfileProps) {
     const usernameInputRef = useRef<HTMLInputElement>(null);
     const bioInputRef = useRef<HTMLTextAreaElement>(null);
+    const history = useHistory();
 
     const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
 
@@ -60,6 +63,10 @@ function EditProfile({ setUpdateProfileState, updateProfileState }: EditProfileP
         }).then((response) => {
             // do something with response
             console.log(response);
+            history.push('/profile')
+            setUpdateProfileState(updateProfileState + 1);
+        }).catch((err) => {
+            console.log(err);
         });
     }
 

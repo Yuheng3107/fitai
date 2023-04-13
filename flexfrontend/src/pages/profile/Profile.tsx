@@ -21,7 +21,6 @@ import {
 } from "@ionic/react";
 
 //component imports
-import UpdateProfile from "../../components/login/UpdateProfile";
 import Login from "../../components/login/Login";
 import ProfileInfo from "../../components/profile/ProfileInfo";
 import ToggleBar from "../../components/profile/ToggleBar";
@@ -33,9 +32,10 @@ import { profile } from "console";
 
 type ProfileProps = {
   updateProfileState: number;
-};
+  setUpdateProfileState: (arg: number) => void;
+}
 
-const Tab3 = ({ updateProfileState }: ProfileProps) => {
+const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState(null);
   const [trendData, setTrendData] = useState<TrendData>(emptyTrendData);
   const [userFeedData, setUserFeedData] = useState(null);
@@ -102,7 +102,7 @@ const Tab3 = ({ updateProfileState }: ProfileProps) => {
       <IonHeader></IonHeader>
       <IonContent fullscreen>
         {loginStatus === false ? (
-          <Login setLoginStatus={setLoginStatus} />
+          <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         ) : (
           <div>
             <ProfileInfo profileData={profileData} isTrend={isTrend} />
