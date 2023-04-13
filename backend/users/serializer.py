@@ -6,5 +6,5 @@ class UserSerializer(serializers.ModelSerializer):
     profile_photo = serializers.ImageField(required=False)
     class Meta:
         model = AppUser
-        fields = ['username', 'email', 'profile_photo', 'achievements', 'bio']
+        fields = ["username", "profile_photo", "achievements", "bio", "exercise_regimes", "exercises", "calories_burnt", "followers", "reps", "perfect_reps"]
 

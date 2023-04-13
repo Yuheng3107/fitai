@@ -19,7 +19,9 @@ class AppUser(AbstractUser):
     # Makes username required when making superuser
     REQUIRED_FIELDS = ['username']
     bio = models.CharField(max_length=1000, blank=True)
-
+    calories_burnt = models.PositiveIntegerField(default=0)
+    reps = models.PositiveIntegerField(default=0)
+    perfect_reps = models.PositiveIntegerField(default=0)
     ########
     # Relations
 
