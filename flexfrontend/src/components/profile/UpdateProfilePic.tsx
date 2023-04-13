@@ -28,7 +28,6 @@ const UpdateProfilePic = () => {
 
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
-    const [image, setImage] = useState();
     const [imageString, setImageString] = useState("");
     const [cropAreaBuffer, setCropAreaBuffer] = useState<Area>({
         width: 0,
@@ -36,9 +35,9 @@ const UpdateProfilePic = () => {
         x: 0,
         y: 0,
     });
-    const [croppedImage, setCroppedImage] = useState<Blob | null>();
     const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
     const [edittingNewImage, setEdittingNewImage] = useState(false);
+    const [imageFileName, setImageFileName] = useState("")
 
 
     const imageInputRef = useRef<HTMLInputElement>(null);
@@ -61,9 +60,10 @@ const UpdateProfilePic = () => {
             console.log(imageInputRef.current.files)
             setImageString(URL.createObjectURL(imageInputRef.current.files[0]));
             setEdittingNewImage(true);
+            let fileName = imageInputRef.current.files[0].name
+            setImageFileName(fileName.substr(0, fileName.lastIndexOf('.')) || fileName);
         }
     }
-
     //Whenever the crop changes, the new cropped image is appended to the formData
     function onCropComplete(croppedArea: Area, croppedAreaPixels: Area) {
         setCropAreaBuffer(croppedAreaPixels);
@@ -76,8 +76,12 @@ const UpdateProfilePic = () => {
         //The last param of the cropImage function is actually a callback which acts on the cropped image (that is now a blob)
         cropImage(imageString, cropAreaBuffer, (croppedBlob) => {
             console.log("this is running properly");
+            console.log(croppedBlob);
             if (croppedBlob !== null) {
-                profilePhotoFormData.append("photo", croppedBlob);
+                profilePhotoFormData.append("photo", croppedBlob, imageFileName);
+                for (const value of profilePhotoFormData.values()) {
+                    console.log(value);
+                  }
             }
             fetch(`${backend}/users/user/update/profile_photo`, {
                 method: "POST",
