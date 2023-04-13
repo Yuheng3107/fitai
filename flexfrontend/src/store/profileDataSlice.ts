@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const ProfileDataSlice = createSlice({
-    name: 'profileData',
+    name: 'profile',
     initialState: {
-        profileData: {}
+        profileData: {
+            profile_photo: "",
+        }
     },
     reducers: {
         setProfileData: (state, action) => {

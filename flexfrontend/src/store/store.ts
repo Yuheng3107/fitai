@@ -4,7 +4,7 @@ import profileDataSlice from './profileDataSlice'
 
 const store = configureStore({
     reducer: {
-        profileData: profileDataSlice.reducer
+        profile: profileDataSlice.reducer
     }
 })
 
