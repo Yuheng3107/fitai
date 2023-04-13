@@ -14,20 +14,25 @@ type ProfileInfoProps = {
     email: string;
     profile_photo: string;
     bio: string;
-  } | null,
-  isTrend: boolean
+    exercise_regimes: any[];
+    exercises: any[];
+    calories_burnt: number;
+    followers: any[];
+    reps: number;
+    perfect_reps: number;
+  } | null;
+  isTrend: boolean;
 };
 
 const ProfileInfo = ({ profileData, isTrend }: ProfileInfoProps) => {
   const [imageUrl, setImageUrl] = useState("");
-  console.log(profileData);
+
   useEffect(() => {
     if (profileData?.profile_photo) {
       setImageUrl(backend.concat(profileData.profile_photo));
     }
   }, [profileData?.profile_photo]);
 
-  console.log(profileData?.username);
   return isTrend ? (
     <div id="userInfo" className="flex flex-col items-center justify-evenly">
       <ProfilePic imageUrl={imageUrl} />
@@ -36,26 +41,33 @@ const ProfileInfo = ({ profileData, isTrend }: ProfileInfoProps) => {
       </span>
 
       <Achievements achievements={profileData?.achievements} />
-      <KeyStats />
+      <KeyStats
+        followers={profileData?.followers?.length}
+        reps={profileData?.reps}
+        perfect_reps={profileData?.perfect_reps}
+      />
     </div>
   ) : (
     <div className="flex flex-col justify-evenly m-4">
-        <span id="username" className="text-3xl">
-            {profileData?.username}
-        </span>
-        <div className="flex flex-row items-center justify-between">
-            <ProfilePic imageUrl={imageUrl} />
-            <div className="flex flex-col items-center justify-between w-11/12">
-                <KeyStats />
-                <Achievements achievements={profileData?.achievements}/>
-            </div>
+      <span id="username" className="text-3xl">
+        {profileData?.username}
+      </span>
+      <div className="flex flex-row items-center justify-between">
+        <ProfilePic imageUrl={imageUrl} />
+        <div className="flex flex-col items-center justify-between w-11/12">
+          <KeyStats
+            followers={profileData?.followers?.length}
+            reps={profileData?.reps}
+            perfect_reps={profileData?.perfect_reps}
+          />
+          <Achievements achievements={profileData?.achievements} />
         </div>
-        <div id="bio" className="text-l mt-4">
-          {profileData?.bio}
-        </div>
-
+      </div>
+      <div id="bio" className="text-l mt-4">
+        {profileData?.bio}
+      </div>
     </div>
-  )
+  );
 };
 
 export default ProfileInfo;
