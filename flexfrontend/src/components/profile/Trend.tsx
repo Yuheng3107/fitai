@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 
 import { backend } from "../../App";
 
-type TrendProps = {
-  trendData: {
+import { TrendData } from "../../types/stateTypes";
 
-  } | null;
+type TrendDataProps = {
+  trendData: TrendData;
 };
-
-const Trend = ({ trendData }: TrendProps) => {
+const Trend = ({ trendData }: TrendDataProps) => {
   return (
     <div
       id="exercise-stats"
@@ -43,7 +42,11 @@ const Trend = ({ trendData }: TrendProps) => {
             className="flex flex-col border border-zinc-500 p-2 rounded-lg mt-2"
           >
             <span className="text-xs">Calories Burnt&#128293; </span>
-            <span className="text-xl">46000 kcal</span>
+            <span className="text-xl">
+              {trendData?.calories_burnt === undefined
+                ? "? kcal"
+                : `${trendData?.calories_burnt} kcal`}
+            </span>
           </div>
         </div>
       </div>
@@ -76,7 +79,7 @@ const Trend = ({ trendData }: TrendProps) => {
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default Trend;

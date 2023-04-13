@@ -5,7 +5,7 @@ import checkLoginStatus from "../../utils/checkLogin";
 import { getProfileDataAsync } from "../../utils/getProfileData";
 
 import { googleLogout } from "@react-oauth/google";
-
+import { TrendData, emptyTrendData } from "../../types/stateTypes";
 //ionic imports
 import {
   IonContent,
@@ -32,12 +32,12 @@ import { backend } from "../../App";
 import { profile } from "console";
 
 type ProfileProps = {
-  updateProfileState: number
-}
+  updateProfileState: number;
+};
 
 const Tab3 = ({ updateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState(null);
-  const [trendData, setTrendData] = useState(null);
+  const [trendData, setTrendData] = useState<TrendData>(emptyTrendData);
   const [userFeedData, setUserFeedData] = useState(null);
   const [loginStatus, setLoginStatus] = useState(false);
   const [isTrend, setTrend] = useState(true);
@@ -52,24 +52,35 @@ const Tab3 = ({ updateProfileState }: ProfileProps) => {
       console.log(profileData);
       if (profileData === null) {
         setProfileData(data);
+        setTrendData({
+          calories_burnt: data?.calories_burnt,
+          exercise_regimes: data?.exercise_regimes,
+          exercises: data?.exercises,
+        });
       }
-      if (profileData !== null) { //this is a type guard to tell typescript that profileData definitely won't be null
+      if (profileData !== null) {
+        //this is a type guard to tell typescript that profileData definitely won't be null
         // if any the following are different, we'll update the profileData state.
         // We're doing this because we can't update profileData state all the time, it causes infintie loop
-        if (profileData['username'] !== data.username ||
-          profileData['email'] !== data.email ||
-          profileData['profile_photo'] !== data['profile_photo']) {
-          setProfileData(data)
+        if (
+          profileData["username"] !== data.username ||
+          profileData["email"] !== data.email ||
+          profileData["profile_photo"] !== data["profile_photo"]
+        ) {
+          setProfileData(data);
+          setTrendData({
+            calories_burnt: data?.calories_burnt,
+            exercise_regimes: data?.exercise_regimes,
+            exercises: data?.exercises,
+          });
         }
       }
       // setProfileData(data);
-
     }
 
     if (loginStatus) {
       obtainProfileData();
     }
-
   }, [
     loginStatus,
     setLoginStatus,
@@ -77,7 +88,7 @@ const Tab3 = ({ updateProfileState }: ProfileProps) => {
     getProfileDataAsync,
     setProfileData,
     profileData,
-    updateProfileState
+    updateProfileState,
   ]);
 
   const logOut = () => {
