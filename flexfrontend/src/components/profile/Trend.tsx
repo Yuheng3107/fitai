@@ -13,7 +13,7 @@ const Trend = ({ trendData }: TrendDataProps) => {
       id="exercise-stats"
       className="flex flex-col justify-start w-full mt-2 h-full px-10"
     >
-      <div className="flex flex-row justify-between w-full">
+      <div className="flex flex-row justify-between w-full h-32">
         <div
           id="fav-exercise"
           className="flex flex-col border border-zinc-500 p-2 rounded-lg h-full w-5/12"
@@ -29,7 +29,7 @@ const Trend = ({ trendData }: TrendDataProps) => {
             <span className="text-xs"> Perfect</span>
           </div>
         </div>
-        <div className="flex flex-col justify-evenly w-5/12">
+        <div className="flex flex-col justify-between w-5/12">
           <div
             id="streak"
             className="flex flex-col border border-zinc-500 p-2 rounded-lg"
@@ -39,7 +39,7 @@ const Trend = ({ trendData }: TrendDataProps) => {
           </div>
           <div
             id="calories"
-            className="flex flex-col border border-zinc-500 p-2 rounded-lg mt-2"
+            className="flex flex-col border border-zinc-500 p-2 rounded-lg"
           >
             <span className="text-xs">Calories Burnt&#128293; </span>
             <span className="text-xl">

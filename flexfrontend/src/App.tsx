@@ -59,6 +59,8 @@ import "@ionic/react/css/display.css";
 setupIonicReact();
 
 const backend = " http://localhost:8000";
+const exercises = ["zero","squat","push-ups","hamstring stretch"];
+let user_id;
 
 const App: React.FC = () => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
@@ -122,4 +124,4 @@ const App: React.FC = () => {
 
 export default App;
 
-export { backend };
+export { backend, user_id };
