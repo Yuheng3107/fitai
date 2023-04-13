@@ -6,6 +6,9 @@ import reportWebVitals from './reportWebVitals';
 
 import './theme/tailwind.css';
 
+import store from './store/store'
+import { Provider } from 'react-redux';
+
 //Jems' clientID : 251115262243-96f07edno5mjnb3b74bo9r6lve83sddp.apps.googleusercontent.com
 
 //Google auth
@@ -15,9 +18,11 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId="251115262243-96f07edno5mjnb3b74bo9r6lve83sddp.apps.googleusercontent.com">
-      <App />
-    </GoogleOAuthProvider>
+    <Provider store={store}>
+      <GoogleOAuthProvider clientId="251115262243-96f07edno5mjnb3b74bo9r6lve83sddp.apps.googleusercontent.com">
+        <App />
+      </GoogleOAuthProvider>
+    </Provider>
   </React.StrictMode >
 
 );

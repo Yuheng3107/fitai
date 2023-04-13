@@ -1,6 +1,9 @@
 //React imports
 import { useEffect, useState } from 'react';
 
+//Redux imports
+import { useAppSelector, useAppDispatch } from './store/hooks';
+
 
 //Util function imports
 import getProfileData from './utils/getProfileData';
@@ -59,12 +62,17 @@ import "@ionic/react/css/display.css";
 setupIonicReact();
 
 const backend = " http://localhost:8000";
-const exercises = ["zero","squat","push-ups","hamstring stretch"];
+const exercises = ["zero", "squat", "push-ups", "hamstring stretch"];
 let user_id;
 
 const App: React.FC = () => {
+
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
   const [updateProfileState, setUpdateProfileState] = useState(0);
+
+  const reduxProfileData = useAppSelector((state) => state.profileData);
+  console.log(reduxProfileData);
+
   useEffect(() => {
     console.log('getprofiledata running from App.tsx')
     getProfileData(setProfileData);
@@ -88,10 +96,10 @@ const App: React.FC = () => {
               return <Exercise {...props} />;
             }} />
             <Route exact path="/profile">
-              <Profile updateProfileState = {updateProfileState} setUpdateProfileState = {setUpdateProfileState}/>
+              <Profile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
             </Route>
             <Route exact path='/profile/create/'>
-              <EditProfile setUpdateProfileState = {setUpdateProfileState} updateProfileState = {updateProfileState} />
+              <EditProfile setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />
