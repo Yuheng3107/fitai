@@ -1,11 +1,12 @@
 from django.urls import path
 from .views import  CheckLoginStatus, UserCreateView, UserDetailView, UserAchievementsUpdateView, UserFriendsUpdateView, UserCommunitiesUpdateView, UserExercisesUpdateView, UserExerciseRegimesUpdateView, UserChatGroupsUpdateView
 from .views import UserAchievementsDeleteView, UserFriendsDeleteView, UserCommunitiesDeleteView, UserExercisesDeleteView, UserExerciseRegimesDeleteView, UserChatGroupsDeleteView, UserBlockedUpdateView, UserBlockedDeleteView, UserAllowedView, UserUpdateView, UserUpdateProfilePhotoView, UserFollowingDeleteView, UserFollowingUpdateView
-from .views import UserFollowingListView, UserFollowerListView
+from .views import UserFollowingListView, UserFollowerListView, UserOthersDetailView
 urlpatterns = [
     # Login stuff
     path('user/create', UserCreateView.as_view(), name='create_user'),
     path('user', UserDetailView.as_view(), name='user_detail'),
+    path('user/<int:pk>', UserOthersDetailView.as_view(), name='other_user_detail'),
     path('user/allowed', UserAllowedView.as_view(), name='user_allowed'),
     # Update normal user fields
     path('user/update', UserUpdateView.as_view(), name='update_user'),
