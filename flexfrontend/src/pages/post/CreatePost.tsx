@@ -24,9 +24,12 @@ function CreatePost() {
         </IonHeader>
         <IonContent>
             <div></div>
-            <main className="bg-blue-500">
-                <input type="text" className="bg-transparent" placeholder="Post Title" />
-                <input type="text" placeholder="optional body text" />
+            <main className="flex flex-col">
+                <input type="text" placeholder="Post Title"
+                    className="bg-transparent block p-4 text-2xl focus:outline-0" />
+                <hr className="border-t border-t-slate-300"/>
+                <input type="text" placeholder="optional body text block"
+                    className="bg-transparent block p-4 text-xl font-light focus:outline-0" />
             </main>
         </IonContent>
     </IonPage>
