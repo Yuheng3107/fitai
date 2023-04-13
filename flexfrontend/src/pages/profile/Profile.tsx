@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
-import getProfileData from "../../utils/getProfileData";
+import { getProfileDataAsync } from "../../utils/getProfileData";
 
 import { googleLogout } from "@react-oauth/google";
 
@@ -46,8 +46,8 @@ const Tab3 = ({ updateProfileState }: ProfileProps) => {
     console.log(`the current loginStatus is ${loginStatus}`);
     console.log(`the current profileData is ${profileData}`);
     checkLoginStatus(loginStatus, setLoginStatus);
-    async function getProfileDataAsync() {
-      let data = await getProfileData();
+    async function obtainProfileData() {
+      let data = await getProfileDataAsync();
       console.log(data);
       console.log(profileData);
       if (profileData === null) {
@@ -67,14 +67,14 @@ const Tab3 = ({ updateProfileState }: ProfileProps) => {
     }
 
     if (loginStatus) {
-      getProfileDataAsync();
+      obtainProfileData();
     }
 
   }, [
     loginStatus,
     setLoginStatus,
     checkLoginStatus,
-    getProfileData,
+    getProfileDataAsync,
     setProfileData,
     profileData,
     updateProfileState
