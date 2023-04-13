@@ -1,9 +1,10 @@
 from django.urls import path
 from .views import ExerciseDetailView, ExerciseUpdateView, ExerciseListView, ExerciseStatisticsDetailView, ExerciseStatisticsUpdateView, ExerciseStatisticsCreateView, ExerciseRegimeDetailView, ExerciseRegimeDeleteView, ExerciseRegimeCreateView, ExerciseRegimeUpdateView
 from .views import ExerciseLikesUpdateView, ExerciseLikesDeleteView, ExerciseTagsUpdateView, ExerciseTagsDeleteView, ExerciseShareUpdateView, ExerciseShareDeleteView, ExerciseMediaUpdateView, ExerciseMediaDeleteView
-from .views import ExerciseRegimeLikesUpdateView, ExerciseRegimeLikesDeleteView, ExerciseRegimeTagsUpdateView, ExerciseRegimeTagsDeleteView, ExerciseRegimeShareUpdateView, ExerciseRegimeShareDeleteView, ExerciseRegimeMediaUpdateView, ExerciseRegimeMediaDeleteView
+from .views import ExerciseRegimeLikesUpdateView, ExerciseRegimeLikesDeleteView, ExerciseRegimeTagsUpdateView, ExerciseRegimeTagsDeleteView, ExerciseRegimeShareUpdateView, ExerciseRegimeShareDeleteView, ExerciseRegimeMediaUpdateView, ExerciseRegimeMediaDeleteView, FavoriteExerciseStatisticView
 urlpatterns = [
     # Exercises
+    path('exercise/favorite', FavoriteExerciseStatisticView.as_view(), name='favorite_exercise_statistic'),
     path('exercise/update', ExerciseUpdateView.as_view(), name='update_exercise'),
     path('exercise/<int:pk>', ExerciseDetailView.as_view(), name='exercise_detail'),
     path('exercise/list', ExerciseListView.as_view(), name='exercise_list'),

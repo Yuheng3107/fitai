@@ -387,7 +387,25 @@ class UpdateLikesViewTests(APITestCase):
         for x in updated_post.likers.all():
             self.assertEqual(x,user)
     
+class FavoriteExerciseViewTests(APITestCase):
+    def test_get_favorite_exercise(self):
+        url = reverse('favorite_exercise_statistic')
+        User = get_user_model()
+        user = baker.make(User)
+        exercise_statistics = [baker.make(ExerciseStatistics, total_reps=i, user=user) for i in range(0, 201, 100)]
+        exercise_ids = [stat.exercise_id for stat in exercise_statistics]
+        data = {
+            "exercises": exercise_ids
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["total_reps"], 200)
         
+            
     
         
     

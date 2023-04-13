@@ -14,4 +14,4 @@ class ExerciseSerializer(serializers.ModelSerializer):
 class ExerciseStatisticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseStatistics
-        exclude = ['user', 'exercise', 'id']
+        exclude = ['user', 'id']
