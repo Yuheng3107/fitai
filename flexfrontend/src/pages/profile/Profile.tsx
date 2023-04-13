@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
-import getProfileData from "../../utils/getProfileData";
+import { getProfileDataAsync } from "../../utils/getProfileData";
 
 import { googleLogout } from "@react-oauth/google";
 
@@ -31,7 +31,11 @@ import UserFeed from "../../components/profile/UserFeed";
 import { backend } from "../../App";
 import { profile } from "console";
 
-const Tab3: React.FC = () => {
+type ProfileProps = {
+  updateProfileState: number
+}
+
+const Tab3 = ({ updateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState(null);
   const [trendData, setTrendData] = useState(null);
   const [userFeedData, setUserFeedData] = useState(null);
@@ -42,17 +46,38 @@ const Tab3: React.FC = () => {
     console.log(`the current loginStatus is ${loginStatus}`);
     console.log(`the current profileData is ${profileData}`);
     checkLoginStatus(loginStatus, setLoginStatus);
+    async function obtainProfileData() {
+      let data = await getProfileDataAsync();
+      console.log(data);
+      console.log(profileData);
+      if (profileData === null) {
+        setProfileData(data);
+      }
+      if (profileData !== null) { //this is a type guard to tell typescript that profileData definitely won't be null
+        // if any the following are different, we'll update the profileData state.
+        // We're doing this because we can't update profileData state all the time, it causes infintie loop
+        if (profileData['username'] !== data.username ||
+          profileData['email'] !== data.email ||
+          profileData['profile_photo'] !== data['profile_photo']) {
+          setProfileData(data)
+        }
+      }
+      // setProfileData(data);
 
-    if (loginStatus && profileData === null) {
-      getProfileData(setProfileData);
     }
+
+    if (loginStatus) {
+      obtainProfileData();
+    }
+
   }, [
     loginStatus,
     setLoginStatus,
     checkLoginStatus,
-    getProfileData,
+    getProfileDataAsync,
     setProfileData,
     profileData,
+    updateProfileState
   ]);
 
   const logOut = () => {
