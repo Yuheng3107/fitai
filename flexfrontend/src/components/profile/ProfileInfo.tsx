@@ -14,9 +14,6 @@ type ProfileInfoProps = {
     email: string;
     profile_photo: string;
     bio: string;
-    exercise_regimes: any[];
-    exercises: any[];
-    calories_burnt: number;
     followers: any[];
     reps: number;
     perfect_reps: number;
