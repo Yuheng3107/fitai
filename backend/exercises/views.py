@@ -283,5 +283,11 @@ class ExerciseRegimeMediaDeleteView(MediaDeleteView):
         self.model = ExerciseRegime
     
     
-        
+class FavoriteExerciseStatisticView(APIView):
+    def post(self, request):
+        if "user_id" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        favorite_exercise_stats = ExerciseStatistics.objects.filter(user_id=request.data["user_id"]).order_by('-total_reps').first()
+        serializer = ExerciseStatisticsSerializer(favorite_exercise_stats)
+        return Response(serializer.data)
     

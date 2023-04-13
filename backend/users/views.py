@@ -3,7 +3,7 @@ from rest_framework.views import APIView, Response
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
 from django.middleware.csrf import get_token
-from .serializer import UserSerializer
+from .serializer import UserSerializer, OtherUserSerializer
 from achievements.models import Achievement #type: ignore
 from community.models import Community #type: ignore
 from exercises.models import Exercise, ExerciseRegime #type: ignore
@@ -52,7 +52,22 @@ class UserDetailView(APIView):
             return Response(serializer.data)
         else:
             return Response(False, status=status.HTTP_401_UNAUTHORIZED)
-    
+
+class UserOthersDetailView(APIView):
+    def get(self, request, pk):
+        User = get_user_model()
+        try:
+            other_user = User.objects.get(pk=pk)
+            serializer = OtherUserSerializer(other_user)
+            return Response(serializer.data)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        
+            
+        
+        
         
 class CheckLoginStatus(APIView):
     def get(self, request):

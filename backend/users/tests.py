@@ -150,6 +150,19 @@ class UserDetailViewTests(APITestCase):
         user = User.objects.create_user(email=email)
         self.client.force_authenticate(user=user)
         response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("email", None), email)
+
+class UserOtherDetailViewTests(APITestCase):
+    def test_retrieve_other_user_data(self):
+        "Ensure we can retrieve other users from db"
+        
+        User = get_user_model()
+        email = "testuser@gmail.com"
+        user = User.objects.create_user(email=email)
+        url = reverse('other_user_detail', kwargs={"pk": user.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("email", None), email)
         
 class UserManyToManyUpdateViewTests(APITestCase):
@@ -325,3 +338,4 @@ class UserFollowerListView(APITestCase):
         data = json.loads(response.content)
         follower_data = UserSerializer(followers, many=True).data
         self.assertEqual(data, follower_data)
+

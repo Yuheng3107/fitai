@@ -10,7 +10,7 @@ const UserFeed = ({ userFeedData }: UserFeedProps) => {
   return (
     <div
       id="userFeed"
-      className="flex flex-col justify-start w-full mt-2 h-full px-5"
+      className="flex flex-col justify-start w-full h-full px-5"
     >
       <PersonTextCard></PersonTextCard>
     </div>

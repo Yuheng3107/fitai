@@ -6,22 +6,13 @@ import ToggleBar from "./ToggleBar";
 import Achievements from "./Achievements";
 import KeyStats from "./KeyStats";
 import ProfilePic from "./ProfilePic";
+import { ProfileData } from "../../types/stateTypes";
 
 type ProfileInfoProps = {
-  profileData: {
-    achievements: any[];
-    username: string;
-    email: string;
-    profile_photo: string;
-    bio: string;
-    followers: any[];
-    reps: number;
-    perfect_reps: number;
-  } | null;
-  isTrend: boolean;
+  profileData: ProfileData;
 };
 
-const ProfileInfo = ({ profileData, isTrend }: ProfileInfoProps) => {
+const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
@@ -30,7 +21,7 @@ const ProfileInfo = ({ profileData, isTrend }: ProfileInfoProps) => {
     }
   }, [profileData?.profile_photo]);
 
-  return isTrend ? (
+  return  (
     <div id="userInfo" className="flex flex-col items-center justify-evenly">
       <ProfilePic imageUrl={imageUrl} />
       <span id="username" className="text-3xl">
@@ -43,8 +34,13 @@ const ProfileInfo = ({ profileData, isTrend }: ProfileInfoProps) => {
         reps={profileData?.reps}
         perfect_reps={profileData?.perfect_reps}
       />
+
+      <div id="bio" className="text-sm mt-4 w-full px-5">
+        {profileData?.bio}
+      </div>
     </div>
-  ) : (
+  );
+  /*
     <div className="flex flex-col justify-evenly m-4">
       <span id="username" className="text-3xl">
         {profileData?.username}
@@ -64,7 +60,7 @@ const ProfileInfo = ({ profileData, isTrend }: ProfileInfoProps) => {
         {profileData?.bio}
       </div>
     </div>
-  );
+  */
 };
 
 export default ProfileInfo;

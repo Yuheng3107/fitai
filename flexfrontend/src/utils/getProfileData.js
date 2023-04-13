@@ -1,4 +1,4 @@
-import { backend } from "../App.tsx";
+import { backend, user_id } from "../App.tsx";
 
 export const  getProfileDataAsync = async function () {
   try {
@@ -12,6 +12,7 @@ export const  getProfileDataAsync = async function () {
       body: JSON.stringify(),
     })
     let data = await res.json();
+    console.log(data)
     return data
   } catch (error) {
     console.log(error);
@@ -37,6 +38,10 @@ const getProfileData =  (updateFunction) =>{
       console.log(data);
     })
     .catch((err) => console.log(err));
+}
+
+const getTrendData = (updateFunction) => {
+
 }
 
 export default getProfileData;
