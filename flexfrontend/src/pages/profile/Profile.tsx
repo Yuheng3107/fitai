@@ -17,7 +17,7 @@ import {
   IonLabel,
   IonInput,
   IonNavLink,
-  IonButton
+  IonButton,
 } from "@ionic/react";
 
 //component imports
@@ -31,7 +31,7 @@ import UserFeed from "../../components/profile/UserFeed";
 import { backend } from "../../App";
 import { profile } from "console";
 
-const Tab3: React.FC = () => {  
+const Tab3: React.FC = () => {
   const [profileData, setProfileData] = useState(null);
   const [trendData, setTrendData] = useState(null);
   const [userFeedData, setUserFeedData] = useState(null);
@@ -46,7 +46,6 @@ const Tab3: React.FC = () => {
     if (loginStatus && profileData === null) {
       getProfileData(setProfileData);
     }
-    
   }, [
     loginStatus,
     setLoginStatus,
@@ -64,18 +63,24 @@ const Tab3: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-
-      </IonHeader>
+      <IonHeader></IonHeader>
       <IonContent fullscreen>
-        {loginStatus === false ? <Login setLoginStatus={setLoginStatus} /> :
+        {loginStatus === false ? (
+          <Login setLoginStatus={setLoginStatus} />
+        ) : (
           <div>
-            <ProfileInfo profileData={profileData} isTrend={isTrend}/>
+            <ProfileInfo profileData={profileData} isTrend={isTrend} />
             <ToggleBar isTrend={isTrend} setTrend={setTrend} />
-            {isTrend === true ? <Trend trendData={trendData}/> : <UserFeed userFeedData={userFeedData}/>}
+            {isTrend === true ? (
+              <Trend trendData={trendData} />
+            ) : (
+              <UserFeed userFeedData={userFeedData} />
+            )}
           </div>
-        }
-        <IonButton routerLink="/profile/create" routerDirection="forward">Edit Profile</IonButton>
+        )}
+        <IonButton routerLink="/profile/create" routerDirection="forward">
+          Edit Profile
+        </IonButton>
       </IonContent>
     </IonPage>
   );

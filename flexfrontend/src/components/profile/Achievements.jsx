@@ -29,6 +29,10 @@ export default function Achievements({ achievements }) {
     });
     return <>{achievementImages}</>;
   } else {
-    return <span id="achievements">No Achievements Found</span>;
+    return (
+      <span id="achievements" className="my-1">
+        No Achievements Found
+      </span>
+    );
   }
 }

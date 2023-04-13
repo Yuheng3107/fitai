@@ -2,7 +2,7 @@ export default function KeyStats() {
   return (
     <div
       id="user-stats"
-      className="flex flex-row items-center justify-evenly w-full"
+      className="flex flex-row items-center justify-evenly w-full my-1"
     >
       <div id="reps" className="flex flex-col items-center justify-evenly">
         <span className="text-xl font-semibold -mb-1">12.4k</span>
