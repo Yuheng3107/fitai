@@ -62,8 +62,7 @@ import "@ionic/react/css/display.css";
 setupIonicReact();
 
 const backend = " http://localhost:8000";
-const exercises = ["zero", "squat", "push-ups", "hamstring stretch"];
-let user_id;
+const exercises = ["zero","Squats","Push-ups","Hamstring Stretch"];
 
 const App: React.FC = () => {
 
@@ -132,4 +131,4 @@ const App: React.FC = () => {
 
 export default App;
 
-export { backend, user_id };
+export { backend, exercises };

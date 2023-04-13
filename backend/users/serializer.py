@@ -7,10 +7,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         # To add more sensitive data
-        fields = ["username", "profile_photo", "achievements", "bio", "exercise_regimes", "exercises", "calories_burnt", "followers", "reps", "perfect_reps", "email"]
+        fields = ["id", "username", "profile_photo", "achievements", "bio", "exercise_regimes", "exercises", "calories_burnt", "followers", "reps", "perfect_reps", "email", "streak"]
 
 class OtherUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
-        fields = ["username", "profile_photo", "achievements", "bio", "exercise_regimes", "exercises", "calories_burnt", "followers", "reps", "perfect_reps", "email"]
+        fields = ["id", "username", "profile_photo", "achievements", "bio", "exercise_regimes", "exercises", "calories_burnt", "followers", "reps", "perfect_reps", "email", "streak"]
         

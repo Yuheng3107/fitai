@@ -35,7 +35,12 @@ ALTER USER admin WITH SUPERUSER;
 
 ### Exercises
 
-## Exercise ID (PK)
+## Exercise ID (DATABASE)
+1: Squat
+2: Push-Ups
+3: Hamstring Stretch
+
+## Exercise ID (FORM CORRECTION)
 
 0: Side Squat
 1: Front Squat
