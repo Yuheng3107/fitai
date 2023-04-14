@@ -6,4 +6,7 @@ class Command(BaseCommand):
             
     def handle(self, *args, **options):
         User = get_user_model()
+        # Resets streak of everyone who was inactive
+        User.objects.filter(active=False).update(streak=0)
+        # Makes all users active status False
         User.objects.update(active=False)
