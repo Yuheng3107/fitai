@@ -25,12 +25,12 @@ import EditSquareIcon from '../../assets/svgComponents/editSquareIcon';
 import Button from '../ui/Button';
 
 type UpdateProfilePicProps = {
-    setUpdateProfileState: (newState:number) => void;
+    setUpdateProfileState: (newState: number) => void;
     updateProfileState: number;
 }
 
 //functional component
-const UpdateProfilePic = ({setUpdateProfileState, updateProfileState}: UpdateProfilePicProps) => {
+const UpdateProfilePic = ({ setUpdateProfileState, updateProfileState }: UpdateProfilePicProps) => {
     const history = useHistory();
     const dispatch = useAppDispatch();
 
@@ -90,7 +90,7 @@ const UpdateProfilePic = ({setUpdateProfileState, updateProfileState}: UpdatePro
                 profilePhotoFormData.append("photo", croppedBlob, imageFileName);
                 for (const value of profilePhotoFormData.values()) {
                     console.log(value);
-                  }
+                }
             }
             fetch(`${backend}/users/user/update/profile_photo`, {
                 method: "POST",
@@ -117,7 +117,23 @@ const UpdateProfilePic = ({setUpdateProfileState, updateProfileState}: UpdatePro
     return <div>
         <div className="relative aspect-square">
             {/* This displays the current profile photo, which will be hidden away once the new profile pic is chosen */}
-            <img className={`rounded-full ${edittingNewImage && "hidden"} border-4 border-sky-300 p-2`} src={backend.concat(profileData.profile_photo)} />
+            {edittingNewImage ?
+                <Cropper
+                    objectFit='auto-cover'
+                    image={imageString}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={1}
+                    onCropChange={setCrop}
+                    onZoomChange={setZoom}
+                    cropShape='round'
+                    showGrid={true}
+                    onCropComplete={onCropComplete}
+                />
+                :
+                <img className={`rounded-full border-4 border-sky-300 p-2 w-full h-full`} src={backend.concat(profileData.profile_photo)} />
+            }
+
             <input id="selectImageFile" className="hidden" ref={imageInputRef} type="file" onChange={imageInputHandler}
                 accept=".png, .jpeg, .jpg, .webp" />
             <button role="button"
@@ -131,18 +147,7 @@ const UpdateProfilePic = ({setUpdateProfileState, updateProfileState}: UpdatePro
                 <EditSquareIcon className="h-8 w-8 absolute top-1 left-2" />
             </button>
             {/* Cropper is positioned absolutely */}
-            <Cropper
-                objectFit='auto-cover'
-                image={imageString}
-                crop={crop}
-                zoom={zoom}
-                aspect={1}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                cropShape='round'
-                showGrid={true}
-                onCropComplete={onCropComplete}
-            />
+
         </div>
         <div className={`${edittingNewImage ? "" : "hidden"} flex flex-row justify-between mt-3`}>
             <Button role="button"
