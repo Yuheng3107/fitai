@@ -73,8 +73,6 @@ const App: React.FC = () => {
   const profileDataRedux = useAppSelector((state) => state.profile.profileData);
   const exerciseStatsRedux = useAppSelector((state) => state.exerciseStats);
   const dispatch = useAppDispatch();
-  console.log(profileDataRedux);
-  console.log(exerciseStatsRedux);
 
   useEffect(() => {
     console.log('getprofiledata running from App.tsx')
@@ -84,8 +82,26 @@ const App: React.FC = () => {
       data.favorite_exercise_regime = await getFavoriteExerciseRegimeAsync(data.id);
       data.favorite_exercise_regime.name = null;
       if (data.favorite_exercise_regime.exercise_regime !== null) data.favorite_exercise_regime = await getExerciseRegimeAsync(data.favorite_exercise_regime.exercise_regime);
-      dispatch(profileDataActions.setProfileData(data))
-      dispatch(exerciseStatsActions.setExerciseStats(data))
+      dispatch(profileDataActions.setProfileData({
+        id: data.id,
+        achievements: data.achievements,
+        username: data.username,
+        email: data.email,
+        profile_photo: data.profile_photo,
+        bio: data.bio,
+        followers: data.followers,
+        reps: data.reps,
+        perfect_reps: data.perfect_reps,
+      }))
+      
+      dispatch(exerciseStatsActions.setExerciseStats({
+        exercise_regimes: data.exercise_regimes,
+        exercises: data.exercises,
+        calories_burnt: data.calories_burnt,
+        streak: data.streak,
+        favorite_exercise: data.favorite_exercise,
+        favorite_exercise_regime: data.favorite_exercise_regime,
+      }))
     }
 
 
@@ -113,7 +129,7 @@ const App: React.FC = () => {
               <Profile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
             </Route>
             <Route exact path='/profile/create/'>
-              <EditProfile setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
+              <EditProfile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />
