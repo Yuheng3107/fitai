@@ -5,6 +5,9 @@ const ProfileDataSlice = createSlice({
     initialState: {
         profileData: {
             profile_photo: "",
+            username:"",
+            email:"",
+            achievements:[]
         },
         profileCounter: 0
     },

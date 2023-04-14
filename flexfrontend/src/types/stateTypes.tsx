@@ -3,10 +3,10 @@ export type ProfileData = {
   username: string;
   email: string;
   profile_photo: string;
-  bio: string;
-  followers: any[];
-  reps: number;
-  perfect_reps: number;
+  bio?: string;
+  followers?: any[];
+  reps?: number;
+  perfect_reps?: number;
 }
 
 export const emptyProfileData = {

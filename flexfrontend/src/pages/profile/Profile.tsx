@@ -66,7 +66,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     <IonPage>
       <IonContent fullscreen>
         {loginStatus ?
-          <UserProfileTemplate profileData={profileData} trendData={trendData} userFeedData={userFeedData} />
+          <UserProfileTemplate profileData={profileDataRedux} trendData={trendData} userFeedData={userFeedData} />
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         }
