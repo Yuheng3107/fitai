@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 //Redux imports
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import { profileDataActions } from './store/profileDataSlice';
+import { exerciseDataActions } from './store/exerciseDataSlice';
 
 
 //Util function imports
@@ -71,9 +72,10 @@ const App: React.FC = () => {
   const [updateProfileState, setUpdateProfileState] = useState(0);
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData);
-  console.log(profileDataRedux);
+  const exerciseDataRedux = useAppSelector((state) => state.exerciseData);
   const dispatch = useAppDispatch();
   console.log(profileDataRedux);
+  console.log(exerciseDataRedux);
 
   useEffect(() => {
     console.log('getprofiledata running from App.tsx')
@@ -84,9 +86,10 @@ const App: React.FC = () => {
         dispatch(profileDataActions.setProfileData(data));
       }
       if (favoriteExercise) {
-        
+        dispatch(exerciseDataActions.setExerciseData(favoriteExercise));
       }
     }
+
 
     obtainProfileData();
   }, [getProfileData, setProfileData, updateProfileState])
