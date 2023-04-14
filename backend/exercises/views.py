@@ -1,6 +1,6 @@
 from rest_framework.views import APIView, Response
-from .models import Exercise, ExerciseStatistics, ExerciseRegime
-from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseStatisticsSerializer
+from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics
+from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseStatisticsSerializer, ExerciseRegimeStatisticsSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -290,4 +290,11 @@ class FavoriteExerciseStatisticView(APIView):
         favorite_exercise_stats = ExerciseStatistics.objects.filter(user_id=request.data["user_id"]).order_by('-total_reps').first()
         serializer = ExerciseStatisticsSerializer(favorite_exercise_stats)
         return Response(serializer.data)
-    
+
+class FavoriteExerciseRegimeStatisticView(APIView):
+    def post(self, request):
+        if "user_id" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        favorite_exercise_regime_stats = ExerciseRegimeStatistics.objects.filter(user_id=request.data["user_id"]).order_by('-times_completed').first()
+        serializer = ExerciseRegimeStatisticsSerializer(favorite_exercise_regime_stats)
+        return Response(serializer.data)

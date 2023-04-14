@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 import json
 
-from .models import Exercise, ExerciseStatistics, ExerciseRegime
+from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics
 
 # Create your tests here.
 class ExerciseTestCase(TestCase):
@@ -392,8 +392,9 @@ class FavoriteExerciseViewTests(APITestCase):
         url = reverse('favorite_exercise_statistic')
         User = get_user_model()
         user = baker.make(User)
-        exercise_statistics = [baker.make(ExerciseStatistics, total_reps=i, user=user) for i in range(0, 201, 100)]
-        exercise_ids = [stat.exercise_id for stat in exercise_statistics]
+        for i in range(0, 201, 100):
+            baker.make(ExerciseStatistics, total_reps=i, user=user)
+        
         data = {
             "user_id": user.id
         }
@@ -402,7 +403,21 @@ class FavoriteExerciseViewTests(APITestCase):
         data = json.loads(response.content)
         self.assertEqual(data["total_reps"], 200)
         
-            
+class FavoriteExerciseRegimeStatisticsViewTests(APITestCase):
+    def test_get_favorite_exercise_regime_stats(self):
+        url = reverse('favorite_exercise_regime_statistic')
+        User = get_user_model()
+        user = baker.make(User)
+        for i in range(3):
+            baker.make(ExerciseRegimeStatistics, times_completed=i, user=user)
+        data = {
+            "user_id": user.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["times_completed"], 2)
+        
     
         
     

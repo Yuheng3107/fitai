@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ExerciseRegime, Exercise, ExerciseStatistics
+from .models import ExerciseRegime, Exercise, ExerciseRegimeStatistics, ExerciseStatistics
 
 class ExerciseRegimeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,4 +14,9 @@ class ExerciseSerializer(serializers.ModelSerializer):
 class ExerciseStatisticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseStatistics
+        exclude = ['user', 'id']
+        
+class ExerciseRegimeStatisticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExerciseRegimeStatistics
         exclude = ['user', 'id']
