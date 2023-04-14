@@ -5,19 +5,37 @@ import LikeIcon from "../../assets/svgComponents/LikeIcon";
 import BookmarkIcon from "../../assets/svgComponents/BookmarkIcon";
 import SendIcon from "../../assets/svgComponents/SendIcon";
 
-function PersonTextCard() {
+import React, { useState, useEffect } from "react";
+
+import { backend } from "../../App";
+
+import { UserPostData, ProfileData } from "../../types/stateTypes";
+
+type UserPostProps = {
+  userPostData: UserPostData;
+  profileData: ProfileData;
+};
+
+const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
+  const [imageUrl, setImageUrl] = useState("");
+
+  useEffect(() => {
+    if (profileData?.profile_photo) {
+      setImageUrl(backend.concat(profileData.profile_photo))
+    }
+  }, [profileData?.profile_photo])
   return (
     <div id="card-container" className="border border-zinc-500 mt-12 p-2">
       <div id="top-bar" className=" flex flex-row justify-between mb-2">
         <div className="flex flex-row">
           <img
             alt="profile-picture"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/10-04-2010_in_Warsaw.jpg/1280px-10-04-2010_in_Warsaw.jpg"
+            src={imageUrl}
             className="h-12 w-12 rounded-full object-cover"
           />
           <div className="ml-3">
             <span id="username" className="font-semibold">
-              JemZhangz
+              {profileData?.username}
             </span>
             <p
               id="subtitle"
@@ -25,7 +43,7 @@ function PersonTextCard() {
             >
               <span id="post-place">Swimming</span>
               <FilledCircle className="mx-1 h-1.5 w-1.5 aspect-square fill-slate-500" />
-              <span id="time-stamp">14h</span>
+              <span id="time-stamp">{userPostData?.posted_at}</span>
             </p>
           </div>
         </div>
@@ -33,14 +51,10 @@ function PersonTextCard() {
       </div>
       <div id="content" className="mb-2">
         <p id="title" className="font-semibold text-xl mb-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem, in.
-          Asperiores neque, expedita unde nemo eum odit ex
+          {userPostData?.title}
         </p>
         <p id="main-content" className="text-sm">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum
-          suscipit tenetur nulla adipisci esse culpa qui nihil placeat quidem,
-          veritatis, saepe obcaecati vitae recusandae, ab corporis beatae
-          laboriosam cumque expedita?
+          {userPostData?.text}
         </p>
       </div>
       <div

@@ -12,6 +12,6 @@ const exerciseDataSlice = createSlice({
     }
 })
 
-export const exerciseDataActions = exerciseDataSlice.actions;
+export const sexerciseStatsActions = exerciseDataSlice.actions;
 
 export default exerciseDataSlice;

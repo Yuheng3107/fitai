@@ -5,15 +5,17 @@ import { backend } from "../../App";
 import ToggleBar from "./ToggleBar";
 import KeyProfileInfoDisplay from "./KeyProfileInfoDisplay";
 import ExerciseStatsDisplay from "./ExerciseStatsDisplay";
-import UserFeed from "./UserFeed";
+import UserPosts from "./UserPosts";
 import { ProfileData, ExerciseStats } from "../../types/stateTypes";
 
 type UserProfileTemplateProps = {
   profileData: ProfileData;
-  userFeedData: null;
+  exerciseStats: ExerciseStats;
+  userPostArray: any[];
+  loadUserPostData: () => void;
 };
 
-const UserProfileTemplate = ({ profileData, userFeedData }: UserProfileTemplateProps) => {
+const UserProfileTemplate = ({ profileData, exerciseStats, userPostArray, loadUserPostData }: UserProfileTemplateProps) => {
   const [isTrend, setTrend] = useState(true);
 
   return (
@@ -23,7 +25,7 @@ const UserProfileTemplate = ({ profileData, userFeedData }: UserProfileTemplateP
       {isTrend === true ?
         <ExerciseStatsDisplay />
         :
-        <UserFeed userFeedData={userFeedData} />
+        <UserPosts userPostArray={userPostArray} profileData={profileData} loadUserPostData={loadUserPostData} />
       }
     </div>
   )

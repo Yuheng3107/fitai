@@ -18,7 +18,7 @@ export const getProfileDataAsync = async function () {
   }
 }
 
-const getProfileData =  (updateFunction) =>{
+export const getProfileData =  (updateFunction) =>{
   fetch(`${backend}/users/user`, {
     method: "GET",
     credentials: "include", // include cookies in the request
@@ -59,4 +59,22 @@ export const getFavoriteExerciseAsync = async function (pk) {
   }
 }
 
-export default getProfileData;
+export const getFavoriteExerciseRegimeAsync = async function (pk) {
+  try {
+    let res = await fetch(`${backend}/exercises/exercise_regime/favorite`, {
+      method: "POST",
+      credentials: "include", // include cookies in the request
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+      },
+      body: JSON.stringify({
+        user_id: pk,
+      })
+    })
+    let data = await res.json();
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}

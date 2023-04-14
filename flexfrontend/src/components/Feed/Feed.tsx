@@ -2,6 +2,7 @@ import PersonTextCard from "./PersonTextCard";
 
 import { backend } from "../../App";
 import { Link } from "react-router-dom";
+import { emptyProfileData, emptyUserPostData } from "../../types/stateTypes";
 
 function Feed() {
     function createPostHandler(event: React.MouseEvent<HTMLButtonElement>) {
@@ -23,7 +24,7 @@ function Feed() {
         });
     }
     return <main className="w-full">
-        <PersonTextCard />
+        <PersonTextCard userPostData={emptyUserPostData} profileData={emptyProfileData}/>
         <Link to="/post/create" className="w-12 h-12 bg-sky-500 block" >Add Post</Link>
     </main>
 }
