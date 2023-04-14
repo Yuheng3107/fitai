@@ -6,7 +6,8 @@ const exerciseStatsSlice = createSlice({
     initialState: emptyExerciseStats,
     reducers: {
         setExerciseStats: (state, action) => {
-            state = action.payload;
+            console.log(action.payload);
+            return action.payload;
         }
     }
 })

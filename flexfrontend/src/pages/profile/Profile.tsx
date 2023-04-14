@@ -37,12 +37,12 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData)
   const exerciseStatsRedux = useAppSelector((state) => state.exerciseStats)
-
+  console.log(exerciseStatsRedux);
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
     checkLoginStatus(loginStatus, setLoginStatus);
-    console.log("redux:");
-    console.log(exerciseStatsRedux);
+    // console.log("redux:");
+    // console.log(exerciseStatsRedux);
     /*
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
@@ -65,7 +65,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
       obtainProfileData();
     }
     */
-  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileDataAsync, setProfileData, profileData, updateProfileState]);
+  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileDataAsync, setProfileData, profileData, updateProfileState, exerciseStatsRedux]);
 
   const logOut = () => {
     googleLogout();

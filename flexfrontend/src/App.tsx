@@ -68,8 +68,6 @@ const exercises = ["zero", "Squats", "Push-ups", "Hamstring Stretch"];
 
 const App: React.FC = () => {
 
-  const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
-  const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
   const [updateProfileState, setUpdateProfileState] = useState(0);
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData);
@@ -92,7 +90,7 @@ const App: React.FC = () => {
 
 
     obtainProfileData();
-  }, [getProfileData, setProfileData, updateProfileState])
+  }, [getProfileData, updateProfileState])
 
   return (
     <IonApp>

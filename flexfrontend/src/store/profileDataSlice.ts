@@ -9,6 +9,7 @@ const ProfileDataSlice = createSlice({
     },
     reducers: {
         setProfileData: (state, action) => {
+            console.log(action.payload);
             state.profileData = action.payload;
         },
         updateProfileCounter: (state) => {
