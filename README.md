@@ -36,6 +36,7 @@ ALTER USER admin WITH SUPERUSER;
 ### Exercises
 
 ## Exercise ID (DATABASE)
+
 1: Squat
 2: Push-Ups
 3: Hamstring Stretch
@@ -56,3 +57,9 @@ ALTER USER admin WITH SUPERUSER;
 
 `exercise_statistics` GET (PK)
 `exercise_statistics/update` POST (exercise_id, perfect_reps, total_reps) at least one of either perfect reps or total reps. THIS AUTOMATICALLY UPDATES GLOBAL STATS
+
+## To reset active status for all users
+
+`python manage.py refreshactivestatus`
+
+In production this will be run every 24h by a CRON job

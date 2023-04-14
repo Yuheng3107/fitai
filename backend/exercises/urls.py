@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import ExerciseDetailView, ExerciseUpdateView, ExerciseListView, ExerciseStatisticsDetailView, ExerciseStatisticsUpdateView, ExerciseStatisticsCreateView, ExerciseRegimeDetailView, ExerciseRegimeDeleteView, ExerciseRegimeCreateView, ExerciseRegimeUpdateView
 from .views import ExerciseLikesUpdateView, ExerciseLikesDeleteView, ExerciseTagsUpdateView, ExerciseTagsDeleteView, ExerciseShareUpdateView, ExerciseShareDeleteView, ExerciseMediaUpdateView, ExerciseMediaDeleteView
-from .views import ExerciseRegimeLikesUpdateView, ExerciseRegimeLikesDeleteView, ExerciseRegimeTagsUpdateView, ExerciseRegimeTagsDeleteView, ExerciseRegimeShareUpdateView, ExerciseRegimeShareDeleteView, ExerciseRegimeMediaUpdateView, ExerciseRegimeMediaDeleteView, FavoriteExerciseStatisticView
+from .views import ExerciseRegimeLikesUpdateView, ExerciseRegimeLikesDeleteView, ExerciseRegimeTagsUpdateView, ExerciseRegimeTagsDeleteView, ExerciseRegimeShareUpdateView, ExerciseRegimeShareDeleteView, ExerciseRegimeMediaUpdateView, ExerciseRegimeMediaDeleteView, FavoriteExerciseStatisticView, FavoriteExerciseRegimeStatisticView
 urlpatterns = [
     # Exercises
     path('exercise/favorite', FavoriteExerciseStatisticView.as_view(), name='favorite_exercise_statistic'),
@@ -21,6 +21,7 @@ urlpatterns = [
     path('exercise_statistics/create', ExerciseStatisticsCreateView.as_view(), name='create_exercise_statistics'),
     path('exercise_statistics/<int:pk>', ExerciseStatisticsDetailView.as_view(), name='exercise_statistics_detail'),
     # Exercise Regimes
+    path('exercise_regime/favorite', FavoriteExerciseRegimeStatisticView.as_view(), name='favorite_exercise_regime_statistic'),
     path('exercise_regime/<int:pk>', ExerciseRegimeDetailView.as_view(), name='exercise_regime_detail'),
     path('exercise_regime/delete/<int:pk>', ExerciseRegimeDeleteView.as_view(), name='delete_exercise_regime'),
     path('exercise_regime/create', ExerciseRegimeCreateView.as_view(), name='create_exercise_regime'),

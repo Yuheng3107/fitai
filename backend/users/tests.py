@@ -339,3 +339,31 @@ class UserFollowerListView(APITestCase):
         follower_data = UserSerializer(followers, many=True).data
         self.assertEqual(data, follower_data)
 
+class UserStreakUpdateViewTests(APITestCase):
+    def test_update_user_streak(self):
+        url = reverse('update_user_streak')
+        # Check that login is required
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        User = get_user_model()
+        user = baker.make(User, active=False, streak=68, longest_streak=68)
+        old_streak = user.streak
+        old_longest_streak = user.longest_streak
+        self.client.force_authenticate(user=user)
+        self.assertFalse(user.active)
+        # Test that streak updates when user is inactive
+        response = self.client.get(url)
+        
+        self.assertTrue(user.active)
+        new_streak = user.streak
+        new_longest_streak = user.longest_streak
+        self.assertEqual(new_streak, old_streak+1)
+        self.assertEqual(new_longest_streak, old_longest_streak+1)
+        # Test that streak doesn't update when user is already active
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(user.streak, new_streak)
+        self.assertEqual(user.longest_streak, new_longest_streak)
+        self.assertTrue(user.active)
+        
+        
