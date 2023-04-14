@@ -5,12 +5,19 @@ const ProfileDataSlice = createSlice({
     initialState: {
         profileData: {
             profile_photo: "",
-        }
+            username:"",
+            email:"",
+            achievements:[]
+        },
+        profileCounter: 0
     },
     reducers: {
         setProfileData: (state, action) => {
             console.log(action.payload);
             state.profileData = action.payload;
+        },
+        updateProfileCounter: (state) => {
+            state.profileCounter = state.profileCounter + 1
         }
     }
 })

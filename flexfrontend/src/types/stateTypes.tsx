@@ -3,10 +3,10 @@ export type ProfileData = {
   username: string;
   email: string;
   profile_photo: string;
-  bio: string;
-  followers: any[];
-  reps: number;
-  perfect_reps: number;
+  bio?: string;
+  followers?: any[];
+  reps?: number;
+  perfect_reps?: number;
 }
 
 export const emptyProfileData = {
@@ -20,7 +20,7 @@ export const emptyProfileData = {
   perfect_reps: 0,
 };
 
-export type TrendData = {
+export type ExerciseStats = {
   exercise_regimes: any[];
   exercises: any[];
   calories_burnt: number;
@@ -32,7 +32,7 @@ export type TrendData = {
   };
 }
 
-export const emptyTrendData = {
+export const emptyExerciseStats = {
   exercise_regimes: [],
   exercises: [],
   calories_burnt: 0,

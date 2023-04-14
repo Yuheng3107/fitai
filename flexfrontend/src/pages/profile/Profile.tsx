@@ -1,31 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+
+//redux imports
+import { useAppSelector } from "../../store/hooks";
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
 import { getProfileDataAsync, getFavoriteExerciseAsync } from "../../utils/getProfileData";
 
 import { googleLogout } from "@react-oauth/google";
-import { TrendData, emptyTrendData, ProfileData, emptyProfileData } from "../../types/stateTypes";
+import { ExerciseStats, emptyExerciseStats, ProfileData, emptyProfileData } from "../../types/stateTypes";
 //ionic imports
 import {
   IonContent,
-  IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonNavLink,
   IonButton,
 } from "@ionic/react";
 
 //component imports
 import Login from "../../components/login/Login";
-import UserProfile from "../../components/profile/UserProfile";
-
-import { backend } from "../../App";
-import { profile } from "console";
+import UserProfileTemplate from "../../components/profile/UserProfileTemplate";
 
 type ProfileProps = {
   updateProfileState: number;
@@ -34,9 +27,11 @@ type ProfileProps = {
 
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
-  const [trendData, setTrendData] = useState<TrendData>(emptyTrendData);
+  const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
   const [userFeedData, setUserFeedData] = useState(null);
   const [loginStatus, setLoginStatus] = useState(false);
+
+  const profileDataRedux = useAppSelector((state) => state.profile.profileData)
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
@@ -52,22 +47,14 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
         profileData['bio'] !== data.bio) {
         setProfileData(data)
       }
-      setTrendData(data);
+      setExerciseStats(data);
     }
 
-    
+
     if (loginStatus) {
       obtainProfileData();
     }
-  }, [
-    loginStatus,
-    setLoginStatus,
-    checkLoginStatus,
-    getProfileDataAsync,
-    setProfileData,
-    profileData,
-    updateProfileState,
-  ]);
+  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileDataAsync, setProfileData, profileData, updateProfileState]);
 
   const logOut = () => {
     googleLogout();
@@ -78,11 +65,11 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   return (
     <IonPage>
       <IonContent fullscreen>
-        {loginStatus === false ? (
+        {loginStatus ?
+          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userFeedData={userFeedData} />
+          :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
-        ) : (
-          <UserProfile profileData={profileData} trendData={trendData} userFeedData={userFeedData}/>
-        )}
+        }
         <IonButton routerLink="/profile/create" routerDirection="forward">
           Edit Profile
         </IonButton>

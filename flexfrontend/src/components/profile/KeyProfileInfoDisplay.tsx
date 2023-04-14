@@ -2,17 +2,15 @@ import React, { useState, useEffect } from "react";
 
 import { backend } from "../../App";
 
-import ToggleBar from "./ToggleBar";
 import Achievements from "./Achievements";
 import KeyStats from "./KeyStats";
-import ProfilePic from "./ProfilePic";
 import { ProfileData } from "../../types/stateTypes";
 
 type ProfileInfoProps = {
   profileData: ProfileData;
 };
 
-const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
+const KeyProfileInfoDisplay = ({ profileData }: ProfileInfoProps) => {
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
@@ -23,7 +21,7 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
 
   return  (
     <div id="userInfo" className="flex flex-col items-center justify-evenly">
-      <ProfilePic imageUrl={imageUrl} />
+      <img className="rounded-full w-1/3 mt-2 p-1" src={imageUrl} />;
       <span id="username" className="text-3xl">
         {profileData?.username}
       </span>
@@ -63,4 +61,4 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
   */
 };
 
-export default ProfileInfo;
+export default KeyProfileInfoDisplay;
