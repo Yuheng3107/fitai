@@ -281,3 +281,23 @@ class UserFollowerListView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         serializer = UserSerializer(request.user.followers.all(), many=True)
         return Response(serializer.data)
+    
+class UserStreakUpdateView(APIView):
+    def get(self, request):
+        # Only logged in users can update their own streak
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Check if the user is active
+        User = get_user_model()
+        is_active = User.objects.filter(pk=request.user.id).values('active')[0]["active"]
+        if is_active:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        else:
+            request.user.active = True
+            request.user.streak += 1
+            if (request.user.streak > request.user.longest_streak):
+                request.user.longest_streak = request.user.streak
+            request.user.save()
+            return Response("Successfully Updated")
+    

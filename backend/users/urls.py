@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import  CheckLoginStatus, UserCreateView, UserDetailView, UserAchievementsUpdateView, UserFriendsUpdateView, UserCommunitiesUpdateView, UserExercisesUpdateView, UserExerciseRegimesUpdateView, UserChatGroupsUpdateView
 from .views import UserAchievementsDeleteView, UserFriendsDeleteView, UserCommunitiesDeleteView, UserExercisesDeleteView, UserExerciseRegimesDeleteView, UserChatGroupsDeleteView, UserBlockedUpdateView, UserBlockedDeleteView, UserAllowedView, UserUpdateView, UserUpdateProfilePhotoView, UserFollowingDeleteView, UserFollowingUpdateView
-from .views import UserFollowingListView, UserFollowerListView, UserOthersDetailView
+from .views import UserFollowingListView, UserFollowerListView, UserOthersDetailView, UserStreakUpdateView
 urlpatterns = [
     # Login stuff
     path('user/create', UserCreateView.as_view(), name='create_user'),
@@ -35,4 +35,6 @@ urlpatterns = [
     # List Views
     path('user/list/following', UserFollowingListView.as_view(), name='user_following_list'),
     path('user/list/followers', UserFollowerListView.as_view(), name='user_followers_list'),
+    # Streak Views
+    path('user/streak/update', UserStreakUpdateView.as_view(), name='update_user_streak'),
 ]

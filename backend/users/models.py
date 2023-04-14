@@ -23,6 +23,8 @@ class AppUser(AbstractUser):
     reps = models.PositiveIntegerField(default=0)
     perfect_reps = models.PositiveIntegerField(default=0)
     streak = models.PositiveSmallIntegerField(default=0)
+    longest_streak = models.PositiveSmallIntegerField(default=0)
+    active = models.BooleanField(default=False)
     ########
     # Relations
 

@@ -298,3 +298,4 @@ class FavoriteExerciseRegimeStatisticView(APIView):
         favorite_exercise_regime_stats = ExerciseRegimeStatistics.objects.filter(user_id=request.data["user_id"]).order_by('-times_completed').first()
         serializer = ExerciseRegimeStatisticsSerializer(favorite_exercise_regime_stats)
         return Response(serializer.data)
+
