@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 
-import { TrendData } from "../../types/stateTypes";
+import { ExerciseStats } from "../../types/stateTypes";
 import { exercises } from "../../App";
 
 type TrendDataProps = {
-  trendData: TrendData;
+  trendData: ExerciseStats;
 };
-const Trend = ({ trendData }: TrendDataProps) => {
+
+
+const ExerciseStatsDisplay = ({ trendData }: TrendDataProps) => {
   return (
     <div
       id="exercise-stats"
@@ -81,4 +83,4 @@ const Trend = ({ trendData }: TrendDataProps) => {
   );
 };
 
-export default Trend;
+export default ExerciseStatsDisplay;

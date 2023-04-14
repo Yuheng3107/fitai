@@ -4,17 +4,17 @@ import { backend } from "../../App";
 
 import ToggleBar from "./ToggleBar";
 import KeyProfileInfoDisplay from "./KeyProfileInfoDisplay";
-import Trend from "./Trend";
+import ExerciseStatsDisplay from "./ExerciseStatsDisplay";
 import UserFeed from "./UserFeed";
-import { ProfileData, TrendData } from "../../types/stateTypes";
+import { ProfileData, ExerciseStats } from "../../types/stateTypes";
 
 type UserProfileProps = {
   profileData: ProfileData;
-  trendData: TrendData;
+  exerciseStats: ExerciseStats;
   userFeedData: null;
 };
 
-const UserProfileTemplate = ({ profileData, trendData, userFeedData }: UserProfileProps) => {
+const UserProfileTemplate = ({ profileData, exerciseStats, userFeedData }: UserProfileProps) => {
   const [isTrend, setTrend] = useState(true);
 
   return (
@@ -22,7 +22,7 @@ const UserProfileTemplate = ({ profileData, trendData, userFeedData }: UserProfi
       <KeyProfileInfoDisplay profileData={profileData} />
       <ToggleBar isTrend={isTrend} setTrend={setTrend} />
       {isTrend === true ?
-        <Trend trendData={trendData} />
+        <ExerciseStatsDisplay trendData={exerciseStats} />
         :
         <UserFeed userFeedData={userFeedData} />
       }

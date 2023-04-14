@@ -7,7 +7,7 @@ import { profileDataActions } from './store/profileDataSlice';
 
 
 //Util function imports
-import getProfileData, { getProfileDataAsync } from './utils/getProfileData';
+import getProfileData, { getProfileDataAsync, getFavoriteExerciseAsync } from './utils/getProfileData';
 
 //type import
 import { ProfileData, emptyProfileData } from './types/stateTypes';
@@ -79,10 +79,15 @@ const App: React.FC = () => {
     console.log('getprofiledata running from App.tsx')
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
+      let favoriteExercise = await getFavoriteExerciseAsync(data.id)
       if (data) {
         dispatch(profileDataActions.setProfileData(data));
       }
+      if (favoriteExercise) {
+        
+      }
     }
+
     obtainProfileData();
   }, [getProfileData, setProfileData, updateProfileState])
 

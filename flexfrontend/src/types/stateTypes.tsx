@@ -20,7 +20,7 @@ export const emptyProfileData = {
   perfect_reps: 0,
 };
 
-export type TrendData = {
+export type ExerciseStats = {
   exercise_regimes: any[];
   exercises: any[];
   calories_burnt: number;
@@ -32,7 +32,7 @@ export type TrendData = {
   };
 }
 
-export const emptyTrendData = {
+export const emptyExerciseStats = {
   exercise_regimes: [],
   exercises: [],
   calories_burnt: 0,

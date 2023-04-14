@@ -8,7 +8,7 @@ import checkLoginStatus from "../../utils/checkLogin";
 import { getProfileDataAsync, getFavoriteExerciseAsync } from "../../utils/getProfileData";
 
 import { googleLogout } from "@react-oauth/google";
-import { TrendData, emptyTrendData, ProfileData, emptyProfileData } from "../../types/stateTypes";
+import { ExerciseStats, emptyExerciseStats, ProfileData, emptyProfileData } from "../../types/stateTypes";
 //ionic imports
 import {
   IonContent,
@@ -27,7 +27,7 @@ type ProfileProps = {
 
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
-  const [trendData, setTrendData] = useState<TrendData>(emptyTrendData);
+  const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
   const [userFeedData, setUserFeedData] = useState(null);
   const [loginStatus, setLoginStatus] = useState(false);
 
@@ -47,7 +47,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
         profileData['bio'] !== data.bio) {
         setProfileData(data)
       }
-      setTrendData(data);
+      setExerciseStats(data);
     }
 
 
@@ -66,7 +66,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     <IonPage>
       <IonContent fullscreen>
         {loginStatus ?
-          <UserProfileTemplate profileData={profileDataRedux} trendData={trendData} userFeedData={userFeedData} />
+          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userFeedData={userFeedData} />
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         }
