@@ -70,15 +70,18 @@ const App: React.FC = () => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
   const [updateProfileState, setUpdateProfileState] = useState(0);
 
-  const profileRedux = useAppSelector((state) => state.profile);
+  const profileDataRedux = useAppSelector((state) => state.profile.profileData);
+  console.log(profileDataRedux);
   const dispatch = useAppDispatch();
-  console.log(profileRedux.profileData);
+  console.log(profileDataRedux);
 
   useEffect(() => {
     console.log('getprofiledata running from App.tsx')
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
-      dispatch(profileDataActions.setProfileData(data));
+      if (data) {
+        dispatch(profileDataActions.setProfileData(data));
+      }
     }
     obtainProfileData();
   }, [getProfileData, setProfileData, updateProfileState])
@@ -126,7 +129,7 @@ const App: React.FC = () => {
             <IonTabButton tab="profile" href="/profile">
               {/* <IonIcon className="fill-red-600 stroke-red-600" aria-hidden="true" src={personUnfilled} /> */}
               {/* <IonIcon aria-hidden="true" icon={backend.concat(profileData.profile_photo)} /> */}
-              <img className={`rounded-full border border-neutral-800 h-9`} src={backend.concat(profileRedux.profileData.profile_photo)} />
+              <img className={`rounded-full border border-neutral-800 h-9`} src={backend.concat(profileDataRedux.profile_photo)} />
             </IonTabButton>
           </IonTabBar>
         </IonTabs>

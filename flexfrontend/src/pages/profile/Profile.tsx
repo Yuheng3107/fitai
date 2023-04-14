@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 
+//redux imports
+import { useAppSelector } from "../../store/hooks";
+
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
 import { getProfileDataAsync, getFavoriteExerciseAsync } from "../../utils/getProfileData";
@@ -37,6 +40,8 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [trendData, setTrendData] = useState<TrendData>(emptyTrendData);
   const [userFeedData, setUserFeedData] = useState(null);
   const [loginStatus, setLoginStatus] = useState(false);
+
+  const profileDataRedux = useAppSelector((state) => state.profile.profileData)
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
