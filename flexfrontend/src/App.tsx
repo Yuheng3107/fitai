@@ -7,7 +7,7 @@ import { profileDataActions } from './store/profileDataSlice';
 
 
 //Util function imports
-import getProfileData, { getProfileDataAsync, getFavoriteExerciseAsync } from './utils/getProfileData';
+import { getProfileData, getProfileDataAsync, getFavoriteExerciseAsync } from './utils/getProfileData';
 
 //type import
 import { ProfileData, emptyProfileData } from './types/stateTypes';

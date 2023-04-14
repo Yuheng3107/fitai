@@ -30,6 +30,10 @@ export type ExerciseStats = {
     perfect_reps: number;
     total_reps: number;
   };
+  favorite_exercise_regime: {
+    name: number;
+    times_completed: number;
+  };
 }
 
 export const emptyExerciseStats = {
@@ -42,4 +46,8 @@ export const emptyExerciseStats = {
     perfect_reps: 0,
     total_reps: 0,
   },
+  favorite_exercise_regime: {
+    name: 1,
+    times_completed: 0,
+  }
 };

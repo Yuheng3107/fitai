@@ -5,7 +5,8 @@ import { useAppSelector } from "../../store/hooks";
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
-import { getProfileDataAsync, getFavoriteExerciseAsync } from "../../utils/getProfileData";
+import { getProfileDataAsync, getFavoriteExerciseAsync, getFavoriteExerciseRegimeAsync } from "../../utils/getProfileData";
+import { getExerciseRegimeAsync } from "../../utils/getExerciseData";
 
 import { googleLogout } from "@react-oauth/google";
 import { ExerciseStats, emptyExerciseStats, ProfileData, emptyProfileData } from "../../types/stateTypes";
@@ -28,7 +29,7 @@ type ProfileProps = {
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
   const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
-  const [userFeedData, setUserFeedData] = useState(null);
+  const [userPostData, setUserPostData] = useState(null);
   const [loginStatus, setLoginStatus] = useState(false);
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData)
@@ -41,6 +42,10 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
       data.favorite_exercise = await getFavoriteExerciseAsync(data.id);
+      data.favorite_exercise_regime = await getFavoriteExerciseRegimeAsync(data.id);
+      data.favorite_exercise_regime.name = null;
+      if (data.favorite_exercise_regime.exercise_regime !== null) data.favorite_exercise_regime = await getExerciseRegimeAsync(data.favorite_exercise_regime.exercise_regime);
+      console.log(data)
       if (profileData['username'] !== data.username ||
         profileData['email'] !== data.email ||
         profileData['profile_photo'] !== data['profile_photo'] ||
@@ -66,7 +71,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     <IonPage>
       <IonContent fullscreen>
         {loginStatus ?
-          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userFeedData={userFeedData} />
+          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userPostData={userPostData} />
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         }

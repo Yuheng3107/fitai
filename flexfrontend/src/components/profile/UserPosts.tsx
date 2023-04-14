@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 
 import { backend } from "../../App";
 import PersonTextCard from "../Feed/PersonTextCard";
-type UserFeedProps = {
-  userFeedData: {} | null;
+type userPostProps = {
+  userPostData: {} | null;
 };
 
-const UserFeed = ({ userFeedData }: UserFeedProps) => {
+const UserPosts = ({ userPostData }: userPostProps) => {
   return (
     <div
       id="userFeed"
@@ -17,4 +17,4 @@ const UserFeed = ({ userFeedData }: UserFeedProps) => {
   );
 };
 
-export default UserFeed;
+export default UserPosts;

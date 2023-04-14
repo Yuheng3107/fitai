@@ -57,17 +57,19 @@ const ExerciseStatsDisplay = ({ trendData }: TrendDataProps) => {
           className="flex flex-col border border-zinc-500 p-2 rounded-lg w-full"
         >
           <span className="text-xs">Favourite Workout</span>
-          <span className="text-2xl">HIIT</span>
+          <span className="text-2xl">{trendData?.favorite_exercise_regime?.name === null ? "None" : trendData?.favorite_exercise_regime?.name}</span>
           <div>
-            <span className="text-sm font-semibold">42</span>
+            <span className="text-sm font-semibold">{trendData?.favorite_exercise_regime?.times_completed === null ? "0" : trendData?.favorite_exercise_regime?.times_completed}</span>
             <span className="text-xs"> Times</span>
           </div>
+          {/*
           <div>
             <span className="text-sm font-semibold">11</span>
             <span className="text-xs"> hrs </span>
             <span className="text-sm font-semibold">42</span>
             <span className="text-xs"> mins</span>
           </div>
+          */}
         </div>
       </div>
       <div className="flex flex-row justify-evenly mt-2">
