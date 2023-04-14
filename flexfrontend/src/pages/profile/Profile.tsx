@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 
 //redux imports
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { profileDataActions } from '../../store/profileDataSlice';
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
 import { getProfileDataAsync, getFavoriteExerciseAsync, getFavoriteExerciseRegimeAsync } from "../../utils/getProfileData";
 import { getExerciseRegimeAsync } from "../../utils/getExerciseData";
+import { getUserPostsAsync } from "../../utils/getPostData";
 
 import { googleLogout } from "@react-oauth/google";
 import { ExerciseStats, emptyExerciseStats, ProfileData, emptyProfileData } from "../../types/stateTypes";
@@ -29,16 +31,20 @@ type ProfileProps = {
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
   const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
-  const [userPostArray, setUserPostArray] = useState([]);
+  const [userPostArray, setUserPostArray] = useState(new Array());
   const [loginStatus, setLoginStatus] = useState(false);
+  const dispatch = useAppDispatch();
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData)
+  const exerciseStatsRedux = useAppSelector((state) => state.exerciseStats)
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
     console.log(`the current profileData is ${profileData}`);
     checkLoginStatus(loginStatus, setLoginStatus);
-
+    console.log("redux:");
+    console.log(exerciseStatsRedux);
+    /*
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
       data.favorite_exercise = await getFavoriteExerciseAsync(data.id);
@@ -59,23 +65,26 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     if (loginStatus) {
       obtainProfileData();
     }
+    */
   }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileDataAsync, setProfileData, profileData, updateProfileState]);
 
   const logOut = () => {
     googleLogout();
     setLoginStatus(false);
-    setProfileData(emptyProfileData);
+    dispatch(profileDataActions.setProfileData(emptyProfileData))
   };
 
-  const loadUserPostData = () => {
-    
+  let currentUserPostSet = 1;
+  const loadUserPostData = async () => {
+    let data = await getUserPostsAsync(profileDataRedux.id, currentUserPostSet);
+    userPostArray.push(data);
   };
 
   return (
     <IonPage>
       <IonContent fullscreen>
         {loginStatus ?
-          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userPostArray={userPostArray} loadUserPostData={loadUserPostData}/>
+          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStatsRedux} userPostArray={userPostArray} loadUserPostData={loadUserPostData}/>
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         }

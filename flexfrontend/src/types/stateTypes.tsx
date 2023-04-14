@@ -1,4 +1,5 @@
 export type ProfileData = {
+  id: number;
   achievements: any[];
   username: string;
   email: string;
@@ -10,6 +11,7 @@ export type ProfileData = {
 }
 
 export const emptyProfileData = {
+  id: 0,
   achievements: [],
   email: "",
   profile_photo: "",

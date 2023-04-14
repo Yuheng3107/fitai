@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 //Redux imports
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import { profileDataActions } from './store/profileDataSlice';
-
+import { exerciseStatsActions } from './store/exerciseStatsSlice';
 
 //Util function imports
-import { getProfileData, getProfileDataAsync, getFavoriteExerciseAsync } from './utils/getProfileData';
+import { getProfileData, getProfileDataAsync, getFavoriteExerciseAsync, getFavoriteExerciseRegimeAsync } from './utils/getProfileData';
+import { getExerciseRegimeAsync } from './utils/getExerciseData';
 
 //type import
-import { ProfileData, emptyProfileData } from './types/stateTypes';
+import { ProfileData, emptyProfileData, ExerciseStats, emptyExerciseStats } from './types/stateTypes';
 
 
 // tailwind imports
@@ -67,11 +68,12 @@ const exercises = ["zero", "Squats", "Push-ups", "Hamstring Stretch"];
 
 const App: React.FC = () => {
 
-  const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
+  const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
+  const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
   const [updateProfileState, setUpdateProfileState] = useState(0);
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData);
-  console.log(profileDataRedux);
+  const exerciseStatsRedux = useAppSelector((state) => state.exerciseStats);
   const dispatch = useAppDispatch();
   console.log(profileDataRedux);
 
@@ -79,13 +81,12 @@ const App: React.FC = () => {
     console.log('getprofiledata running from App.tsx')
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
-      let favoriteExercise = await getFavoriteExerciseAsync(data.id)
-      if (data) {
-        dispatch(profileDataActions.setProfileData(data));
-      }
-      if (favoriteExercise) {
-        
-      }
+      data.favorite_exercise = await getFavoriteExerciseAsync(data.id);
+      data.favorite_exercise_regime = await getFavoriteExerciseRegimeAsync(data.id);
+      data.favorite_exercise_regime.name = null;
+      if (data.favorite_exercise_regime.exercise_regime !== null) data.favorite_exercise_regime = await getExerciseRegimeAsync(data.favorite_exercise_regime.exercise_regime);
+      dispatch(profileDataActions.setProfileData(data))
+      dispatch(exerciseStatsActions.setExerciseStats(data))
     }
 
     obtainProfileData();
