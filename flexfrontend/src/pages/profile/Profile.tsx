@@ -18,7 +18,7 @@ import {
 
 //component imports
 import Login from "../../components/login/Login";
-import UserProfile from "../../components/profile/UserProfile";
+import UserProfileTemplate from "../../components/profile/UserProfileTemplate";
 
 type ProfileProps = {
   updateProfileState: number;
@@ -66,7 +66,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     <IonPage>
       <IonContent fullscreen>
         {loginStatus ?
-          <UserProfile profileData={profileData} trendData={trendData} userFeedData={userFeedData} />
+          <UserProfileTemplate profileData={profileData} trendData={trendData} userFeedData={userFeedData} />
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         }

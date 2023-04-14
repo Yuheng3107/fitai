@@ -10,7 +10,7 @@ type ProfileInfoProps = {
   profileData: ProfileData;
 };
 
-const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
+const KeyProfileInfoDisplay = ({ profileData }: ProfileInfoProps) => {
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
@@ -61,4 +61,4 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
   */
 };
 
-export default ProfileInfo;
+export default KeyProfileInfoDisplay;
