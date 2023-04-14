@@ -7,7 +7,9 @@ import { useHistory } from 'react-router-dom';
 
 import { backend } from '../../App';
 
-//ionic imports
+//redux imports
+import { profileDataActions } from '../../store/profileDataSlice';
+import { useAppDispatch } from '../../store/hooks';
 
 //utils import
 import cropImage from '../../utils/crop';
@@ -30,6 +32,7 @@ type UpdateProfilePicProps = {
 //functional component
 const UpdateProfilePic = ({setUpdateProfileState, updateProfileState}: UpdateProfilePicProps) => {
     const history = useHistory();
+    const dispatch = useAppDispatch();
 
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
@@ -52,6 +55,7 @@ const UpdateProfilePic = ({setUpdateProfileState, updateProfileState}: UpdatePro
     //Using getProfileData to get the current profilePic
     useEffect(() => {
         getProfileData(setProfileData);
+        dispatch(profileDataActions.updateProfileCounter);
     }, [getProfileData])
 
 

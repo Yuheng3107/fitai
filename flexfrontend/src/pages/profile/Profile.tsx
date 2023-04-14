@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 //redux imports
 import { useAppSelector } from "../../store/hooks";
@@ -12,23 +12,13 @@ import { TrendData, emptyTrendData, ProfileData, emptyProfileData } from "../../
 //ionic imports
 import {
   IonContent,
-  IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonNavLink,
   IonButton,
 } from "@ionic/react";
 
 //component imports
 import Login from "../../components/login/Login";
 import UserProfile from "../../components/profile/UserProfile";
-
-import { backend } from "../../App";
-import { profile } from "console";
 
 type ProfileProps = {
   updateProfileState: number;
@@ -60,19 +50,11 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
       setTrendData(data);
     }
 
-    
+
     if (loginStatus) {
       obtainProfileData();
     }
-  }, [
-    loginStatus,
-    setLoginStatus,
-    checkLoginStatus,
-    getProfileDataAsync,
-    setProfileData,
-    profileData,
-    updateProfileState,
-  ]);
+  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileDataAsync, setProfileData, profileData, updateProfileState]);
 
   const logOut = () => {
     googleLogout();
@@ -83,11 +65,11 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   return (
     <IonPage>
       <IonContent fullscreen>
-        {loginStatus === false ? (
+        {loginStatus ?
+          <UserProfile profileData={profileData} trendData={trendData} userFeedData={userFeedData} />
+          :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
-        ) : (
-          <UserProfile profileData={profileData} trendData={trendData} userFeedData={userFeedData}/>
-        )}
+        }
         <IonButton routerLink="/profile/create" routerDirection="forward">
           Edit Profile
         </IonButton>
