@@ -1,9 +1,13 @@
 //React imports
 import { useEffect, useState } from 'react';
 
+//Redux imports
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import { profileDataActions } from './store/profileDataSlice';
+
 
 //Util function imports
-import getProfileData from './utils/getProfileData';
+import getProfileData, { getProfileDataAsync } from './utils/getProfileData';
 
 //type import
 import { ProfileData, emptyProfileData } from './types/stateTypes';
@@ -59,13 +63,24 @@ import "@ionic/react/css/display.css";
 setupIonicReact();
 
 const backend = " http://localhost:8000";
+const exercises = ["zero", "Squats", "Push-ups", "Hamstring Stretch"];
 
 const App: React.FC = () => {
+
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData)
   const [updateProfileState, setUpdateProfileState] = useState(0);
+
+  const profileRedux = useAppSelector((state) => state.profile);
+  const dispatch = useAppDispatch();
+  console.log(profileRedux.profileData);
+
   useEffect(() => {
     console.log('getprofiledata running from App.tsx')
-    getProfileData(setProfileData);
+    async function obtainProfileData() {
+      let data = await getProfileDataAsync();
+      dispatch(profileDataActions.setProfileData(data));
+    }
+    obtainProfileData();
   }, [getProfileData, setProfileData, updateProfileState])
 
   return (
@@ -86,10 +101,10 @@ const App: React.FC = () => {
               return <Exercise {...props} />;
             }} />
             <Route exact path="/profile">
-              <Profile updateProfileState = {updateProfileState} setUpdateProfileState = {setUpdateProfileState}/>
+              <Profile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
             </Route>
             <Route exact path='/profile/create/'>
-              <EditProfile setUpdateProfileState = {setUpdateProfileState} updateProfileState = {updateProfileState} />
+              <EditProfile setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />
@@ -111,7 +126,7 @@ const App: React.FC = () => {
             <IonTabButton tab="profile" href="/profile">
               {/* <IonIcon className="fill-red-600 stroke-red-600" aria-hidden="true" src={personUnfilled} /> */}
               {/* <IonIcon aria-hidden="true" icon={backend.concat(profileData.profile_photo)} /> */}
-              <img className={`rounded-full border border-neutral-800 h-9`} src={backend.concat(profileData.profile_photo)} />
+              <img className={`rounded-full border border-neutral-800 h-9`} src={backend.concat(profileRedux.profileData.profile_photo)} />
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
@@ -122,4 +137,4 @@ const App: React.FC = () => {
 
 export default App;
 
-export { backend };
+export { backend, exercises };

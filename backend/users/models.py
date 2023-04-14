@@ -22,6 +22,7 @@ class AppUser(AbstractUser):
     calories_burnt = models.PositiveIntegerField(default=0)
     reps = models.PositiveIntegerField(default=0)
     perfect_reps = models.PositiveIntegerField(default=0)
+    streak = models.PositiveSmallIntegerField(default=0)
     ########
     # Relations
 

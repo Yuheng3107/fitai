@@ -1,6 +1,6 @@
 import { backend } from "../App.tsx";
 
-export const  getProfileDataAsync = async function () {
+export const getProfileDataAsync = async function () {
   try {
     let res = await fetch(`${backend}/users/user`, {
       method: "GET",
@@ -37,6 +37,26 @@ const getProfileData =  (updateFunction) =>{
       console.log(data);
     })
     .catch((err) => console.log(err));
+}
+
+export const getFavoriteExerciseAsync = async function (pk) {
+  try {
+    let res = await fetch(`${backend}/exercises/exercise/favorite`, {
+      method: "POST",
+      credentials: "include", // include cookies in the request
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+      },
+      body: JSON.stringify({
+        user_id: pk,
+      })
+    })
+    let data = await res.json();
+    return data
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export default getProfileData;
