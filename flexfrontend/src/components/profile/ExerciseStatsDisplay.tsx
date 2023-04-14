@@ -11,7 +11,7 @@ type ExerciseStatsDisplayProps = {
 };
 
 
-const ExerciseStatsDisplay = ({  }: ExerciseStatsDisplayProps) => {
+const ExerciseStatsDisplay = () => {
   const exerciseStats = useAppSelector(state => state.exerciseData)
   return (
     <div

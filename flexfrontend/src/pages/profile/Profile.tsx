@@ -26,8 +26,6 @@ type ProfileProps = {
 }
 
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
-  const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
-  const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
   const [userFeedData, setUserFeedData] = useState(null);
   const [loginStatus, setLoginStatus] = useState(false);
 
@@ -35,38 +33,20 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
-    console.log(`the current profileData is ${profileData}`);
     checkLoginStatus(loginStatus, setLoginStatus);
 
-    async function obtainProfileData() {
-      let data = await getProfileDataAsync();
-      data.favorite_exercise = await getFavoriteExerciseAsync(data.id);
-      if (profileData['username'] !== data.username ||
-        profileData['email'] !== data.email ||
-        profileData['profile_photo'] !== data['profile_photo'] ||
-        profileData['bio'] !== data.bio) {
-        setProfileData(data)
-      }
-      setExerciseStats(data);
-    }
-
-
-    if (loginStatus) {
-      obtainProfileData();
-    }
-  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileDataAsync, setProfileData, profileData, updateProfileState]);
+  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileDataAsync, updateProfileState]);
 
   const logOut = () => {
     googleLogout();
     setLoginStatus(false);
-    setProfileData(emptyProfileData);
   };
 
   return (
     <IonPage>
       <IonContent fullscreen>
         {loginStatus ?
-          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userFeedData={userFeedData} />
+          <UserProfileTemplate profileData={profileDataRedux} userFeedData={userFeedData} />
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         }
