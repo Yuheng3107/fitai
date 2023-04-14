@@ -67,11 +67,15 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     setProfileData(emptyProfileData);
   };
 
+  const loadUserPostData = () => {
+    
+  };
+
   return (
     <IonPage>
       <IonContent fullscreen>
         {loginStatus ?
-          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userPostArray={userPostArray} />
+          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userPostArray={userPostArray} loadUserPostData={loadUserPostData}/>
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         }

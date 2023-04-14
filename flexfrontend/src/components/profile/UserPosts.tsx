@@ -7,9 +7,10 @@ import { ProfileData, UserPostData } from "../../types/stateTypes";
 type userPostProps = {
   profileData: ProfileData;
   userPostArray: any[];
+  loadUserPostData: () => void;
 };
 
-const UserPosts = ({ profileData, userPostArray }: userPostProps) => {
+const UserPosts = ({ profileData, userPostArray, loadUserPostData }: userPostProps) => {
   return (
     <div
       id="userFeed"
@@ -18,6 +19,7 @@ const UserPosts = ({ profileData, userPostArray }: userPostProps) => {
       {userPostArray.map(item => (
         <PersonTextCard userPostData={item} profileData={profileData}/>
       ))}
+      <button onClick={loadUserPostData}>Load More</button>
     </div>
   );
 };

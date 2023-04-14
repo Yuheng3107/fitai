@@ -12,9 +12,10 @@ type UserProfileProps = {
   profileData: ProfileData;
   exerciseStats: ExerciseStats;
   userPostArray: any[];
+  loadUserPostData: () => void;
 };
 
-const UserProfileTemplate = ({ profileData, exerciseStats, userPostArray }: UserProfileProps) => {
+const UserProfileTemplate = ({ profileData, exerciseStats, userPostArray, loadUserPostData }: UserProfileProps) => {
   const [isTrend, setTrend] = useState(true);
 
   return (
@@ -24,7 +25,7 @@ const UserProfileTemplate = ({ profileData, exerciseStats, userPostArray }: User
       {isTrend === true ?
         <ExerciseStatsDisplay trendData={exerciseStats} />
         :
-        <UserPosts userPostArray={userPostArray} profileData={profileData} />
+        <UserPosts userPostArray={userPostArray} profileData={profileData} loadUserPostData={loadUserPostData} />
       }
     </div>
   )
