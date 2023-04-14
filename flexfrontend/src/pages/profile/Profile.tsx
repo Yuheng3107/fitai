@@ -29,7 +29,7 @@ type ProfileProps = {
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
   const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
-  const [userPostData, setUserPostData] = useState(null);
+  const [userPostArray, setUserPostArray] = useState([]);
   const [loginStatus, setLoginStatus] = useState(false);
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData)
@@ -71,7 +71,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     <IonPage>
       <IonContent fullscreen>
         {loginStatus ?
-          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userPostData={userPostData} />
+          <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStats} userPostArray={userPostArray} />
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />
         }

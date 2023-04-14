@@ -20,6 +20,22 @@ export const emptyProfileData = {
   perfect_reps: 0,
 };
 
+export type UserPostData = {
+  poster: number;
+  posted_at: string;
+  likes: number;
+  text: string;
+  title: string;
+}
+
+export const emptyUserPostData = {
+  poster: 0,
+  posted_at: "",
+  likes: 0,
+  text: "Lorem Ipsum",
+  title: "Ipsum Lorem",
+}
+
 export type ExerciseStats = {
   exercise_regimes: any[];
   exercises: any[];

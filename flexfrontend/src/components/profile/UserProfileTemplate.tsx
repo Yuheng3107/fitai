@@ -11,10 +11,10 @@ import { ProfileData, ExerciseStats } from "../../types/stateTypes";
 type UserProfileProps = {
   profileData: ProfileData;
   exerciseStats: ExerciseStats;
-  userPostData: null;
+  userPostArray: any[];
 };
 
-const UserProfileTemplate = ({ profileData, exerciseStats, userPostData }: UserProfileProps) => {
+const UserProfileTemplate = ({ profileData, exerciseStats, userPostArray }: UserProfileProps) => {
   const [isTrend, setTrend] = useState(true);
 
   return (
@@ -24,7 +24,7 @@ const UserProfileTemplate = ({ profileData, exerciseStats, userPostData }: UserP
       {isTrend === true ?
         <ExerciseStatsDisplay trendData={exerciseStats} />
         :
-        <UserPosts userPostData={userPostData} />
+        <UserPosts userPostArray={userPostArray} profileData={profileData} />
       }
     </div>
   )
