@@ -1,5 +1,5 @@
 from rest_framework.views import APIView, Response
-from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics
+from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics, ExerciseSessions
 from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseStatisticsSerializer, ExerciseRegimeStatisticsSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -299,3 +299,18 @@ class FavoriteExerciseRegimeStatisticView(APIView):
         serializer = ExerciseRegimeStatisticsSerializer(favorite_exercise_regime_stats)
         return Response(serializer.data)
 
+class ExerciseSessionCreateView(APIView):
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return ResourceWarning(status=status.HTTP_401_UNAUTHORIZED)
+        required_fields = ["exercise", "sets", "duration", "reps", "perfect_reps", "start_time"]
+        for field in required_fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+        # Exercise Regime is optional, if exercise regime id is sent to backend, add it to required fields
+        if "exercise_regime" in request.data:
+            required_fields.append("exercise_regime")
+        
+        fields = {field: request.data[field] for field in required_fields}
+        ExerciseSessions.objects.create(user=request.user, **fields)
+        return Response(status=status.HTTP_201_CREATED)

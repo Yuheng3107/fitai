@@ -418,6 +418,8 @@ class FavoriteExerciseRegimeStatisticsViewTests(APITestCase):
         data = json.loads(response.content)
         self.assertEqual(data["times_completed"], 2)
         
-    
+class ExerciseSessionCreateViewTests(APITestCase):
+    def test_create_exercise_session(self):
+        pass
         
     

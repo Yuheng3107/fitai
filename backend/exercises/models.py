@@ -67,3 +67,4 @@ class ExerciseSessions(models.Model):
     duration = models.PositiveSmallIntegerField()
     reps = models.PositiveSmallIntegerField(default=0)
     perfect_reps = models.PositiveSmallIntegerField(default=0)
+    start_time = models.DateTimeField(null=True, blank=True)
