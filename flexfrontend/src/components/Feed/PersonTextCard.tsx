@@ -25,7 +25,7 @@ const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
     }
   }, [profileData?.profile_photo])
   return (
-    <div id="card-container" className="border border-zinc-500 mt-12 p-2">
+    <div id="card-container" className="border border-zinc-500 mt-4 p-2">
       <div id="top-bar" className=" flex flex-row justify-between mb-2">
         <div className="flex flex-row">
           <img

@@ -27,6 +27,8 @@ type ProfileProps = {
   updateProfileState: number;
   setUpdateProfileState: (arg: number) => void;
 }
+// for keeping track of how many sets of user posts
+let currentUserPostSet = 0;
 
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
@@ -37,12 +39,12 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData)
   const exerciseStatsRedux = useAppSelector((state) => state.exerciseStats)
+  
+
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
     checkLoginStatus(loginStatus, setLoginStatus);
     /*
-    console.log("redux:");
-    console.log(exerciseStatsRedux);
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
       data.favorite_exercise = await getFavoriteExerciseAsync(data.id);
@@ -58,8 +60,6 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
       }
       setExerciseStats(data);
     }
-
-
     if (loginStatus) {
       obtainProfileData();
     }
@@ -72,10 +72,12 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     dispatch(profileDataActions.setProfileData(emptyProfileData))
   };
 
-  let currentUserPostSet = 1;
   const loadUserPostData = async () => {
     let data = await getUserPostsAsync(profileDataRedux.id, currentUserPostSet);
-    userPostArray.push(data);
+    setUserPostArray(userPostArray.concat(data));
+    console.log(data);
+    console.log(currentUserPostSet);
+    currentUserPostSet += 1;
   };
 
   return (

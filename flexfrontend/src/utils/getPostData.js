@@ -1,6 +1,6 @@
 import { backend } from "../App.tsx";
 
-export const getUserPostsAsync = async function (pk, set) {
+export const getUserPostsAsync = async function (user_id, set_no) {
   try {
     let res = await fetch(`${backend}/feed/user_post/latest`, {
       method: "POST",
@@ -10,8 +10,8 @@ export const getUserPostsAsync = async function (pk, set) {
         "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
       },
       body: JSON.stringify({
-        user_id: pk,
-        set: set,
+        user_id: user_id,
+        set_no: set_no,
       })
     })
     let data = await res.json();
