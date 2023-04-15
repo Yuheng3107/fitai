@@ -68,3 +68,6 @@ class ExerciseSession(models.Model):
     reps = models.PositiveSmallIntegerField(default=0)
     perfect_reps = models.PositiveSmallIntegerField(default=0)
     start_time = models.DateTimeField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.exercise.name} Session of {self.user.username}"

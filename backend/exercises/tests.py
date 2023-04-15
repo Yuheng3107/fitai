@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 import json
 
-from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics
+from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics, ExerciseSession
 
 # Create your tests here.
 class ExerciseTestCase(TestCase):
@@ -442,5 +442,14 @@ class ExerciseSessionCreateViewTests(APITestCase):
         self.client.force_authenticate(user=user)
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        exercise_session = ExerciseSession.objects.filter(user=user).filter(exercise=exercise).filter(duration=duration)[0]
+        self.assertEqual(exercise_session.exercise, exercise)
+        self.assertEqual(exercise_session.user, user)
+        self.assertEqual(exercise_session.sets, sets)
+        self.assertEqual(exercise_session.reps, reps)
+        self.assertEqual(exercise_session.duration, duration)
+        self.assertEqual(exercise_session.perfect_reps, perfect_reps)
         
+        
+            
     
