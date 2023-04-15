@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from feed.views import TagsUpdateView, TagsDeleteView, LikesUpdateView, LikesDeleteView, ShareUpdateView, ShareDeleteView, MediaUpdateView, MediaDeleteView #type: ignore
+from datetime import datetime, timezone
 # Create your views here.
 
 class ExerciseUpdateView(APIView):
@@ -299,18 +300,19 @@ class FavoriteExerciseRegimeStatisticView(APIView):
         serializer = ExerciseRegimeStatisticsSerializer(favorite_exercise_regime_stats)
         return Response(serializer.data)
 
-class ExerciseSessionCreateView(APIView):
+class ExerciseSessionsCreateView(APIView):
     def post(self, request):
         if not request.user.is_authenticated:
-            return ResourceWarning(status=status.HTTP_401_UNAUTHORIZED)
-        required_fields = ["exercise", "sets", "duration", "reps", "perfect_reps", "start_time"]
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        required_fields = ["exercise_id", "sets", "duration", "reps", "perfect_reps", "start_time"]
         for field in required_fields:
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
         # Exercise Regime is optional, if exercise regime id is sent to backend, add it to required fields
         if "exercise_regime" in request.data:
             required_fields.append("exercise_regime")
-        
+        # Convert ISO format start time to datetime.datetime object
+        request.data["start_time"] = datetime.strptime(request.data["start_time"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
         fields = {field: request.data[field] for field in required_fields}
         ExerciseSessions.objects.create(user=request.user, **fields)
         return Response(status=status.HTTP_201_CREATED)

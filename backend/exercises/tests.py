@@ -418,8 +418,29 @@ class FavoriteExerciseRegimeStatisticsViewTests(APITestCase):
         data = json.loads(response.content)
         self.assertEqual(data["times_completed"], 2)
         
-class ExerciseSessionCreateViewTests(APITestCase):
+class ExerciseSessionsCreateViewTests(APITestCase):
     def test_create_exercise_session(self):
-        pass
+        url = reverse('create_exercise_session')
+        start_time = "2023-04-15T09:05:49.401Z"
+        User = get_user_model()
+        user = baker.make(User)
+        exercise = baker.make(Exercise)
+        sets = 2
+        duration = 6969
+        reps = 69
+        perfect_reps = 21
+        data = {
+            "exercise_id": exercise.id,
+            "sets": sets,
+            "duration": duration,
+            "reps": reps,
+            "perfect_reps": perfect_reps,
+            "start_time": start_time,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
     
