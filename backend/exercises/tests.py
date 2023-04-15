@@ -418,7 +418,7 @@ class FavoriteExerciseRegimeStatisticsViewTests(APITestCase):
         data = json.loads(response.content)
         self.assertEqual(data["times_completed"], 2)
         
-class ExerciseSessionsCreateViewTests(APITestCase):
+class ExerciseSessionCreateViewTests(APITestCase):
     def test_create_exercise_session(self):
         url = reverse('create_exercise_session')
         start_time = "2023-04-15T09:05:49.401Z"

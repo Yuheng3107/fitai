@@ -59,7 +59,7 @@ class ExerciseRegimeStatistics(models.Model):
         return f"{self.user} stats for {self.exercise_regime}"
 
 
-class ExerciseSessions(models.Model):
+class ExerciseSession(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     exercise_regime = models.ForeignKey(ExerciseRegime, on_delete=models.SET_NULL, blank=True, null=True)

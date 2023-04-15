@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import ExerciseDetailView, ExerciseUpdateView, ExerciseListView, ExerciseStatisticsDetailView, ExerciseStatisticsUpdateView, ExerciseStatisticsCreateView, ExerciseRegimeDetailView, ExerciseRegimeDeleteView, ExerciseRegimeCreateView, ExerciseRegimeUpdateView
 from .views import ExerciseLikesUpdateView, ExerciseLikesDeleteView, ExerciseTagsUpdateView, ExerciseTagsDeleteView, ExerciseShareUpdateView, ExerciseShareDeleteView, ExerciseMediaUpdateView, ExerciseMediaDeleteView
-from .views import ExerciseRegimeLikesUpdateView, ExerciseRegimeLikesDeleteView, ExerciseRegimeTagsUpdateView, ExerciseRegimeTagsDeleteView, ExerciseRegimeShareUpdateView, ExerciseRegimeShareDeleteView, ExerciseRegimeMediaUpdateView, ExerciseRegimeMediaDeleteView, FavoriteExerciseStatisticView, FavoriteExerciseRegimeStatisticView, ExerciseSessionsCreateView
+from .views import ExerciseRegimeLikesUpdateView, ExerciseRegimeLikesDeleteView, ExerciseRegimeTagsUpdateView, ExerciseRegimeTagsDeleteView, ExerciseRegimeShareUpdateView, ExerciseRegimeShareDeleteView, ExerciseRegimeMediaUpdateView, ExerciseRegimeMediaDeleteView, FavoriteExerciseStatisticView, FavoriteExerciseRegimeStatisticView, ExerciseSessionCreateView
 urlpatterns = [
     # Exercises
     path('exercise/favorite', FavoriteExerciseStatisticView.as_view(), name='favorite_exercise_statistic'),
@@ -35,5 +35,5 @@ urlpatterns = [
     path('exercise_regime/update/media', ExerciseRegimeMediaUpdateView.as_view(), name='update_exercise_regime_media'),
     path('exercise_regime/delete/media/<int:pk>', ExerciseRegimeMediaDeleteView.as_view(), name='delete_exercise_regime_media'),
     # Exercise Sessions
-    path('exercise_session/create', ExerciseSessionsCreateView.as_view(), name='create_exercise_session'),
+    path('exercise_session/create', ExerciseSessionCreateView.as_view(), name='create_exercise_session'),
 ]

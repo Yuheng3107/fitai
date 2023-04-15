@@ -1,5 +1,5 @@
 from rest_framework.views import APIView, Response
-from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics, ExerciseSessions
+from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics, ExerciseSession
 from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseStatisticsSerializer, ExerciseRegimeStatisticsSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -300,7 +300,7 @@ class FavoriteExerciseRegimeStatisticView(APIView):
         serializer = ExerciseRegimeStatisticsSerializer(favorite_exercise_regime_stats)
         return Response(serializer.data)
 
-class ExerciseSessionsCreateView(APIView):
+class ExerciseSessionCreateView(APIView):
     def post(self, request):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -314,5 +314,5 @@ class ExerciseSessionsCreateView(APIView):
         # Convert ISO format start time to datetime.datetime object
         request.data["start_time"] = datetime.strptime(request.data["start_time"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
         fields = {field: request.data[field] for field in required_fields}
-        ExerciseSessions.objects.create(user=request.user, **fields)
+        ExerciseSession.objects.create(user=request.user, **fields)
         return Response(status=status.HTTP_201_CREATED)
