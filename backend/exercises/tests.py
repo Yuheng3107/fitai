@@ -450,6 +450,28 @@ class ExerciseSessionCreateViewTests(APITestCase):
         self.assertEqual(exercise_session.duration, duration)
         self.assertEqual(exercise_session.perfect_reps, perfect_reps)
         
-        
+      
             
-    
+class LatestExerciseSessionViewTests(APITestCase):
+    def test_get_latest_exercise_session(self):
+        url = reverse('latest_exercise_session')
+        User = get_user_model()
+        user = baker.make(User)
+        exercise_sessions = [baker.make(ExerciseSession, user=user) for i in range(21)]
+        data = {
+            "set_no": 0,
+            "user_id": user.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        # Checks that last 10 entries of exercise sessions we generated are indeed returned
+        for i, exercise_session in enumerate(response_data):
+            self.assertEqual(exercise_sessions[-(i+1)].id, exercise_session["id"])
+        data["set_no"] = 1
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        # Checks that newest set of entries (latest 10 exercise sessions) are returned 
+        for i, exercise_session in enumerate(response_data):
+            self.assertEqual(exercise_sessions[-(i+11)].id, exercise_session["id"])
