@@ -15,7 +15,7 @@ urlpatterns = [
     path('user_post/delete/share/<int:pk>', UserPostShareDeleteView.as_view(), name='delete_user_post_share'),
     path('user_post/update/media', UserPostMediaUpdateView.as_view(), name='update_user_post_media'),
     path('user_post/delete/media/<int:pk>', UserPostMediaDeleteView.as_view(), name='delete_user_post_media'),
-    
+    path('user_post/latest', LatestUserPostView.as_view(), name='latest_user_post'),
     #Comments
     path('comment/<int:pk>', CommentDetailView.as_view(), name='comment_detail'),
     path('comment/list', CommentListView.as_view(), name='comment_list'),

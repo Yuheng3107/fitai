@@ -13,6 +13,7 @@ import json
 
 from .models import UserPost, CommunityPost, Comment, Tags
 from exercises.models import Exercise # type: ignore
+from datetime import datetime, timezone
 # Create your tests here.
 
 
@@ -695,3 +696,27 @@ class DeleteTagsViewTests(APITestCase):
         updated_post = CommunityPost.objects.get()
         # many to many checks
         self.assertFalse(updated_post.tags.all().exists())
+        
+class LatestUserPostViewTests(APITestCase):
+    def test_get_latest_user_posts(self):
+        url = reverse('latest_user_post')
+        User = get_user_model()
+        user = baker.make(User)
+        posts = [baker.make(UserPost, poster=user) for i in range(21)]
+        data = {
+            "set_no": 0,
+            "user_id": user.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        # Checks that last 10 entries of posts we generated are indeed returned by comparing the posted_at times
+        for i, post in enumerate(response_data):
+            self.assertEqual(posts[-(i+1)].posted_at, datetime.strptime(post["posted_at"], '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc))
+        data["set_no"] = 1
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        # Checks that newest set of entries (latest 10 posts) are returned by comparing the posted_at times
+        for i, post in enumerate(response_data):
+            self.assertEqual(posts[-(i+11)].posted_at, datetime.strptime(post["posted_at"], '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc))

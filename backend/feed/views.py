@@ -669,3 +669,18 @@ class CommentLikesDeleteView(LikesDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = Comment
+        
+class LatestUserPostView(APIView):
+    def post(self, request):
+        """Returns 10 most recent posts, taking into account posts user has already loaded"""
+        if "set_no" not in request.data or "user_id" not in request.data:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        set_no = request.data["set_no"]
+        set_size = 10
+        start = set_no * set_size
+        try:
+            latest_posts_qs = UserPost.objects.filter(poster=request.data["user_id"]).order_by('-id')[start:start+set_size]
+            serializer = UserPostSerializer(latest_posts_qs, many=True)
+            return Response(serializer.data)
+        except:
+            return Response("No more posts", status=status.HTTP_404_NOT_FOUND)
