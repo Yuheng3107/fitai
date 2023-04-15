@@ -1,6 +1,6 @@
 from rest_framework.views import APIView, Response
 from .models import Exercise, ExerciseStatistics, ExerciseRegime, ExerciseRegimeStatistics, ExerciseSession
-from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseStatisticsSerializer, ExerciseRegimeStatisticsSerializer
+from .serializers import ExerciseRegimeSerializer, ExerciseSerializer, ExerciseStatisticsSerializer, ExerciseRegimeStatisticsSerializer, ExerciseSessionSerializer
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -316,3 +316,18 @@ class ExerciseSessionCreateView(APIView):
         fields = {field: request.data[field] for field in required_fields}
         ExerciseSession.objects.create(user=request.user, **fields)
         return Response(status=status.HTTP_201_CREATED)
+    
+class LatestExerciseSessionView(APIView):
+    def post(self, request):
+        """Returns 10 most recent exercise sessions, taking into account those the user has already loaded"""
+        if "set_no" not in request.data or "user_id" not in request.data:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        set_no = request.data["set_no"]
+        set_size = 10
+        start = set_no * set_size
+        try:
+            exercise_session_qs = ExerciseSession.objects.filter(user=request.data["user_id"]).order_by('-id')[start:start+set_size]
+            serializer = ExerciseSessionSerializer(exercise_session_qs, many=True)
+            return Response(serializer.data)
+        except:
+            return Response("No more exercise sessions", status=status.HTTP_404_NOT_FOUND)
