@@ -3,12 +3,16 @@ import React, { useState, useEffect } from "react";
 import { ExerciseStats } from "../../types/stateTypes";
 import { exercises } from "../../App";
 
-type TrendDataProps = {
-  trendData: ExerciseStats;
+//redux imports
+import { useAppSelector } from "../../store/hooks";
+
+type ExerciseStatsDisplayProps = {
+  exerciseStats: ExerciseStats;
 };
 
 
-const ExerciseStatsDisplay = ({ trendData }: TrendDataProps) => {
+const ExerciseStatsDisplay = () => {
+  const exerciseStats = useAppSelector(state => state.exerciseStats)
   return (
     <div
       id="exercise-stats"
@@ -20,13 +24,13 @@ const ExerciseStatsDisplay = ({ trendData }: TrendDataProps) => {
           className="flex flex-col border border-zinc-500 p-2 rounded-lg h-full w-5/12"
         >
           <span className="text-xs">Favourite Exercise</span>
-          <span className="text-xl">{trendData?.favorite_exercise?.exercise === null ? "None" : exercises[trendData?.favorite_exercise?.exercise]}</span>
+          <span className="text-xl">{exerciseStats?.favorite_exercise?.exercise === null ? "None" : exercises[exerciseStats?.favorite_exercise?.exercise]}</span>
           <div>
-            <span className="text-sm font-semibold">{trendData?.favorite_exercise?.total_reps === null ? "0" : trendData?.favorite_exercise?.total_reps}</span>
+            <span className="text-sm font-semibold">{exerciseStats?.favorite_exercise?.total_reps ? exerciseStats?.favorite_exercise?.total_reps : "0" }</span>
             <span className="text-xs"> Reps</span>
           </div>
           <div>
-            <span className="text-sm font-semibold">{trendData?.favorite_exercise?.perfect_reps === null ? "0" : Math.round(trendData?.favorite_exercise?.perfect_reps / trendData?.favorite_exercise?.total_reps*100)}%</span>
+            <span className="text-sm font-semibold">{exerciseStats.favorite_exercise.perfect_reps ? Math.round(exerciseStats?.favorite_exercise?.perfect_reps / exerciseStats?.favorite_exercise?.total_reps*100) : "0" }%</span>
             <span className="text-xs"> Perfect</span>
           </div>
         </div>
@@ -36,7 +40,7 @@ const ExerciseStatsDisplay = ({ trendData }: TrendDataProps) => {
             className="flex flex-col border border-zinc-500 p-2 rounded-lg"
           >
             <span className="text-xs">Longest Streak&#9889;</span>
-            <span className="text-xl">{trendData?.streak} days</span>
+            <span className="text-xl">{exerciseStats?.streak} days</span>
           </div>
           <div
             id="calories"
@@ -44,9 +48,9 @@ const ExerciseStatsDisplay = ({ trendData }: TrendDataProps) => {
           >
             <span className="text-xs">Calories Burnt&#128293; </span>
             <span className="text-xl">
-              {trendData?.calories_burnt === undefined
+              {exerciseStats?.calories_burnt === undefined
                 ? "? kcal"
-                : `${trendData?.calories_burnt} kcal`}
+                : `${exerciseStats?.calories_burnt} kcal`}
             </span>
           </div>
         </div>
@@ -57,17 +61,19 @@ const ExerciseStatsDisplay = ({ trendData }: TrendDataProps) => {
           className="flex flex-col border border-zinc-500 p-2 rounded-lg w-full"
         >
           <span className="text-xs">Favourite Workout</span>
-          <span className="text-2xl">HIIT</span>
+          <span className="text-2xl">{exerciseStats?.favorite_exercise_regime?.name === null ? "None" : exerciseStats?.favorite_exercise_regime?.name}</span>
           <div>
-            <span className="text-sm font-semibold">42</span>
+            <span className="text-sm font-semibold">{exerciseStats?.favorite_exercise_regime?.times_completed === null ? "0" : exerciseStats?.favorite_exercise_regime?.times_completed}</span>
             <span className="text-xs"> Times</span>
           </div>
+          {/*
           <div>
             <span className="text-sm font-semibold">11</span>
             <span className="text-xs"> hrs </span>
             <span className="text-sm font-semibold">42</span>
             <span className="text-xs"> mins</span>
           </div>
+          */}
         </div>
       </div>
       <div className="flex flex-row justify-evenly mt-2">

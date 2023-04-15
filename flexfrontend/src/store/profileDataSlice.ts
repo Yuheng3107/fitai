@@ -1,14 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { emptyProfileData } from "../types/stateTypes";
 
 const ProfileDataSlice = createSlice({
     name: 'profile',
     initialState: {
-        profileData: {
-            profile_photo: "",
-            username:"",
-            email:"",
-            achievements:[]
-        },
+        profileData: emptyProfileData,
         profileCounter: 0
     },
     reducers: {

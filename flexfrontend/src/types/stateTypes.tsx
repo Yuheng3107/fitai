@@ -1,4 +1,5 @@
 export type ProfileData = {
+  id: number;
   achievements: any[];
   username: string;
   email: string;
@@ -10,6 +11,7 @@ export type ProfileData = {
 }
 
 export const emptyProfileData = {
+  id: 0,
   achievements: [],
   email: "",
   profile_photo: "",
@@ -20,6 +22,22 @@ export const emptyProfileData = {
   perfect_reps: 0,
 };
 
+export type UserPostData = {
+  poster: number;
+  posted_at: string;
+  likes: number;
+  text: string;
+  title: string;
+}
+
+export const emptyUserPostData = {
+  poster: 0,
+  posted_at: "",
+  likes: 0,
+  text: "Lorem Ipsum",
+  title: "Ipsum Lorem",
+}
+
 export type ExerciseStats = {
   exercise_regimes: any[];
   exercises: any[];
@@ -29,6 +47,10 @@ export type ExerciseStats = {
     exercise: number;
     perfect_reps: number;
     total_reps: number;
+  };
+  favorite_exercise_regime: {
+    name: number;
+    times_completed: number;
   };
 }
 
@@ -42,4 +64,8 @@ export const emptyExerciseStats = {
     perfect_reps: 0,
     total_reps: 0,
   },
+  favorite_exercise_regime: {
+    name: 1,
+    times_completed: 0,
+  }
 };

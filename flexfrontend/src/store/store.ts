@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import profileDataSlice from './profileDataSlice'
-import exerciseDataSlice from "./exerciseDataSlice";
+import exerciseStatsSlice from "./exerciseStatsSlice";
 
 const store = configureStore({
     reducer: {
         profile: profileDataSlice.reducer,
-        exerciseData: exerciseDataSlice.reducer
+        exerciseStats: exerciseStatsSlice.reducer
     }
 })
 
