@@ -101,15 +101,13 @@ const UpdateProfilePic = ({ setUpdateProfileState, updateProfileState }: UpdateP
                 },
                 credentials: "include",
                 body: profilePhotoFormData,
-            })
-                .then((response) => {
-                    // do something with response
-                    setUpdateProfileState(updateProfileState + 1);
-                    history.push('/profile');
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            }).then((response) => {
+                // do something with response
+                setUpdateProfileState(updateProfileState + 1);
+                history.push('/profile');
+            }).catch((err) => {
+                console.log(err);
+            });
         });
 
     }

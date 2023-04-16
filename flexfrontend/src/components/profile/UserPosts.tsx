@@ -5,15 +5,7 @@ import PersonTextCard from "../Feed/PersonTextCard";
 import { ProfileData, UserPostData } from "../../types/stateTypes";
 
 import {
-  IonPage,
-  IonContent,
-  IonHeader,
-  IonToolbar,
-  IonBackButton,
-  IonTitle,
-  IonButtons,
   IonButton,
-  IonSpinner
 } from '@ionic/react';
 
 type userPostProps = {
