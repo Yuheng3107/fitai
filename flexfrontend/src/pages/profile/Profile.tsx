@@ -6,12 +6,10 @@ import { profileDataActions } from '../../store/profileDataSlice';
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
-import { getProfileDataAsync, getFavoriteExerciseAsync, getFavoriteExerciseRegimeAsync } from "../../utils/getProfileData";
-import { getExerciseRegimeAsync } from "../../utils/getExerciseData";
 import { getUserPostsAsync } from "../../utils/getPostData";
 
 import { googleLogout } from "@react-oauth/google";
-import { ExerciseStats, emptyExerciseStats, ProfileData, emptyProfileData } from "../../types/stateTypes";
+import { emptyProfileData } from "../../types/stateTypes";
 //ionic imports
 import {
   IonContent,
@@ -31,40 +29,17 @@ type ProfileProps = {
 let currentUserPostSet = 0;
 
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
-  const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
-  const [exerciseStats, setExerciseStats] = useState<ExerciseStats>(emptyExerciseStats);
   const [userPostArray, setUserPostArray] = useState(new Array());
   const [loginStatus, setLoginStatus] = useState(false);
   const dispatch = useAppDispatch();
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData)
   const exerciseStatsRedux = useAppSelector((state) => state.exerciseStats)
-  
 
   useEffect(() => {
     console.log(`the current loginStatus is ${loginStatus}`);
     checkLoginStatus(loginStatus, setLoginStatus);
-    /*
-    async function obtainProfileData() {
-      let data = await getProfileDataAsync();
-      data.favorite_exercise = await getFavoriteExerciseAsync(data.id);
-      data.favorite_exercise_regime = await getFavoriteExerciseRegimeAsync(data.id);
-      data.favorite_exercise_regime.name = null;
-      if (data.favorite_exercise_regime.exercise_regime !== null) data.favorite_exercise_regime = await getExerciseRegimeAsync(data.favorite_exercise_regime.exercise_regime);
-      console.log(data)
-      if (profileData['username'] !== data.username ||
-        profileData['email'] !== data.email ||
-        profileData['profile_photo'] !== data['profile_photo'] ||
-        profileData['bio'] !== data.bio) {
-        setProfileData(data)
-      }
-      setExerciseStats(data);
-    }
-    if (loginStatus) {
-      obtainProfileData();
-    }
-    */
-  }, [loginStatus, setLoginStatus, checkLoginStatus, getProfileDataAsync, setProfileData, profileData, updateProfileState, exerciseStatsRedux]);
+  }, [loginStatus, setLoginStatus, checkLoginStatus, updateProfileState, exerciseStatsRedux]);
 
   const logOut = () => {
     googleLogout();
@@ -75,8 +50,6 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const loadUserPostData = async () => {
     let data = await getUserPostsAsync(profileDataRedux.id, currentUserPostSet);
     setUserPostArray(userPostArray.concat(data));
-    console.log(data);
-    console.log(currentUserPostSet);
     currentUserPostSet += 1;
   };
 
