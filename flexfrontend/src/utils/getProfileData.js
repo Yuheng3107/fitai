@@ -110,6 +110,10 @@ export const getAllProfileData = async function (pk) {
   data.favorite_exercise_regime = await getFavoriteExerciseRegimeAsync(data.id);
   data.favorite_exercise_regime.name = null;
   if (data.favorite_exercise_regime.exercise_regime !== null) data.favorite_exercise_regime = await getExerciseRegimeAsync(data.favorite_exercise_regime.exercise_regime);
+  return splitProfileData(data);
+}
+
+export const splitProfileData = function (data) {
   return ({
     profileData: {
       id: data.id,

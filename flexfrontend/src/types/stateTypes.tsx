@@ -8,7 +8,7 @@ export type ProfileData = {
   followers?: any[];
   reps?: number;
   perfect_reps?: number;
-}
+};
 
 export const emptyProfileData = {
   id: 0,
@@ -40,7 +40,7 @@ export type UserPostData = {
   likes: number;
   text: string;
   title: string;
-}
+};
 
 export const emptyUserPostData = {
   poster: 0,
@@ -48,7 +48,7 @@ export const emptyUserPostData = {
   likes: 0,
   text: "Lorem Ipsum",
   title: "Ipsum Lorem",
-}
+};
 
 export type ExerciseStats = {
   exercise_regimes: any[];
@@ -64,7 +64,7 @@ export type ExerciseStats = {
     name: number;
     times_completed: number;
   };
-}
+};
 
 export const emptyExerciseStats = {
   exercise_regimes: [],
