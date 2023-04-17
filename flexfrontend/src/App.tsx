@@ -34,7 +34,6 @@ import { IonReactRouter } from "@ionic/react-router";
 import {
   accessibility,
   home,
-  person,
 } from "ionicons/icons";
 
 //Pages Components imports
@@ -60,6 +59,8 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
+import UserProfileTemplate from './components/profile/UserProfileTemplate';
+import OtherUserProfile from './pages/other users/OtherUserProfile';
 
 setupIonicReact();
 
@@ -93,7 +94,7 @@ const App: React.FC = () => {
         reps: data.reps,
         perfect_reps: data.perfect_reps,
       }))
-      
+
       dispatch(exerciseStatsActions.setExerciseStats({
         exercise_regimes: data.exercise_regimes,
         exercises: data.exercises,
@@ -131,6 +132,9 @@ const App: React.FC = () => {
             <Route exact path='/profile/create/'>
               <EditProfile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
             </Route>
+            <Route exact path="/profile/:userId" render={(props) => {
+              return <OtherUserProfile {...props} />;
+            }} />
             <Route exact path="/">
               <Redirect to="/home" />
             </Route>
