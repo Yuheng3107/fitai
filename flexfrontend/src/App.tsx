@@ -80,9 +80,9 @@ const App: React.FC = () => {
       data.favorite_exercise_regime = await getFavoriteExerciseRegimeAsync(data.id);
       data.favorite_exercise_regime.name = null;
       if (data.favorite_exercise_regime.exercise_regime !== null) data.favorite_exercise_regime = await getExerciseRegimeAsync(data.favorite_exercise_regime.exercise_regime);
-      let splitData = splitProfileData(data);
-      dispatch(profileDataActions.setProfileData(splitData.profileData));
-      dispatch(exerciseStatsActions.setExerciseStats(splitData.exerciseStats));
+      data = splitProfileData(data);
+      dispatch(profileDataActions.setProfileData(data.profileData));
+      dispatch(exerciseStatsActions.setExerciseStats(data.exerciseStats));
     }
 
     obtainProfileData();

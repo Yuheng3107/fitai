@@ -10,7 +10,6 @@ type ExerciseStatsDisplayProps = {
   exerciseStats: ExerciseStats;
 };
 
-
 const ExerciseStatsDisplay = () => {
   const exerciseStats = useAppSelector(state => state.exerciseStats)
   return (
