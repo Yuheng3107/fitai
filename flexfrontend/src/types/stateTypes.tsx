@@ -22,6 +22,18 @@ export const emptyProfileData = {
   perfect_reps: 0,
 };
 
+export const invalidProfileData = {
+  id: -1,
+  achievements: [],
+  email: "",
+  profile_photo: "",
+  username: "",
+  bio: "",
+  followers: [],
+  reps: 0,
+  perfect_reps: 0,
+};
+
 export type UserPostData = {
   poster: number;
   posted_at: string;

@@ -1,6 +1,6 @@
 import { backend } from "../App.tsx";
 import { getExerciseRegimeAsync } from "./getExerciseData";
-import { emptyProfileData, emptyExerciseStats } from "../types/stateTypes";
+import { invalidProfileData, emptyExerciseStats } from "../types/stateTypes";
 
 export const getProfileDataAsync = async function () {
   try {
@@ -102,7 +102,7 @@ export const getFavoriteExerciseRegimeAsync = async function (pk) {
 export const getAllProfileData = async function (pk) {
   let data = await getOtherProfileDataAsync(pk);
   if (data === undefined) return ({
-    profileData: emptyProfileData,
+    profileData: invalidProfileData,
     exerciseStats: emptyExerciseStats,
   });
   

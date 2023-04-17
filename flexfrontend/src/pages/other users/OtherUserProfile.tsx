@@ -63,7 +63,7 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
     return (
         <IonPage>
             <IonContent fullscreen>
-                {profileData.id === 0 ? 
+                {profileData.id === -1 ? 
                     <div className="flex flex-col justify-evenly items-center">
                         <img src={img404} />
                     </div> 
