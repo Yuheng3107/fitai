@@ -32,6 +32,9 @@ let synth;
 class VideoFeed extends Component {
   constructor(props) {
     super(props);
+    
+    this.setState = this.setState.bind(this); // <- try by adding this line
+
     this.state = {
       repCount: 0,
       repFeedback: "sample feedback for Rep 1",
