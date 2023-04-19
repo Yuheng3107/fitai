@@ -114,7 +114,7 @@ class VideoFeed extends Component {
 
         </div>
         <StartEndButton start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} />
-        <img src="" alt="" ref={this.image} />
+        <img src="" alt="" ref={this.image} className="hidden" />
       </div>
     );
   };
