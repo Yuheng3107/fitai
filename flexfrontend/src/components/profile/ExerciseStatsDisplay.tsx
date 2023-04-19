@@ -12,38 +12,46 @@ type ExerciseStatsDisplayProps = {
 
 const ExerciseStatsDisplay = () => {
   const exerciseStats = useAppSelector(state => state.exerciseStats)
+
+  const moduleWidth = "w-[calc(50%-0.4rem)]";
+  const moduleHeight = "h-[calc(50%-0.4rem)]";
+
   return (
     <div
       id="exercise-stats"
-      className="flex flex-col justify-start w-full mt-2 h-full px-10"
+      className="flex flex-col justify-start w-full mt-2 h-full px-5"
     >
-      <div className="flex flex-row justify-between w-full h-32">
+      <div id="favex-streak-calories" className="flex flex-row justify-between w-full">
         <div
           id="fav-exercise"
-          className="flex flex-col border border-zinc-500 p-2 rounded-lg h-full w-5/12"
+          className={`relative flex flex-col border border-zinc-500 p-3 rounded-lg ${moduleWidth} aspect-square text-white
+           bg-cover bg-center bg-[url('https://images.healthshots.com/healthshots/en/uploads/2021/09/06145503/shutterstock_1563301450-1600x900.jpg')]`}
         >
-          <span className="text-xs">Favourite Exercise</span>
-          <span className="text-xl">{exerciseStats?.favorite_exercise?.exercise === null ? "None" : exercises[exerciseStats?.favorite_exercise?.exercise]}</span>
-          <div>
-            <span className="text-sm font-semibold">{exerciseStats?.favorite_exercise?.total_reps ? exerciseStats?.favorite_exercise?.total_reps : "0" }</span>
+
+          <span className="text-xs text-orange-400 font-bold z-10">Favourite Exercise</span>
+          <span className="text-4xl font-bold my-3 z-10">{exerciseStats?.favorite_exercise?.exercise === null ? "None" : exercises[exerciseStats?.favorite_exercise?.exercise]}</span>
+          <div className="z-10">
+            <span className="text-lg font-semibold">{exerciseStats?.favorite_exercise?.total_reps ? exerciseStats?.favorite_exercise?.total_reps : "0"}</span>
             <span className="text-xs"> Reps</span>
           </div>
-          <div>
-            <span className="text-sm font-semibold">{exerciseStats.favorite_exercise.perfect_reps ? Math.round(exerciseStats?.favorite_exercise?.perfect_reps / exerciseStats?.favorite_exercise?.total_reps*100) : "0" }%</span>
+          <div className="z-10">
+            <span className="text-lg font-semibold">{exerciseStats.favorite_exercise.perfect_reps ? Math.round(exerciseStats?.favorite_exercise?.perfect_reps / exerciseStats?.favorite_exercise?.total_reps * 100) : "0"}%</span>
             <span className="text-xs"> Perfect</span>
           </div>
+          <div className=" absolute w-full h-full left-0 top-0 bg-gradient-to-r from-gray-900 z-0">
+          </div>
         </div>
-        <div className="flex flex-col justify-between w-5/12">
+        <div className={`flex flex-col justify-between ${moduleWidth}`}>
           <div
             id="streak"
-            className="flex flex-col border border-zinc-500 p-2 rounded-lg"
+            className={`flex flex-col border border-zinc-500 p-2 rounded-lg ${moduleHeight}`}
           >
             <span className="text-xs">Longest Streak&#9889;</span>
             <span className="text-xl">{exerciseStats?.streak} days</span>
           </div>
           <div
             id="calories"
-            className="flex flex-col border border-zinc-500 p-2 rounded-lg"
+            className={`flex flex-col border border-zinc-500 p-2 rounded-lg ${moduleHeight}`}
           >
             <span className="text-xs">Calories Burnt&#128293; </span>
             <span className="text-xl">
@@ -57,7 +65,7 @@ const ExerciseStatsDisplay = () => {
       <div className="flex flex-row justify-evenly mt-2">
         <div
           id="workout"
-          className="flex flex-col border border-zinc-500 p-2 rounded-lg w-full"
+          className={`flex flex-col border border-zinc-500 p-2 rounded-lg w-full aspect-[2/1]`}
         >
           <span className="text-xs">Favourite Workout</span>
           <span className="text-2xl">{exerciseStats?.favorite_exercise_regime?.name === null ? "None" : exerciseStats?.favorite_exercise_regime?.name}</span>
