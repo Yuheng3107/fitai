@@ -80,11 +80,12 @@ class ExerciseStatisticsUpdateView(APIView):
             exercise = Exercise.objects.get(pk=exercise_id)
         except Exercise.DoesNotExist:
             return Response("Please put a valid exercise id", status=status.HTTP_400_BAD_REQUEST)
-
-        exercise_statistics = ExerciseStatistics.objects.filter(user=user_id).filter(exercise=exercise_id)
-        if not exercise_statistics.exists():
-            return Response("Entry does not exist.", status=status.HTTP_400_BAD_REQUEST)
-        exercise_statistics = exercise_statistics[0]
+        try:
+            exercise_statistics = ExerciseStatistics.objects.get(user=user_id, exercise=exercise_id)
+        except:
+            # create a new exercise if doesn't exist
+            request.user.exercises.add(exercise)
+            exercise_statistics = ExerciseStatistics.objects.get(user=user_id, exercise=exercise_id)
 
         if perfect_reps is not None:
             exercise_statistics.perfect_reps += perfect_reps

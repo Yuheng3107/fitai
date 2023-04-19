@@ -231,7 +231,7 @@ class ExerciseStatisticsUpdateViewTests(APITestCase):
 
         url = reverse('update_exercise_statistics')
         user = baker.make('users.AppUser')
-        user.exercises.add(exercise)
+        # do not add exercise to user to check if auto creates for nonexistant entry
         perfect_reps_increase = 20
         total_reps_increase = 10
         data = {
