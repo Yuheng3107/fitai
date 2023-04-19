@@ -50,6 +50,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const loadUserPostData = async () => {
     let data = await getUserPostsAsync(profileDataRedux.id, currentUserPostSet);
     setUserPostArray(userPostArray.concat(data));
+    console.log(data)
     currentUserPostSet += 1;
   };
 

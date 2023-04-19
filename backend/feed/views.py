@@ -23,7 +23,7 @@ class UserPostCreateView(APIView):
         check_fields = ["text", "title"]
         # Check that all the required data is in the post request
         for field in check_fields:
-            if field not in request.data:
+            if field not in request.data or request.data[field] == "":
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
         
         create_fields = ["text", "shared_id", "privacy_level", "title"]
@@ -42,7 +42,7 @@ class UserPostUpdateView(APIView):
         check_fields = ["id"]
         # Check that all the required data is in the post request
         for field in check_fields:
-            if field not in request.data:
+            if field not in request.data or request.data[field] == "":
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
 
         # Check post
@@ -104,7 +104,7 @@ class CommentCreateView(APIView):
         check_fields = ["text", "parent_type", "parent_id"]
         # Check that all the required data is in the post request
         for field in check_fields:
-            if field not in request.data:
+            if field not in request.data or request.data[field] == "":
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
 
         # Check for valid content type
@@ -139,7 +139,7 @@ class CommentUpdateView(APIView):
         check_fields = ["text", "id"]
         # Check that all the required data is in the post request
         for field in check_fields:
-            if field not in request.data:
+            if field not in request.data or request.data[field] == "":
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
 
         # Check post
@@ -199,7 +199,7 @@ class CommunityPostCreateView(APIView):
         check_fields = ["text", "community_id"]
         # Check that all the required data is in the post request
         for field in check_fields:
-            if field not in request.data:
+            if field not in request.data or request.data[field] == "":
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
         
         try:
@@ -223,7 +223,7 @@ class CommunityPostUpdateView(APIView):
         check_fields = ["id"]
         # Check that all the required data is in the post request
         for field in check_fields:
-            if field not in request.data:
+            if field not in request.data or request.data[field] == "":
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
                 
         # Check post
