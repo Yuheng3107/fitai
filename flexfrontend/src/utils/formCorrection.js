@@ -246,11 +246,12 @@ function endExercise() {
 * @returns {string} feedback for that rep
 */
 function summariseFeedback() {
-  let feedback =  "";
-  feedback += repCount.toString() + " reps completed. ";
+  // let feedback =  "";
+  let feedback = [];
+  feedback[0] = repCount.toString() + " reps completed. ";
   // time
   if (repTimeError !== 0) {
-    feedback += "Reps too fast " + repTimeError.toString() + " times. ";
+    feedback[0] += "Reps too fast " + repTimeError.toString() + " times. ";
   }
   
   // form
@@ -258,14 +259,15 @@ function summariseFeedback() {
   for (let j=0;j<smallErrorCount.length;j++) {
     for (let i=0;i<n;i++) {
       if (smallErrorCount[j][i] !== 0) {
-        feedback += glossary[j][i][0] + " " + smallErrorCount[j][i].toString() + " times. ";
+        feedback[0] += glossary[j][i][0] + " " + smallErrorCount[j][i].toString() + " times. ";
       }
       if (largeErrorCount[j][i] !== 0) {
-        feedback += glossary[j][i][1] + " " + largeErrorCount[j][i].toString() + " times. ";
+        feedback[0] += glossary[j][i][1] + " " + largeErrorCount[j][i].toString() + " times. ";
       }
     }
   }
-  feedback += perfectReps.toString() + " perfect reps.";
+  feedback[0] += perfectReps.toString() + " perfect reps.";
+  feedback[1] = perfectReps;
   return feedback;
 }
 

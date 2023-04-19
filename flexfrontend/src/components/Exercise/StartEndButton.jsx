@@ -13,32 +13,13 @@ function StartEndButton(props) {
             startButton: false
         })
     }
+    console.log(props.parentState);
 
     function endButtonHandler(event) {
         props.end();
         props.setState({
             startButton: true
         })
-
-        fetch(`${backend}/exercises/exercise_statistics/create`, {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": String(
-                    document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
-                ),
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                exercise_id, 
-                perfect_reps, 
-                total_reps
-            }),
-        }).then((response) => {
-            // do something with response
-            console.log(response);
-        }).catch((err) => {
-            console.log(err);
-        });
     }
 
     return <div id="button-container" className="absolute bottom-10 w-screen flex justify-center">
