@@ -40,6 +40,7 @@ export type UserPostData = {
   likes: number;
   text: string;
   title: string;
+  community: string;
 };
 
 export const emptyUserPostData = {

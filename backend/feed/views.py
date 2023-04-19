@@ -9,8 +9,7 @@ from .serializers import CommentSerializer, UserPostSerializer, CommunityPostSer
 
 from datetime import datetime, timedelta, timezone
 import itertools as it, more_itertools as mt
-from operator import attrgetter
-import math, json
+import math
 from django.contrib.auth import get_user_model
 
 # Create your views here.
