@@ -2,14 +2,13 @@ import React, { Component } from "react";
 import { isMobile, isSafari, isFirefox } from "react-device-detect";
 import Webcam from "react-webcam";
 
-
 //components
 import Button from "../ui/Button";
 import TextBox from "../ui/TextBox";
 import StartEndButton from "./StartEndButton";
 
 //assets
-import expandIcon from '../../assets/svg/expand-icon.svg'
+import expandIcon from "../../assets/svg/expand-icon.svg";
 import PlayIcon from "../../assets/svgComponents/playIcon";
 import StopIcon from "../../assets/svgComponents/stopIcon";
 
@@ -32,13 +31,14 @@ let synth;
 class VideoFeed extends Component {
   constructor(props) {
     super(props);
-    
+
     this.setState = this.setState.bind(this); // <- try by adding this line
 
     this.state = {
       repCount: 0,
       repFeedback: "sample feedback for Rep 1",
-      repFeedbackLog: "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
+      repFeedbackLog:
+        "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
       generalFeedback: "some stuff general feedback sample",
       feedbackLogShowing: false,
       startButton: true,
@@ -47,13 +47,10 @@ class VideoFeed extends Component {
     };
 
     this.webcam = React.createRef();
-    this.image = React.createRef();
     this.toggleFeedbackLog = this.toggleFeedbackLog.bind(this);
   }
 
   componentDidMount = async () => {
-
-
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
@@ -66,10 +63,9 @@ class VideoFeed extends Component {
   toggleFeedbackLog() {
     this.setState((prevState) => {
       console.log(prevState.feedbackLogShowing);
-      return { feedbackLogShowing: !prevState.feedbackLogShowing }
+      return { feedbackLogShowing: !prevState.feedbackLogShowing };
     });
   }
-
 
   render = () => {
     return (
@@ -89,29 +85,47 @@ class VideoFeed extends Component {
                 style={{
                   strokeDasharray: `${2 * Math.PI * 80}`,
                   //This line tells us how much of the ring should be blank
-                  strokeDashoffset: (this.props.repCountInput - this.state.repCount) / this.props.repCountInput * 2 * Math.PI * 80,
-                  transition: 'stroke-dashoffset 1000ms linear',
-                  strokeLinecap: "round"
+                  strokeDashoffset:
+                    ((this.props.repCountInput - this.state.repCount) /
+                      this.props.repCountInput) *
+                    2 *
+                    Math.PI *
+                    80,
+                  transition: "stroke-dashoffset 1000ms linear",
+                  strokeLinecap: "round",
                 }}
               />
             </svg>
-            <span className="text-6xl p-0 m-0 flex justify-center items-center absolute left-0 top-0 w-32 h-32">{this.state.repCount}</span>
+            <span className="text-6xl p-0 m-0 flex justify-center items-center absolute left-0 top-0 w-32 h-32">
+              {this.state.repCount}
+            </span>
           </div>
 
           <TextBox className="flex flex-col justify-between bg-zinc-100 pt-3 pb-0 w-4/5 mt-3">
-            {this.state.feedbackLogShowing}{this.state.repFeedback}
-            <button onClick={this.toggleFeedbackLog} className="flex flex-row items-center justify-center" id="show-log-button">
+            {this.state.feedbackLogShowing}
+            {this.state.repFeedback}
+            <button
+              onClick={this.toggleFeedbackLog}
+              className="flex flex-row items-center justify-center"
+              id="show-log-button"
+            >
               <span className="text-zinc-400">Show Feedback Log</span>
-              <img className={`${this.state.feedbackLogShowing && "rotate-180"} `} src={expandIcon} alt="expand icon" height="36" width="36" />
+              <img
+                className={`${this.state.feedbackLogShowing && "rotate-180"} `}
+                src={expandIcon}
+                alt="expand icon"
+                height="36"
+                width="36"
+              />
             </button>
-            {this.state.feedbackLogShowing && <span className="mt-1">{this.state.repFeedbackLog}</span>}
+            {this.state.feedbackLogShowing && (
+              <span className="mt-1">{this.state.repFeedbackLog}</span>
+            )}
           </TextBox>
 
-
-
-          <TextBox className="bg-zinc-100 p-3 w-4/5 mt-3">{this.state.generalFeedback}</TextBox>
-
-
+          <TextBox className="bg-zinc-100 p-3 w-4/5 mt-3">
+            {this.state.generalFeedback}
+          </TextBox>
         </div>
         <StartEndButton start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} />
         <img src="" alt="" ref={this.image} className="hidden" />
@@ -134,7 +148,7 @@ class VideoFeed extends Component {
     console.log("start");
     this.setState({
       repFeedback: "",
-      generalFeedback: "Loading..."
+      generalFeedback: "Loading...",
     });
 
     //allow the feedback to update to loading
@@ -149,7 +163,7 @@ class VideoFeed extends Component {
     feedback = ["", ""];
 
     // get from backend
-    let exercise = getExercise(1);
+    let exercise = getExercise(0);
 
     // initialise form correction
     formCorrection.init(
@@ -172,7 +186,9 @@ class VideoFeed extends Component {
       let newFeedback = formCorrection.run(poses);
       if (newFeedback[0] !== "") {
         console.log(newFeedback[0][0]);
-        this.setState({ repCount: newFeedback[0].slice(-1)[0].match(/\d+/)[0] });
+        this.setState({
+          repCount: newFeedback[0].slice(-1)[0].match(/\d+/)[0],
+        });
         this.setState({ repFeedback: newFeedback[0].slice(-1) });
         this.setState({ repFeedbackLog: newFeedback[0] });
         read(newFeedback[0][newFeedback[0].slice(-1)]);
@@ -181,8 +197,6 @@ class VideoFeed extends Component {
         this.setState({ generalFeedback: newFeedback[1] });
       feedback = newFeedback;
       frameCount += 1;
-
-
     }
   };
 
@@ -195,13 +209,12 @@ class VideoFeed extends Component {
     let feedback = formCorrection.endExercise();
     this.setState({
       repFeedback: feedback,
-      generalFeedback: frameCount
-    })
+      generalFeedback: frameCount,
+    });
   };
 
   assignImgHeight = () => {
     let screenshot = this.webcam.current.getScreenshot();
-    this.image.current.src = screenshot;
     let img = new Image();
     img.src = screenshot;
     img.onload = () => {
@@ -240,12 +253,5 @@ const textToSpeech = () => {
   }
   return false;
 };
-
-/**
- * To be replaced with request to backend.
- * @param {Object} x
- * @returns Exercise Parameters
- */
-
 
 export default VideoFeed;

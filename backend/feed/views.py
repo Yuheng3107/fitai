@@ -6,6 +6,12 @@ from django.contrib.contenttypes.models import ContentType
 from .models import Comment, Tags, UserPost, CommunityPost
 from community.models import Community #type: ignore
 from .serializers import CommentSerializer, UserPostSerializer, CommunityPostSerializer
+
+from datetime import datetime, timedelta, timezone
+import itertools as it
+import math
+from django.contrib.auth import get_user_model
+
 # Create your views here.
 
 class UserPostCreateView(APIView):
@@ -19,10 +25,6 @@ class UserPostCreateView(APIView):
         for field in check_fields:
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-        
-        # if "media" in request.data (TODO):
-            # Check for media type
-            # if request.data["media"]
         
         create_fields = ["text", "shared_id", "privacy_level", "title"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
@@ -120,9 +122,6 @@ class CommentCreateView(APIView):
             ct.get_object_for_this_type(pk=request.data["parent_id"])
         except:
             return Response("Please put a valid parent_id", status=status.HTTP_400_BAD_REQUEST)
-        # Check for media type (TODO)
-            # Check for media type
-            # if request.data["media"]
         
         create_fields = ["text", "parent_id"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
@@ -188,7 +187,6 @@ class CommentDeleteView(APIView):
         except Comment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-
 """
 CommunityPost Views
 """              
@@ -203,9 +201,6 @@ class CommunityPostCreateView(APIView):
         for field in check_fields:
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
-        # if "media" in request.data (TODO):
-            # Check for media type
-            # if request.data["media"]
         
         try:
             community = Community.objects.get(pk=request.data["community_id"])
@@ -240,8 +235,6 @@ class CommunityPostUpdateView(APIView):
         if request.user != post.poster:
             return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
 
-        # Check for valid content type
-       
         update_fields = ["text"]
         fields = {field: request.data[field] for field in update_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
@@ -383,7 +376,6 @@ class TagsDeleteView(APIView):
         # Check User
         if request.user != post.poster:
             return Response(f"Editing a post you did not create", status=status.HTTP_401_UNAUTHORIZED)
-
         
         # Adds the relations to the model
         try:
@@ -684,3 +676,30 @@ class LatestUserPostView(APIView):
             return Response(serializer.data)
         except:
             return Response("No more posts", status=status.HTTP_404_NOT_FOUND)
+
+class UserFeedView(APIView):
+    def post(self,request):
+        """Returns posts for the day"""
+        if "set_no" not in request.data:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        set_no = request.data["set_no"]
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # Calculate the start and end times for the most recent day
+        end_time = (datetime.today() - timedelta(days=set_no)).replace(tzinfo=timezone.utc)
+        start_time = (end_time - timedelta(days=1)).replace(tzinfo=timezone.utc)
+
+        # Filter for events that occurred within the most recent day
+        friends = request.user.friends.values_list('id', flat=True)
+        communities = request.user.communities.values_list('id', flat=True)
+        friend_posts = UserPostSerializer(UserPost.objects.filter(poster__in=friends, posted_at__range=(start_time, end_time)).order_by("-id"), many=True).data
+        community_posts = CommunityPostSerializer(CommunityPost.objects.filter(community__in=communities, posted_at__range=(start_time, end_time)).order_by("-likes")[0:10], many=True).data
+        followed = list(it.chain(friend_posts, community_posts))
+        # recommended
+        recommended_no = math.floor(len(followed)/4)
+        recommended_friends = UserPostSerializer(UserPost.objects.filter(posted_at__range=(start_time, end_time)).exclude(poster__in=friends).order_by("-likes")[0:recommended_no], many=True).data
+        recommended_community = CommunityPostSerializer(CommunityPost.objects.filter(posted_at__range=(start_time, end_time)).exclude(community__in=communities).order_by("-likes")[0:recommended_no], many=True).data
+
+        #stitch
+        data = list(it.chain(followed, recommended_friends, recommended_community))
+        return Response(data)

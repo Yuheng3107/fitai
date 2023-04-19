@@ -40,6 +40,7 @@ export type UserPostData = {
   likes: number;
   text: string;
   title: string;
+  community: number;
 };
 
 export const emptyUserPostData = {
@@ -80,4 +81,24 @@ export const emptyExerciseStats = {
     name: 1,
     times_completed: 0,
   }
+};
+
+export type CommunityData = {
+  id: number;
+  name: string;
+  description: string;
+  banner: string;
+  created_at: string;
+  created_by: number;
+  privacy_level: number;
+};
+
+export const emptyCommunityData = {
+  id: 0,
+  name: "",
+  description: "",
+  banner: "",
+  created_at: "",
+  created_by: 0,
+  privacy_level: 0,
 };

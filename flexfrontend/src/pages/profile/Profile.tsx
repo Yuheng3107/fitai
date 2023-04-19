@@ -29,7 +29,7 @@ type ProfileProps = {
 let currentUserPostSet = 0;
 
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
-  const [userPostArray, setUserPostArray] = useState(new Array());
+  const [userPostArray, setUserPostArray] = useState([]);
   const [loginStatus, setLoginStatus] = useState(false);
   const dispatch = useAppDispatch();
 

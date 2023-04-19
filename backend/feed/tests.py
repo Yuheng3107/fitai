@@ -720,3 +720,30 @@ class LatestUserPostViewTests(APITestCase):
         # Checks that newest set of entries (latest 10 posts) are returned by comparing the posted_at times
         for i, post in enumerate(response_data):
             self.assertEqual(posts[-(i+11)].posted_at, datetime.strptime(post["posted_at"], '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc))
+
+class UserFeedViewTests(APITestCase):
+    def test_get_user_feed(self):
+        url = reverse('user_feed')
+        User = get_user_model()
+        user = baker.make(User)
+        user_friend = baker.make(User)
+        post = baker.make(UserPost, poster=user_friend)
+        community = baker.make('community.Community')
+        post2 = baker.make(CommunityPost, poster=user_friend, community=community)
+        data = {
+            "set_no": 0,
+            "user_id": user.id
+        }
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 0)
+        user.friends.add(user_friend)
+        user.communities.add(community)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 2)
+        self.assertEqual(response_data[0]["id"], post.id)
+        self.assertEqual(response_data[1]["id"], post2.id)
