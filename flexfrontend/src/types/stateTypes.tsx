@@ -8,6 +8,7 @@ export type ProfileData = {
   followers?: any[];
   reps?: number;
   perfect_reps?: number;
+  friend_requests?: any[];
 };
 
 export const emptyProfileData = {
@@ -20,6 +21,7 @@ export const emptyProfileData = {
   followers: [],
   reps: 0,
   perfect_reps: 0,
+  friend_requests: [],
 };
 
 export const invalidProfileData = {
@@ -29,9 +31,6 @@ export const invalidProfileData = {
   profile_photo: "",
   username: "",
   bio: "",
-  followers: [],
-  reps: 0,
-  perfect_reps: 0,
 };
 
 export type UserPostData = {
