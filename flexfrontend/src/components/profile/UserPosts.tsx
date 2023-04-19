@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
-import { backend } from "../../App";
 import PersonTextCard from "../Feed/PersonTextCard";
-import { ProfileData, UserPostData } from "../../types/stateTypes";
+import { ProfileData } from "../../types/stateTypes";
 
 import {
   IonButton,
