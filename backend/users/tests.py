@@ -32,7 +32,7 @@ class UsersManagersTests(TestCase):
         achievement = baker.make('achievements.achievement')
         user.achievements.add(achievement) 
         fren = baker.make(self.User)
-        user.friends.add(fren)
+        user.following.add(fren)
 
         user = self.User.objects.get(first_name='Test')
         self.assertEqual(user.email, "test@user.com")
@@ -57,7 +57,7 @@ class UsersManagersTests(TestCase):
         for x in user.achievements.all():
             self.assertEqual(x,achievement)
         
-        for x in user.friends.all():
+        for x in user.following.all():
             self.assertEqual(x,fren)
         
         # test for no data
@@ -97,9 +97,9 @@ class UsersManagersTests(TestCase):
         achievement2 = baker.make('achievements.achievement')
         user.achievements.add(achievement2) 
         fren = baker.make(self.User)
-        user.friends.add(fren)
+        user.followers.add(fren)
         fren2 = baker.make(self.User)
-        user.friends.add(fren2)
+        user.followers.add(fren2)
 
         # test for 2 frens and achievements
         i = 0
@@ -107,17 +107,17 @@ class UsersManagersTests(TestCase):
             i += 1
         self.assertEqual(i,2)
         i = 0
-        for x in user.friends.all():
+        for x in user.followers.all():
             i += 1
         self.assertEqual(i,2)
 
-        user.friends.remove(fren)
+        user.followers.remove(fren)
         user.achievements.remove(achievement)
 
         # test for only 1 fren and achievement
         for x in user.achievements.all():
             self.assertEqual(x,achievement2)
-        for x in user.friends.all():
+        for x in user.followers.all():
             self.assertEqual(x,fren2)
 
     def test_delete_user(self):
@@ -166,8 +166,8 @@ class UserOtherDetailViewTests(APITestCase):
         self.assertEqual(response.data.get("email", None), email)
         
 class UserManyToManyUpdateViewTests(APITestCase):
-    def test_update_user_friends(self):
-        url = reverse('update_user_friends')
+    def test_update_user_friend_requests(self):
+        url = reverse('update_user_friend_requests')
         friends = [baker.make('users.AppUser') for i in range(3)]
         data = {
             "fk_list": [friend.id for friend in friends]
@@ -179,7 +179,7 @@ class UserManyToManyUpdateViewTests(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures friends are successfully added
-        self.assertEqual(list(user.friends.all()), friends)
+        self.assertEqual(list(user.sent_friend_requests.all()), friends)
         
 class UserManyToManyDeleteViewTests(APITestCase):
     def test_delete_user_achievements(self):
@@ -365,5 +365,48 @@ class UserStreakUpdateViewTests(APITestCase):
         self.assertEqual(user.streak, new_streak)
         self.assertEqual(user.longest_streak, new_longest_streak)
         self.assertTrue(user.active)
+
+class UserFriendRequestAcceptViewTests(APITestCase):
+    def test_accept_user_friend_requests(self):
+        url = reverse('accept_user_friend_requests')
+        friend = baker.make('users.AppUser')
+        user = baker.make('users.AppUser')
+        data = {
+            "user_id": friend.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # Ensures friends are successfully added
+        friend.sent_friend_requests.add(user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(user.followers.all()[0],friend)
+        self.assertEqual(friend.followers.all()[0],user)
+        self.assertEqual(friend.sent_friend_requests.exists(), False)
+
+class UserFriendRequestDeclineViewTests(APITestCase):
+    def test_accept_user_friend_requests(self):
+        url = reverse('decline_user_friend_requests')
+        friend = baker.make('users.AppUser')
+        user = baker.make('users.AppUser')
+        data = {
+            "user_id": friend.id,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # Ensures friends are successfully added
+        friend.sent_friend_requests.add(user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(user.followers.exists(), False)
+        self.assertEqual(friend.followers.exists(), False)
+        self.assertEqual(friend.sent_friend_requests.exists(), False)
+
         
         

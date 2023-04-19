@@ -680,17 +680,17 @@ class LatestUserPostView(APIView):
 class UserFeedView(APIView):
     def post(self,request):
         """Returns posts for the day"""
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         if "set_no" not in request.data:
             return Response(status.HTTP_400_BAD_REQUEST)
         set_no = request.data["set_no"]
-        if not request.user.is_authenticated:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         # Calculate the start and end times for the most recent day
         end_time = (datetime.today() - timedelta(days=set_no)).replace(tzinfo=timezone.utc)
         start_time = (end_time - timedelta(days=1)).replace(tzinfo=timezone.utc)
 
         # Filter for events that occurred within the most recent day
-        friends = request.user.friends.values_list('id', flat=True)
+        friends = request.user.following.values_list('id', flat=True)
         communities = request.user.communities.values_list('id', flat=True)
         friend_posts = UserPostSerializer(UserPost.objects.filter(poster__in=friends, posted_at__range=(start_time, end_time)).order_by("-id"), many=True).data
         community_posts = CommunityPostSerializer(CommunityPost.objects.filter(community__in=communities, posted_at__range=(start_time, end_time)).order_by("-likes")[0:10], many=True).data
