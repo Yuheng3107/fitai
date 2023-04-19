@@ -8,8 +8,8 @@ import SendIcon from "../../assets/svgComponents/SendIcon";
 import React, { useState, useEffect } from "react";
 
 import { backend } from "../../App";
-
 import { UserPostData, ProfileData } from "../../types/stateTypes";
+import { timeSince } from "../../utils/generalUtils";
 
 type UserPostProps = {
   userPostData: UserPostData;
@@ -18,14 +18,16 @@ type UserPostProps = {
 
 const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
   const [imageUrl, setImageUrl] = useState("");
+  const postDate = new Date(userPostData.posted_at);
 
   useEffect(() => {
     if (profileData?.profile_photo) {
       setImageUrl(backend.concat(profileData.profile_photo))
     }
   }, [profileData?.profile_photo])
+
   return (
-    <div id="card-container" className="border border-zinc-500 mt-12 p-2">
+    <div id="card-container" className="border border-zinc-500 mt-4 p-2">
       <div id="top-bar" className=" flex flex-row justify-between mb-2">
         <div className="flex flex-row">
           <img
@@ -43,7 +45,7 @@ const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
             >
               <span id="post-place">Swimming</span>
               <FilledCircle className="mx-1 h-1.5 w-1.5 aspect-square fill-slate-500" />
-              <span id="time-stamp">{userPostData?.posted_at}</span>
+              <span id="time-stamp">{timeSince(postDate)}</span>
             </p>
           </div>
         </div>

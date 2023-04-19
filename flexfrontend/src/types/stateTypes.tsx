@@ -8,10 +8,22 @@ export type ProfileData = {
   followers?: any[];
   reps?: number;
   perfect_reps?: number;
-}
+};
 
 export const emptyProfileData = {
   id: 0,
+  achievements: [],
+  email: "",
+  profile_photo: "",
+  username: "",
+  bio: "",
+  followers: [],
+  reps: 0,
+  perfect_reps: 0,
+};
+
+export const invalidProfileData = {
+  id: -1,
   achievements: [],
   email: "",
   profile_photo: "",
@@ -28,7 +40,8 @@ export type UserPostData = {
   likes: number;
   text: string;
   title: string;
-}
+  community: string;
+};
 
 export const emptyUserPostData = {
   poster: 0,
@@ -36,7 +49,7 @@ export const emptyUserPostData = {
   likes: 0,
   text: "Lorem Ipsum",
   title: "Ipsum Lorem",
-}
+};
 
 export type ExerciseStats = {
   exercise_regimes: any[];
@@ -52,7 +65,7 @@ export type ExerciseStats = {
     name: number;
     times_completed: number;
   };
-}
+};
 
 export const emptyExerciseStats = {
   exercise_regimes: [],

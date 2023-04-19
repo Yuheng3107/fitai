@@ -1,14 +1,37 @@
-import PersonTextCard from "./PersonTextCard";
+
+import React, { useState, useEffect } from "react";
 
 //Redux imports
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 
+import FeedPosts from "./FeedPosts";
+import { getUserFeedAsync } from "../../utils/getPostData";
+import { getOtherProfileDataAsync } from "../../utils/getProfileData";
+
 import { backend } from "../../App";
 import { Link } from "react-router-dom";
-import { emptyUserPostData } from "../../types/stateTypes";
+import { ProfileData } from "../../types/stateTypes";
+
+let currentFeedSet = 0;
 
 function Feed() {
     const profileDataRedux = useAppSelector((state) => state.profile.profileData);
+    const [feedPostArray, setFeedPostArray] = useState(new Array());
+
+    const loadFeedData = async () => {
+        let data = await getUserFeedAsync(currentFeedSet);
+        let dataWithProfile:any[] = [];
+        for (let i=0;i<data.length;i++) {
+            let profileData:ProfileData = await getOtherProfileDataAsync(data[i].poster)
+            dataWithProfile.push({
+                postData: data[i],
+                profileData: profileData,
+            })
+        }
+        console.log(dataWithProfile);
+        setFeedPostArray(feedPostArray.concat(dataWithProfile));
+        currentFeedSet += 1;
+    }
 
     function createPostHandler(event: React.MouseEvent<HTMLButtonElement>) {
         fetch(`${backend}/feed/user_post/create`, {
@@ -29,7 +52,7 @@ function Feed() {
         });
     }
     return <main className="w-full">
-        <PersonTextCard userPostData={emptyUserPostData} profileData={profileDataRedux}/>
+        <FeedPosts feedPostArray={feedPostArray} loadFeedData={loadFeedData} />
         <Link to="/post/create" className="w-12 h-12 bg-sky-500 block" >Add Post</Link>
     </main>
 }

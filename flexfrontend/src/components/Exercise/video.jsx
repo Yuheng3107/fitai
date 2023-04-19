@@ -31,6 +31,9 @@ let synth;
 class VideoFeed extends Component {
   constructor(props) {
     super(props);
+
+    this.setState = this.setState.bind(this); // <- try by adding this line
+
     this.state = {
       repCount: 0,
       repFeedback: "sample feedback for Rep 1",
@@ -44,7 +47,6 @@ class VideoFeed extends Component {
     };
 
     this.webcam = React.createRef();
-    this.image = React.createRef();
     this.toggleFeedbackLog = this.toggleFeedbackLog.bind(this);
   }
 
@@ -131,7 +133,6 @@ class VideoFeed extends Component {
           startButton={this.state.startButton}
           setState={this.setState}
         />
-        <img src="" alt="" ref={this.image} />
       </div>
     );
   };
@@ -218,7 +219,6 @@ class VideoFeed extends Component {
 
   assignImgHeight = () => {
     let screenshot = this.webcam.current.getScreenshot();
-    this.image.current.src = screenshot;
     let img = new Image();
     img.src = screenshot;
     img.onload = () => {
@@ -257,11 +257,5 @@ const textToSpeech = () => {
   }
   return false;
 };
-
-/**
- * To be replaced with request to backend.
- * @param {Object} x
- * @returns Exercise Parameters
- */
 
 export default VideoFeed;

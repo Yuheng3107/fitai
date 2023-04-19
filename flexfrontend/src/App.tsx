@@ -7,16 +7,14 @@ import { profileDataActions } from './store/profileDataSlice';
 import { exerciseStatsActions } from './store/exerciseStatsSlice';
 
 //Util function imports
-import { getProfileData, getProfileDataAsync, getFavoriteExerciseAsync, getFavoriteExerciseRegimeAsync } from './utils/getProfileData';
+import { getProfileData, getProfileDataAsync, getFavoriteExerciseAsync, getFavoriteExerciseRegimeAsync, splitProfileData } from './utils/getProfileData';
 import { getExerciseRegimeAsync } from './utils/getExerciseData';
 
 //type import
 import { ProfileData, emptyProfileData, ExerciseStats, emptyExerciseStats } from './types/stateTypes';
 
-
 // tailwind imports
 import "./theme/tailwind.css";
-
 
 import { Redirect, Route } from "react-router-dom";
 
@@ -34,7 +32,6 @@ import { IonReactRouter } from "@ionic/react-router";
 import {
   accessibility,
   home,
-  person,
 } from "ionicons/icons";
 
 //Pages Components imports
@@ -60,6 +57,7 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
+import OtherUserProfile from './pages/other users/OtherUserProfile';
 
 setupIonicReact();
 
@@ -82,28 +80,10 @@ const App: React.FC = () => {
       data.favorite_exercise_regime = await getFavoriteExerciseRegimeAsync(data.id);
       data.favorite_exercise_regime.name = null;
       if (data.favorite_exercise_regime.exercise_regime !== null) data.favorite_exercise_regime = await getExerciseRegimeAsync(data.favorite_exercise_regime.exercise_regime);
-      dispatch(profileDataActions.setProfileData({
-        id: data.id,
-        achievements: data.achievements,
-        username: data.username,
-        email: data.email,
-        profile_photo: data.profile_photo,
-        bio: data.bio,
-        followers: data.followers,
-        reps: data.reps,
-        perfect_reps: data.perfect_reps,
-      }))
-      
-      dispatch(exerciseStatsActions.setExerciseStats({
-        exercise_regimes: data.exercise_regimes,
-        exercises: data.exercises,
-        calories_burnt: data.calories_burnt,
-        streak: data.streak,
-        favorite_exercise: data.favorite_exercise,
-        favorite_exercise_regime: data.favorite_exercise_regime,
-      }))
+      data = splitProfileData(data);
+      dispatch(profileDataActions.setProfileData(data.profileData));
+      dispatch(exerciseStatsActions.setExerciseStats(data.exerciseStats));
     }
-
 
     obtainProfileData();
   }, [getProfileData, updateProfileState])
@@ -131,6 +111,9 @@ const App: React.FC = () => {
             <Route exact path='/profile/create/'>
               <EditProfile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
             </Route>
+            <Route exact path="/profile/:userId" render={(props) => {
+              return <OtherUserProfile {...props} />;
+            }} />
             <Route exact path="/">
               <Redirect to="/home" />
             </Route>
