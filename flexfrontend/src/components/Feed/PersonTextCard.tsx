@@ -39,15 +39,17 @@ const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
     <div id="card-container" className="border border-zinc-500 mt-4 p-2">
       <div id="top-bar" className=" flex flex-row justify-between mb-2">
         <div className="flex flex-row">
-          <img
-            alt="profile-picture"
-            src={imageUrl}
-            className="h-12 w-12 rounded-full object-cover"
-          />
+          <a href={`/profile/${profileData.id}`}>
+            <img
+              alt="profile-picture"
+              src={imageUrl}
+              className="h-12 w-12 rounded-full object-cover"
+            />
+          </a>
           <div className="ml-3">
-            <span id="username" className="font-semibold">
+            <a id="username" className="font-semibold text-black" href={`/profile/${profileData.id}`}>
               {profileData?.username}
-            </span>
+            </a>
             <p
               id="subtitle"
               className="flex flex-row items-center text-sm text-gray-700"
