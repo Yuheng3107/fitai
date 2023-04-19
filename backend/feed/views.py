@@ -8,7 +8,7 @@ from community.models import Community #type: ignore
 from .serializers import CommentSerializer, UserPostSerializer, CommunityPostSerializer
 
 from datetime import datetime, timedelta, timezone
-import itertools as it, more_itertools as mt
+import itertools as it
 import math
 from django.contrib.auth import get_user_model
 
@@ -701,6 +701,5 @@ class UserFeedView(APIView):
         recommended_community = CommunityPostSerializer(CommunityPost.objects.filter(posted_at__range=(start_time, end_time)).exclude(community__in=communities).order_by("-likes")[0:recommended_no], many=True).data
 
         #stitch
-        recommended = list(it.chain(*mt.roundrobin(mt.chunked(recommended_friends, 1), recommended_community)))
-        data = list(it.chain(*mt.roundrobin(mt.chunked(followed, 2), recommended)))
+        data = list(it.chain(followed, recommended_friends, recommended_community))
         return Response(data)
