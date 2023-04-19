@@ -19,7 +19,6 @@ type UserPostProps = {
 const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
   const [imageUrl, setImageUrl] = useState("");
   const postDate = new Date(userPostData.posted_at);
-  console.log(postDate);
 
   useEffect(() => {
     if (profileData?.profile_photo) {
