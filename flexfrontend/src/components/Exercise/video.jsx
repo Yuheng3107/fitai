@@ -127,12 +127,8 @@ class VideoFeed extends Component {
             {this.state.generalFeedback}
           </TextBox>
         </div>
-        <StartEndButton
-          start={this.start}
-          end={this.end}
-          startButton={this.state.startButton}
-          setState={this.setState}
-        />
+        <StartEndButton start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} />
+        <img src="" alt="" ref={this.image} className="hidden" />
       </div>
     );
   };

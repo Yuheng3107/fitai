@@ -29,9 +29,9 @@ const ExerciseStatsDisplay = () => {
         >
 
           <span className="text-xs text-orange-400 font-bold z-10">Favourite Exercise</span>
-          <span className="text-4xl font-bold my-3 z-10">{exerciseStats?.favorite_exercise?.exercise === null ? "None" : exercises[exerciseStats?.favorite_exercise?.exercise]}</span>
+          <span className="text-4xl font-bold mt-3 mb-1 z-10">{exerciseStats?.favorite_exercise?.exercise === null ? "None" : exercises[exerciseStats?.favorite_exercise?.exercise]}</span>
           <div className="z-10">
-            <span className="text-lg font-semibold">{exerciseStats?.favorite_exercise?.total_reps ? exerciseStats?.favorite_exercise?.total_reps : "0"}</span>
+            <span className="text-lg font-semibold leading-3">{exerciseStats?.favorite_exercise?.total_reps ? exerciseStats?.favorite_exercise?.total_reps : "0"}</span>
             <span className="text-xs"> Reps</span>
           </div>
           <div className="z-10">
