@@ -5,25 +5,36 @@ import StopIcon from "../../assets/svgComponents/stopIcon";
 
 import { backend } from "../../App";
 
+//redux imports
+import { useAppSelector } from "../../store/hooks";
+
 function StartEndButton(props) {
+  const profileDataRedux = useAppSelector((state) => state.profile.profileData);
   function startButtonHandler(event) {
-    // if (props.detector) {
-    //     props.start();
-    //     props.setState({
-    //         startButton: false
-    //     })
-
-    // } else {
-    // }
-
-    props.start();
-    props.setState({
-      startButton: false,
-    });
+    if (props.parentState.detector == null) {
+      window.alert("loading!");
+    } else {
+      props.start();
+      props.setState({
+        startButton: false,
+      });
+    }
+    // console.log(props.parentState.detector);
+    // props.start();
+    // props.setState({
+    //     startButton: false
+    // })
   }
   console.log(props.parentState);
 
   function endButtonHandler(event) {
+    console.log(
+      JSON.stringify({
+        exercise_id: 1,
+        total_reps: Number(props.parentState.repCount),
+        perfect_reps: Number(props.parentState.perfectRepCount),
+      })
+    );
     props.end();
     props.setState({
       startButton: true,
@@ -38,9 +49,9 @@ function StartEndButton(props) {
       },
       credentials: "include",
       body: JSON.stringify({
-        exercise_id: 0,
-        total_reps: props.parentState.repCount,
-        perfect_reps: props.parentState.perfectRepCount,
+        exercise_id: 1,
+        total_reps: Number(props.parentState.repCount),
+        perfect_reps: Number(props.parentState.perfectRepCount),
       }),
     })
       .then((response) => {
@@ -48,8 +59,8 @@ function StartEndButton(props) {
         console.log(response);
         return response.json();
       })
-      .then((data) => {
-        console.log(data);
+      .then((body) => {
+        console.log(body);
       })
       .catch((err) => {
         console.log(err);
@@ -57,10 +68,7 @@ function StartEndButton(props) {
   }
 
   return (
-    <div
-      id="button-container"
-      className="absolute bottom-10 w-screen flex justify-center"
-    >
+    <>
       <Button
         onClick={startButtonHandler}
         className={`${
@@ -79,7 +87,7 @@ function StartEndButton(props) {
       >
         <StopIcon className="h-14 w-14 fill-white" />
       </Button>
-    </div>
+    </>
   );
 }
 

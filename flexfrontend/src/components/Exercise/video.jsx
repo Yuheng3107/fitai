@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { isMobile, isSafari, isFirefox } from "react-device-detect";
 import Webcam from "react-webcam";
 
+//ionic imports
+import { IonSpinner } from "@ionic/react";
+
 //components
 import Button from "../ui/Button";
 import TextBox from "../ui/TextBox";
@@ -21,11 +24,11 @@ import "@tensorflow/tfjs-backend-webgl";
 //formCorrection
 import * as formCorrection from "../../utils/formCorrection";
 import getExercise from "../../utils/ExerciseAlgo/exericseAlgo";
+import RepCountCircle from "./RepCountCircle";
 
 let feedback = new Array();
 let isActive = false;
 let frameCount = 0;
-let detector;
 let synth;
 
 class VideoFeed extends Component {
@@ -35,12 +38,14 @@ class VideoFeed extends Component {
     this.setState = this.setState.bind(this); // <- try by adding this line
 
     this.state = {
+      //Movenet model
+      detectorLoading: true,
+      detector: {},
       repCount: 0,
       perfectRepCount: 0,
-      repFeedback: "sample feedback for Rep 1",
-      repFeedbackLog:
-        "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
-      generalFeedback: "some stuff general feedback sample",
+      repFeedback: "",
+      repFeedbackLog: "",
+      generalFeedback: "",
       feedbackLogShowing: false,
       startButton: true,
       offset: 0,
@@ -55,11 +60,14 @@ class VideoFeed extends Component {
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
-    detector = await poseDetection.createDetector(
+    let detectorObject = await poseDetection.createDetector(
       poseDetection.SupportedModels.MoveNet,
       detectorConfig
     );
-    console.log(`this is the data type of detector: ${typeof detector}`);
+    this.setState({
+      detector: detectorObject,
+      detectorLoading: false
+    })
   };
 
   toggleFeedbackLog() {
@@ -74,34 +82,8 @@ class VideoFeed extends Component {
       <div className="relative h-full">
         <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
         <div className="exercise-feedback flex flex-col items-center p-5 w-full">
-          <div id="rep-count-container" className="relative">
-            <svg className="w-32 h-32 -rotate-90" viewBox="0 0 200 200">
-              <circle
-                className="stroke-current text-blue-500"
-                stroke="#4A5568"
-                strokeWidth="14"
-                fill="transparent"
-                r="80"
-                cx="50%"
-                cy="50%"
-                style={{
-                  strokeDasharray: `${2 * Math.PI * 80}`,
-                  //This line tells us how much of the ring should be blank
-                  strokeDashoffset:
-                    ((this.props.repCountInput - this.state.repCount) /
-                      this.props.repCountInput) *
-                    2 *
-                    Math.PI *
-                    80,
-                  transition: "stroke-dashoffset 1000ms linear",
-                  strokeLinecap: "round",
-                }}
-              />
-            </svg>
-            <span className="text-6xl p-0 m-0 flex justify-center items-center absolute left-0 top-0 w-32 h-32">
-              {this.state.repCount}
-            </span>
-          </div>
+
+          <RepCountCircle repCount={this.state.repCount} repCountInput={this.props.repCountInput} />
 
           <TextBox className="flex flex-col justify-between bg-zinc-100 pt-3 pb-0 w-4/5 mt-3">
             {this.state.feedbackLogShowing}
@@ -129,7 +111,14 @@ class VideoFeed extends Component {
             {this.state.generalFeedback}
           </TextBox>
         </div>
-        <StartEndButton detector={detector} start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
+        <div id="button-container" className="absolute bottom-10 w-screen flex justify-center">
+          {this.state.detectorLoading ?
+            <IonSpinner></IonSpinner>
+            :
+            <StartEndButton detector={this.state.detector} start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
+          }
+        </div>
+
         <img src="" alt="" ref={this.image} className="hidden" />
       </div>
     );
@@ -143,7 +132,7 @@ class VideoFeed extends Component {
    * Starts Exercise
    */
   start = async () => {
-    if (detector === null) {
+    if (this.state.detector === null) {
       window.alert("loading!");
       return
     }
@@ -182,7 +171,7 @@ class VideoFeed extends Component {
     // await delay(3000);
 
     while (isActive) {
-      let poses = await detector.estimatePoses(this.webcam.current.video);
+      let poses = await this.state.detector.estimatePoses(this.webcam.current.video);
       await delay(1);
       // process raw data
       let newFeedback = formCorrection.run(poses);
@@ -212,7 +201,7 @@ class VideoFeed extends Component {
     this.setState({
       repFeedback: completedFeedback[0],
       perfectRepCount: completedFeedback[1],
-      generalFeedback: frameCount,
+      generalFeedback: "Exercise ended",
     });
     console.log(completedFeedback);
   };
