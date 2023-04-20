@@ -1,7 +1,8 @@
 import { IonButton } from "@ionic/react";
 import { useEffect } from "react";
 type CommunitiesListProps = {
-    closeSideMenu: () => Promise<boolean>;
+    // closeSideMenu: () => Promise<boolean>;
+    closeSideMenu: () => void;
 }
 function CommunitiesList({ closeSideMenu }: CommunitiesListProps) {
 
@@ -10,7 +11,7 @@ function CommunitiesList({ closeSideMenu }: CommunitiesListProps) {
     }, []);
 
     return <aside>
-        <IonButton routerLink="/community/create">
+        <IonButton routerLink="/home/community/create" onClick={() => closeSideMenu()}>
             Create Community
         </IonButton>
     </aside>

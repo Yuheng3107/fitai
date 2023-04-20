@@ -11,6 +11,10 @@ import CommunitiesList from '../../components/home/CommunitiesList';
 const Home: React.FC = () => {
   const [sideMenuShowing, setSetMenuShowing] = useState(false);
   const sideMenuRef = useRef<HTMLIonMenuElement>(null);
+
+  function closeSideMenu () {
+    sideMenuRef.current?.close();
+  }
   return <>
     {/* This is the content of the sideMenu  */}
     <IonMenu ref={sideMenuRef} contentId="main-content">
@@ -20,7 +24,7 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        {/* <CommunitiesList closeSideMenu={sideMenuRef.current?.close}/> */}
+        <CommunitiesList closeSideMenu={closeSideMenu}/>
         <button onClick={() => {
           sideMenuRef.current?.close();
         }}>close</button>
