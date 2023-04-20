@@ -1,0 +1,7 @@
+version: '3'
+services:
+  django:
+    image: django-server
+    ports:
+      - "8000:8000"
+    restart: always
