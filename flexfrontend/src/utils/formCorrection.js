@@ -267,7 +267,9 @@ function summariseFeedback() {
     }
   }
   feedback[0] += perfectReps.toString() + " perfect reps.";
+  console.log(perfectReps);
   feedback[1] = perfectReps;
+  console.log(feedback);
   return feedback;
 }
 

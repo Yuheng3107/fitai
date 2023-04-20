@@ -5,8 +5,12 @@ import StopIcon from "../../assets/svgComponents/stopIcon";
 
 import { backend } from "../../App";
 
+//redux imports
+import { useAppSelector } from "../../store/hooks";
+
 function StartEndButton(props) {
 
+    const profileDataRedux = useAppSelector((state) => state.profile.profileData);
     function startButtonHandler(event) {
         // if (props.detector) {
         //     props.start();
@@ -26,6 +30,13 @@ function StartEndButton(props) {
     console.log(props.parentState);
 
     function endButtonHandler(event) {
+
+        console.log(JSON.stringify({
+            exercise_id: 1,
+            total_reps: Number(props.parentState.repCount),
+            perfect_reps: Number(props.parentState.perfectRepCount),
+
+        }))
         props.end();
         props.setState({
             startButton: true
@@ -40,13 +51,17 @@ function StartEndButton(props) {
             },
             credentials: "include",
             body: JSON.stringify({
-                exercise_id: 0,
-                total_reps: props.parentState.repCount,
-                perfect_reps: props.parentState.perfectRepCount
+                exercise_id: 1,
+                total_reps: Number(props.parentState.repCount),
+                perfect_reps: Number(props.parentState.perfectRepCount),
+
             }),
         }).then((response) => {
             // do something with response
             console.log(response);
+            return response.json();
+        }).then((body) => {
+            console.log(body);
         }).catch((err) => {
             console.log(err);
         });
