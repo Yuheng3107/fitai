@@ -37,10 +37,9 @@ class VideoFeed extends Component {
     this.state = {
       repCount: 0,
       perfectRepCount: 0,
-      repFeedback: "sample feedback for Rep 1",
-      repFeedbackLog:
-        "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
-      generalFeedback: "some stuff general feedback sample",
+      repFeedback: "",
+      repFeedbackLog:"",
+      generalFeedback: "",
       feedbackLogShowing: false,
       startButton: true,
       offset: 0,
