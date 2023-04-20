@@ -59,6 +59,7 @@ class VideoFeed extends Component {
       poseDetection.SupportedModels.MoveNet,
       detectorConfig
     );
+    console.log(`this is the data type of detector: ${typeof detector}`);
   };
 
   toggleFeedbackLog() {
@@ -128,7 +129,7 @@ class VideoFeed extends Component {
             {this.state.generalFeedback}
           </TextBox>
         </div>
-        <StartEndButton start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
+        <StartEndButton detector={detector} start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
         <img src="" alt="" ref={this.image} className="hidden" />
       </div>
     );
@@ -142,12 +143,9 @@ class VideoFeed extends Component {
    * Starts Exercise
    */
   start = async () => {
-    if (detector == undefined) {
+    if (detector === null) {
       window.alert("loading!");
-      this.setState({
-        startButton: true
-      });
-      return;
+      return
     }
     console.log("start");
     this.setState({

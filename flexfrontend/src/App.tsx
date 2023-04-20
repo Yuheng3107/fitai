@@ -41,6 +41,7 @@ import ChooseExercise from './pages/exercise/ChooseExercise';
 import Profile from "./pages/profile/Profile";
 import EditProfile from "./pages/profile/EditProfile";
 import CreatePost from './pages/post/CreatePost';
+import FriendsList from './pages/profile/FriendsList';
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -114,6 +115,9 @@ const App: React.FC = () => {
             <Route exact path="/profile/:userId" render={(props) => {
               return <OtherUserProfile {...props} />;
             }} />
+            <Route exact path='/profile/friendslist/'>
+              <FriendsList />
+            </Route>
             <Route exact path="/">
               <Redirect to="/home" />
             </Route>

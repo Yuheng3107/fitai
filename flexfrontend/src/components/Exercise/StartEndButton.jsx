@@ -8,10 +8,20 @@ import { backend } from "../../App";
 function StartEndButton(props) {
 
     function startButtonHandler(event) {
+        // if (props.detector) {
+        //     props.start();
+        //     props.setState({
+        //         startButton: false
+        //     })
+
+        // } else {
+        // }
+
         props.start();
         props.setState({
             startButton: false
         })
+
     }
     console.log(props.parentState);
 
@@ -20,6 +30,26 @@ function StartEndButton(props) {
         props.setState({
             startButton: true
         })
+        fetch(`${backend}/exercises/exercise_statistics/update`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": String(
+                    document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
+                )
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                exercise_id: 0,
+                total_reps: props.parentState.repCount,
+                perfect_reps: props.parentState.perfectRepCount
+            }),
+        }).then((response) => {
+            // do something with response
+            console.log(response);
+        }).catch((err) => {
+            console.log(err);
+        });
     }
 
     return <div id="button-container" className="absolute bottom-10 w-screen flex justify-center">
