@@ -54,7 +54,7 @@ function Feed() {
     }
     return <main className="w-full relative">
         <FeedPosts feedPostArray={feedPostArray} loadFeedData={loadFeedData} />
-        <Link to="/post/create" className="w-14 h-14 bg-sky-500 block rounded-full fixed right-4 bottom-4 flex justify-center items-center" >
+        <Link to="/home/post/create" className="w-14 h-14 bg-sky-500 rounded-full fixed right-4 bottom-4 flex justify-center items-center" >
             <AddIcon className="fill-slate-50"/>
         </Link>
     </main>
