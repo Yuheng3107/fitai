@@ -42,6 +42,7 @@ import Profile from "./pages/profile/Profile";
 import EditProfile from "./pages/profile/EditProfile";
 import CreatePost from './pages/post/CreatePost';
 import FriendsList from './pages/profile/FriendsList';
+import CreateCommunity from './pages/community/CreateCommunity';
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -97,8 +98,11 @@ const App: React.FC = () => {
             <Route exact path="/home">
               <Home />
             </Route>
-            <Route exact path="/post/create">
+            <Route exact path="/home/post/create">
               <CreatePost />
+            </Route>
+            <Route exact path="/home/community/create">
+              <CreateCommunity />
             </Route>
             <Route exact path="/exercise">
               <ChooseExercise />
@@ -126,6 +130,7 @@ const App: React.FC = () => {
             <IonTabButton tab="home" href="/home">
               <IonIcon aria-hidden="true" icon={home} />
             </IonTabButton>
+            
             <IonTabButton tab="exercise" href="/exercise">
               {/* <div className="relative bg-sky-400 aspect-square rounded-full"> */}
               <IonIcon

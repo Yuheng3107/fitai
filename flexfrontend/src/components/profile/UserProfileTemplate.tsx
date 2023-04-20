@@ -22,7 +22,7 @@ const UserProfileTemplate = ({ profileData, exerciseStats, userPostArray, loadUs
       <KeyProfileInfoDisplay profileData={profileData} />
       <ToggleBar isTrend={isTrend} setTrend={setTrend} />
       {isTrend === true ?
-        <ExerciseStatsDisplay />
+        <ExerciseStatsDisplay exerciseStats={exerciseStats} />
         :
         <UserPosts userPostArray={userPostArray} profileData={profileData} loadUserPostData={loadUserPostData} />
       }

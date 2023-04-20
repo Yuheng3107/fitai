@@ -3,15 +3,11 @@ import React, { useState, useEffect } from "react";
 import { ExerciseStats } from "../../types/stateTypes";
 import { exercises } from "../../App";
 
-//redux imports
-import { useAppSelector } from "../../store/hooks";
-
 type ExerciseStatsDisplayProps = {
   exerciseStats: ExerciseStats;
 };
 
-const ExerciseStatsDisplay = () => {
-  const exerciseStats = useAppSelector(state => state.exerciseStats)
+const ExerciseStatsDisplay = ({exerciseStats}: ExerciseStatsDisplayProps) => {
 
   const moduleWidth = "w-[calc(50%-0.4rem)]";
   const moduleHeight = "h-[calc(50%-0.4rem)]";
