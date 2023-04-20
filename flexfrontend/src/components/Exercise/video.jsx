@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { isMobile, isSafari, isFirefox } from "react-device-detect";
 import Webcam from "react-webcam";
 
+//ionic imports
+import { IonSpinner } from "@ionic/react";
+
 //components
 import Button from "../ui/Button";
 import TextBox from "../ui/TextBox";
@@ -35,7 +38,8 @@ class VideoFeed extends Component {
 
     this.state = {
       //Movenet model
-      detector,
+      detectorLoading: true,
+      detector: {},
       repCount: 0,
       perfectRepCount: 0,
       repFeedback: "",
@@ -60,7 +64,8 @@ class VideoFeed extends Component {
       detectorConfig
     );
     this.setState({
-      detector: detectorObject
+      detector: detectorObject,
+      detectorLoading: false
     })
   };
 
@@ -131,7 +136,14 @@ class VideoFeed extends Component {
             {this.state.generalFeedback}
           </TextBox>
         </div>
-        <StartEndButton detector={this.state.detector} start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
+        <div id="button-container" className="absolute bottom-10 w-screen flex justify-center">
+          {this.state.detectorLoading ?
+            <IonSpinner></IonSpinner>
+            :
+            <StartEndButton detector={this.state.detector} start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
+          }
+        </div>
+
         <img src="" alt="" ref={this.image} className="hidden" />
       </div>
     );

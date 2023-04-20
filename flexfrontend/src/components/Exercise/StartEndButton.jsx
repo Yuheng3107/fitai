@@ -68,7 +68,7 @@ function StartEndButton(props) {
         });
     }
 
-    return <div id="button-container" className="absolute bottom-10 w-screen flex justify-center">
+    return <>
         <Button
             onClick={startButtonHandler}
             className={`${props.startButton ? "" : "hidden"} bg-blue-400 w-16 h-16 mx-2 text-zinc-900
@@ -83,7 +83,8 @@ function StartEndButton(props) {
         >
             <StopIcon className="h-14 w-14 fill-white" />
         </Button>
-    </div>
+    </>
+
 
 }
 
