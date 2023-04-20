@@ -1,10 +1,11 @@
 
 
 //Ionic imports
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons } from '@ionic/react';
 
 //Component imports
 import Feed from '../../components/Feed/Feed';
+import SearchBar from '../../components/Feed/SearchBar';
 
 const Home: React.FC = () => {
 
@@ -12,7 +13,11 @@ const Home: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Home</IonTitle>
+          <IonButtons slot="start">
+            menu
+            
+            <SearchBar />
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="relative">
