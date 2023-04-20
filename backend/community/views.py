@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import Community, CommunityMembers
 from .serializers import CommunitySerializer
 # Create your views here.
+User = get_user_model()
 
 class CommunityCreateView(APIView):
     def post(self, request):
@@ -32,7 +33,7 @@ class CommunityCreateView(APIView):
 
 class CommunityUpdateView(APIView):
     def put(self, request):
-        """To update community"""
+        """For moderators to update details of the community"""
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -42,14 +43,14 @@ class CommunityUpdateView(APIView):
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
 
-        # Check community
+        # Check that community exists
         community = None
         try:
             community = Community.objects.get(pk=request.data["id"])
         except Community.DoesNotExist:
             return Response("Please put a valid Community id", status=status.HTTP_404_NOT_FOUND)
 
-        # Check User
+        # Check that user is a member of the community
         try:
             member = CommunityMembers.objects.get(user=request.user.id, community=community.id)
         except CommunityMembers.DoesNotExist:
@@ -68,7 +69,7 @@ class CommunityUpdateView(APIView):
 
 class CommunityDetailView(APIView):
     def get(self, request, pk):
-        """To get details of a UserPost"""
+        """To get details of community"""
         try:
             community = Community.objects.get(pk=pk)
             serializer = CommunitySerializer(community)
@@ -116,7 +117,7 @@ class CommunityMemberUpdateView(APIView):
             if field not in request.data:
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
 
-        # Check community
+        # Check that community exists
         try:
             community = Community.objects.get(pk=request.data["community_id"])
         except Community.DoesNotExist:
@@ -150,4 +151,4 @@ class CommunityMemberUpdateView(APIView):
         CommunityMembers.objects.filter(pk=member.id).update(**fields)
 
         return Response(status=status.HTTP_200_OK)
-        
+
