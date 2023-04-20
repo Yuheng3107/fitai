@@ -41,11 +41,15 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
     const [loginStatus, setLoginStatus] = useState(false);
 
     useEffect(() => {
-        if (hasLoaded === false) {
-            loadAllProfileData();
-            hasLoaded = true;
-        }
-    });
+        // if (hasLoaded === false) {
+        //     loadAllProfileData();
+        //     hasLoaded = true;
+        // }
+
+        //useEffect with empty dependency array means this function will only run once right after the component is mounted
+        loadAllProfileData();
+
+    },[]);
 
     const loadAllProfileData = async () => {
         let data = await getAllProfileData(match.params.userId);
