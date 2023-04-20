@@ -36,6 +36,7 @@ class VideoFeed extends Component {
 
     this.state = {
       repCount: 0,
+      perfectRepCount: 0,
       repFeedback: "sample feedback for Rep 1",
       repFeedbackLog:
         "sample feedback for Rep 1. sample feedback for Rep 1. sample feedback for Rep 1",
@@ -127,12 +128,8 @@ class VideoFeed extends Component {
             {this.state.generalFeedback}
           </TextBox>
         </div>
-        <StartEndButton
-          start={this.start}
-          end={this.end}
-          startButton={this.state.startButton}
-          setState={this.setState}
-        />
+        <StartEndButton start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
+        <img src="" alt="" ref={this.image} className="hidden" />
       </div>
     );
   };
@@ -147,6 +144,9 @@ class VideoFeed extends Component {
   start = async () => {
     if (detector == undefined) {
       window.alert("loading!");
+      this.setState({
+        startButton: true
+      });
       return;
     }
     console.log("start");
@@ -210,11 +210,13 @@ class VideoFeed extends Component {
   end = () => {
     isActive = false;
     console.log("End");
-    let feedback = formCorrection.endExercise();
+    let completedFeedback = formCorrection.endExercise();
     this.setState({
-      repFeedback: feedback,
+      repFeedback: completedFeedback[0],
+      perfectRepCount: completedFeedback[1],
       generalFeedback: frameCount,
     });
+    console.log(completedFeedback);
   };
 
   assignImgHeight = () => {

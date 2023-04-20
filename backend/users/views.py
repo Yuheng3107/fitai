@@ -61,13 +61,7 @@ class UserOthersDetailView(APIView):
             serializer = OtherUserSerializer(other_user)
             return Response(serializer.data)
         except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        
-        
-        
-            
-        
-        
+            return Response(status=status.HTTP_400_BAD_REQUEST) 
         
 class CheckLoginStatus(APIView):
     def get(self, request):
@@ -140,7 +134,6 @@ class UserManyToManyUpdateView(APIView):
         if "fk_list" not in request.data:
             return Response("Please add list of foreign keys as fk_list in request.", status=status.HTTP_400_BAD_REQUEST)
        
-    
         # Adds the relations to the model
         try:
             # Unpacks foreign keys in fk_list
@@ -155,11 +148,11 @@ class UserAchievementsUpdateView(UserManyToManyUpdateView):
         self.model = Achievement
         self.field_name = 'achievements'
         
-class UserFriendsUpdateView(UserManyToManyUpdateView):
+class UserFriendRequestUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = get_user_model()
-        self.field_name = 'friends'
+        self.field_name = 'sent_friend_requests'
 
 class UserBlockedUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
@@ -226,11 +219,11 @@ class UserAchievementsDeleteView(UserManyToManyDeleteView):
         self.model = Achievement
         self.field_name = 'achievements'
         
-class UserFriendsDeleteView(UserManyToManyDeleteView):
+class UserFriendRequestDeleteView(UserManyToManyDeleteView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.model = get_user_model()
-        self.field_name = 'friends'
+        self.field_name = 'sent_friend_requests'
 
 class UserBlockedDeleteView(UserManyToManyDeleteView):
     def setup(self, request, *args, **kwargs):
@@ -300,4 +293,33 @@ class UserStreakUpdateView(APIView):
                 request.user.longest_streak = request.user.streak
             request.user.save()
             return Response("Successfully Updated")
+
+class UserFriendRequestAcceptView(APIView):
+    def post(self, request):
+         # Only logged in users can accept requests
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        if "user_id" not in request.data:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        id = request.data["user_id"]
+        if not request.user.friend_requests.values_list('id', flat=True).filter(id=id).exists():
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        request.user.followers.add(id)
+        request.user.following.add(id)
+        request.user.friend_requests.remove(id)
+        return Response("Successfully Added")
+
+class UserFriendRequestDeclineView(APIView):
+    def post(self, request):
+         # Only logged in users can accept requests
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        if "user_id" not in request.data:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        id = request.data["user_id"]
+        if not request.user.friend_requests.values_list('id', flat=True).filter(id=id).exists():
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        request.user.friend_requests.remove(id)
+        return Response("Successfully Declined")
+
     

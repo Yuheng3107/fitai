@@ -1,7 +1,5 @@
 from django.urls import path
-from .views import  CheckLoginStatus, UserCreateView, UserDetailView, UserAchievementsUpdateView, UserFriendsUpdateView, UserCommunitiesUpdateView, UserExercisesUpdateView, UserExerciseRegimesUpdateView, UserChatGroupsUpdateView
-from .views import UserAchievementsDeleteView, UserFriendsDeleteView, UserCommunitiesDeleteView, UserExercisesDeleteView, UserExerciseRegimesDeleteView, UserChatGroupsDeleteView, UserBlockedUpdateView, UserBlockedDeleteView, UserAllowedView, UserUpdateView, UserUpdateProfilePhotoView, UserFollowingDeleteView, UserFollowingUpdateView
-from .views import UserFollowingListView, UserFollowerListView, UserOthersDetailView, UserStreakUpdateView
+from .views import *
 urlpatterns = [
     # Login stuff
     path('user/create', UserCreateView.as_view(), name='create_user'),
@@ -16,7 +14,9 @@ urlpatterns = [
     path('user/status', CheckLoginStatus.as_view(), name='login_status'),
     # Update m2m relationships
     path('user/update/achievements', UserAchievementsUpdateView.as_view(), name='update_user_achievements'),
-    path('user/update/friends', UserFriendsUpdateView.as_view(), name='update_user_friends'),
+    path('user/update/friend_request', UserFriendRequestUpdateView.as_view(), name='update_user_friend_requests'),
+    path('user/accept/friend_request', UserFriendRequestAcceptView.as_view(), name='accept_user_friend_requests'),
+    path('user/decline/friend_request', UserFriendRequestDeclineView.as_view(), name='decline_user_friend_requests'),
     path('user/update/blocked', UserBlockedUpdateView.as_view(), name='update_user_blocked'),
     path('user/update/communities', UserCommunitiesUpdateView.as_view(), name='update_user_communities'),
     path('user/update/exercises', UserExercisesUpdateView.as_view(), name='update_user_exercises'),
@@ -25,7 +25,7 @@ urlpatterns = [
     path('user/update/following', UserFollowingUpdateView.as_view(), name='update_user_following'),
     # Delete m2m 
     path('user/delete/achievements/<int:pk>', UserAchievementsDeleteView.as_view(), name='delete_user_achievements'),
-    path('user/delete/friends/<int:pk>', UserFriendsDeleteView.as_view(), name='delete_user_friends'),
+    path('user/delete/friend_request/<int:pk>', UserFriendRequestDeleteView.as_view(), name='delete_user_friend_requests'),
     path('user/delete/blocked/<int:pk>', UserBlockedDeleteView.as_view(), name='delete_user_blocked'),
     path('user/delete/communities/<int:pk>', UserCommunitiesDeleteView.as_view(), name='delete_user_communities'),
     path('user/delete/exercises/<int:pk>', UserExercisesDeleteView.as_view(), name='delete_user_exercises'),

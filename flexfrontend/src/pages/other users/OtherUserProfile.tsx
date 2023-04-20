@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { getAllProfileData } from "../../utils/getProfileData";
 import { getUserPostsAsync } from "../../utils/getPostData";
 import { ExerciseStats, emptyExerciseStats, ProfileData, emptyProfileData } from "../../types/stateTypes";
+import { sendFriendRequest } from "../../utils/friendRequests";
 
 //img imports
 import img404 from "../../assets/img/404.png"
@@ -50,7 +51,6 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
         let data = await getAllProfileData(match.params.userId);
         setProfileData(data.profileData);
         setExerciseStats(data.exerciseStats);
-        console.log(match.params.userId);
         console.log(data.profileData);
     };
 
@@ -60,6 +60,10 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
         currentUserPostSet += 1;
     };
 
+    const friendRequest = async () => {
+        await (sendFriendRequest(match.params.userId));
+    }
+
     return (
         <IonPage>
             <IonContent fullscreen>
@@ -68,7 +72,10 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
                         <img src={img404} />
                     </div> 
                 :
-                    <UserProfileTemplate profileData={profileData} exerciseStats={exerciseStats} userPostArray={userPostArray} loadUserPostData={loadUserPostData}/>
+                    <div>
+                        <UserProfileTemplate profileData={profileData} exerciseStats={exerciseStats} userPostArray={userPostArray} loadUserPostData={loadUserPostData}/>
+                        <IonButton onClick={friendRequest}>Send Friend Request</IonButton>
+                    </div>
                 }
             </IonContent>
         </IonPage>

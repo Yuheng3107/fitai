@@ -8,8 +8,9 @@ import SendIcon from "../../assets/svgComponents/SendIcon";
 import React, { useState, useEffect } from "react";
 
 import { backend } from "../../App";
-import { UserPostData, ProfileData } from "../../types/stateTypes";
+import { UserPostData, ProfileData, CommunityData, emptyCommunityData } from "../../types/stateTypes";
 import { timeSince } from "../../utils/generalUtils";
+import { getCommunityAsync } from "../../utils/getCommunityData";
 
 type UserPostProps = {
   userPostData: UserPostData;
@@ -18,35 +19,45 @@ type UserPostProps = {
 
 const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
   const [imageUrl, setImageUrl] = useState("");
+  const [communityData, setCommunityData] = useState<CommunityData>(emptyCommunityData);
   const postDate = new Date(userPostData.posted_at);
 
   useEffect(() => {
     if (profileData?.profile_photo) {
       setImageUrl(backend.concat(profileData.profile_photo))
     }
+    if (userPostData?.community !== undefined) {
+      getCommunityData(userPostData.community);
+    }
   }, [profileData?.profile_photo])
+
+  async function getCommunityData(pk:number) {
+    setCommunityData(await getCommunityAsync(pk));
+  }
 
   return (
     <div id="card-container" className="border border-zinc-500 mt-4 p-2">
       <div id="top-bar" className=" flex flex-row justify-between mb-2">
         <div className="flex flex-row">
-          <img
-            alt="profile-picture"
-            src={imageUrl}
-            className="h-12 w-12 rounded-full object-cover"
-          />
+          <a href={`/profile/${profileData.id}`}>
+            <img
+              alt="profile-picture"
+              src={imageUrl}
+              className="h-12 w-12 rounded-full object-cover"
+            />
+          </a>
           <div className="ml-3">
-            <span id="username" className="font-semibold">
+            <a id="username" className="font-semibold text-black" href={`/profile/${profileData.id}`}>
               {profileData?.username}
-            </span>
+            </a>
             <p
               id="subtitle"
               className="flex flex-row items-center text-sm text-gray-700"
             >
-              <span id="post-place">Swimming</span>
+              <span id="post-place">{userPostData?.community === undefined ? "Feed" : communityData?.name}</span>
               <FilledCircle className="mx-1 h-1.5 w-1.5 aspect-square fill-slate-500" />
               <span id="time-stamp">{timeSince(postDate)}</span>
-            </p>
+            </p>  
           </div>
         </div>
         <button id="menu-button"></button>

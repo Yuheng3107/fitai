@@ -32,11 +32,11 @@ class AppUser(AbstractUser):
     achievements = models.ManyToManyField(
         'achievements.Achievement', related_name='users', blank=True)
     # Many to Many friends
-    friends = models.ManyToManyField('self', blank=True)
+    sent_friend_requests = models.ManyToManyField('self', symmetrical=False, related_name='friend_requests', blank=True)
     # Many to Many people they follow
-    following = models.ManyToManyField('self', symmetrical=False, related_name='followers')
+    following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
     # Many to Many friends
-    blocked = models.ManyToManyField('self', symmetrical=False)
+    blocked = models.ManyToManyField('self', symmetrical=False, blank=True)
     # Many to Many communities
     communities = models.ManyToManyField('community.Community', through='community.CommunityMembers', blank=True)
     # Many to Many exercises, with stats included

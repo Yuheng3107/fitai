@@ -739,7 +739,7 @@ class UserFeedViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_data = json.loads(response.content)
         self.assertEqual(len(response_data), 0)
-        user.friends.add(user_friend)
+        user.following.add(user_friend)
         user.communities.add(community)
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
