@@ -63,3 +63,6 @@ ALTER USER admin WITH SUPERUSER;
 `python manage.py refreshactivestatus`
 
 In production this will be run every 24h by a CRON job
+
+To run backend server:
+daphne backend.asgi:application

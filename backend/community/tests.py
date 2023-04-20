@@ -231,3 +231,4 @@ class CommunityMembersUpdateViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         member = CommunityMembers.objects.get(user=user2.id, community=community.id)
         self.assertEqual(member.moderator_level, 2)
+        
