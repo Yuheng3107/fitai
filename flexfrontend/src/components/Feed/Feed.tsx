@@ -11,6 +11,7 @@ import { getOtherProfileDataAsync } from "../../utils/getProfileData";
 import { backend } from "../../App";
 import { Link } from "react-router-dom";
 import { ProfileData } from "../../types/stateTypes";
+import AddIcon from "../../assets/svgComponents/AddIcon";
 
 let currentFeedSet = 0;
 
@@ -51,9 +52,11 @@ function Feed() {
             console.log(response);
         });
     }
-    return <main className="w-full">
+    return <main className="w-full relative">
         <FeedPosts feedPostArray={feedPostArray} loadFeedData={loadFeedData} />
-        <Link to="/post/create" className="w-12 h-12 bg-sky-500 block" >Add Post</Link>
+        <Link to="/post/create" className="w-14 h-14 bg-sky-500 block rounded-full fixed right-4 bottom-4 flex justify-center items-center" >
+            <AddIcon className="fill-slate-50"/>
+        </Link>
     </main>
 }
 
