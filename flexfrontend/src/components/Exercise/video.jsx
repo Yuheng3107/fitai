@@ -24,6 +24,7 @@ import "@tensorflow/tfjs-backend-webgl";
 //formCorrection
 import * as formCorrection from "../../utils/formCorrection";
 import getExercise from "../../utils/ExerciseAlgo/exericseAlgo";
+import RepCountCircle from "./RepCountCircle";
 
 let feedback = new Array();
 let isActive = false;
@@ -81,34 +82,8 @@ class VideoFeed extends Component {
       <div className="relative h-full">
         <Webcam videoConstraints={{ facingMode: "user" }} ref={this.webcam} />
         <div className="exercise-feedback flex flex-col items-center p-5 w-full">
-          <div id="rep-count-container" className="relative">
-            <svg className="w-32 h-32 -rotate-90" viewBox="0 0 200 200">
-              <circle
-                className="stroke-current text-blue-500"
-                stroke="#4A5568"
-                strokeWidth="14"
-                fill="transparent"
-                r="80"
-                cx="50%"
-                cy="50%"
-                style={{
-                  strokeDasharray: `${2 * Math.PI * 80}`,
-                  //This line tells us how much of the ring should be blank
-                  strokeDashoffset:
-                    ((this.props.repCountInput - this.state.repCount) /
-                      this.props.repCountInput) *
-                    2 *
-                    Math.PI *
-                    80,
-                  transition: "stroke-dashoffset 1000ms linear",
-                  strokeLinecap: "round",
-                }}
-              />
-            </svg>
-            <span className="text-6xl p-0 m-0 flex justify-center items-center absolute left-0 top-0 w-32 h-32">
-              {this.state.repCount}
-            </span>
-          </div>
+
+          <RepCountCircle repCount={this.state.repCount} repCountInput={this.props.repCountInput} />
 
           <TextBox className="flex flex-col justify-between bg-zinc-100 pt-3 pb-0 w-4/5 mt-3">
             {this.state.feedbackLogShowing}
