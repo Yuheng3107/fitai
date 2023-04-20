@@ -25,7 +25,6 @@ import getExercise from "../../utils/ExerciseAlgo/exericseAlgo";
 let feedback = new Array();
 let isActive = false;
 let frameCount = 0;
-let detector;
 let synth;
 
 class VideoFeed extends Component {
@@ -35,10 +34,12 @@ class VideoFeed extends Component {
     this.setState = this.setState.bind(this); // <- try by adding this line
 
     this.state = {
+      //Movenet model
+      detector,
       repCount: 0,
       perfectRepCount: 0,
       repFeedback: "",
-      repFeedbackLog:"",
+      repFeedbackLog: "",
       generalFeedback: "",
       feedbackLogShowing: false,
       startButton: true,
@@ -54,11 +55,13 @@ class VideoFeed extends Component {
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
     };
-    detector = await poseDetection.createDetector(
+    let detectorObject = await poseDetection.createDetector(
       poseDetection.SupportedModels.MoveNet,
       detectorConfig
     );
-    console.log(`this is the data type of detector: ${typeof detector}`);
+    this.setState({
+      detector: detectorObject
+    })
   };
 
   toggleFeedbackLog() {
@@ -128,7 +131,7 @@ class VideoFeed extends Component {
             {this.state.generalFeedback}
           </TextBox>
         </div>
-        <StartEndButton detector={detector} start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
+        <StartEndButton detector={this.state.detector} start={this.start} end={this.end} startButton={this.state.startButton} setState={this.setState} parentState={this.state} />
         <img src="" alt="" ref={this.image} className="hidden" />
       </div>
     );
@@ -142,7 +145,7 @@ class VideoFeed extends Component {
    * Starts Exercise
    */
   start = async () => {
-    if (detector === null) {
+    if (this.state.detector === null) {
       window.alert("loading!");
       return
     }
@@ -181,7 +184,7 @@ class VideoFeed extends Component {
     // await delay(3000);
 
     while (isActive) {
-      let poses = await detector.estimatePoses(this.webcam.current.video);
+      let poses = await this.state.detector.estimatePoses(this.webcam.current.video);
       await delay(1);
       // process raw data
       let newFeedback = formCorrection.run(poses);
@@ -211,7 +214,7 @@ class VideoFeed extends Component {
     this.setState({
       repFeedback: completedFeedback[0],
       perfectRepCount: completedFeedback[1],
-      generalFeedback: frameCount,
+      generalFeedback: "Exercise ended",
     });
     console.log(completedFeedback);
   };

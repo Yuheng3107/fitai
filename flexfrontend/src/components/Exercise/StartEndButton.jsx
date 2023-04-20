@@ -12,19 +12,20 @@ function StartEndButton(props) {
 
     const profileDataRedux = useAppSelector((state) => state.profile.profileData);
     function startButtonHandler(event) {
-        // if (props.detector) {
-        //     props.start();
-        //     props.setState({
-        //         startButton: false
-        //     })
+        if (props.parentState.detector == null) {
+            window.alert('loading!')
+        } else {
 
-        // } else {
-        // }
-
-        props.start();
-        props.setState({
-            startButton: false
-        })
+            props.start();
+            props.setState({
+                startButton: false
+            })
+        }
+        // console.log(props.parentState.detector);
+        // props.start();
+        // props.setState({
+        //     startButton: false
+        // })
 
     }
     console.log(props.parentState);
