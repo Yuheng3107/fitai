@@ -13,7 +13,6 @@ interface CommunityPageProps extends RouteComponentProps<{
 
 //This component defines the routes following /community
 function CommunityPage({ match }: CommunityPageProps) {
-    console.log(match.url);
     return <IonPage>
         <IonRouterOutlet>
             <Route exact path={`${match.url}/:communityId`} render={(props) => {
