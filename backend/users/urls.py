@@ -14,7 +14,7 @@ urlpatterns = [
     path('user/status', CheckLoginStatus.as_view(), name='login_status'),
     # Update m2m relationships
     path('user/update/achievements', UserAchievementsUpdateView.as_view(), name='update_user_achievements'),
-    path('user/update/friend_request', UserFriendRequestUpdateView.as_view(), name='update_user_friend_requests'),
+    path('user/update/friend_request', UserFriendRequestUpdatetView.as_view(), name='update_user_friend_requests'),
     path('user/accept/friend_request', UserFriendRequestAcceptView.as_view(), name='accept_user_friend_requests'),
     path('user/decline/friend_request', UserFriendRequestDeclineView.as_view(), name='decline_user_friend_requests'),
     path('user/update/blocked', UserBlockedUpdateView.as_view(), name='update_user_blocked'),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('user/delete/exercise_regimes/<int:pk>', UserExerciseRegimesDeleteView.as_view(), name='delete_user_exercise_regimes'),
     path('user/delete/chat_groups/<int:pk>', UserChatGroupsDeleteView.as_view(), name='delete_user_chat_groups'),
     path('user/delete/following/<int:pk>', UserFollowingDeleteView.as_view(), name='delete_user_following'),
+    path('user/delete/friend/<int:pk>', UserFriendDeleteView.as_view(), name='delete_user_friend'),
     # List Views
     path('user/list/following', UserFollowingListView.as_view(), name='user_following_list'),
     path('user/list/followers', UserFollowerListView.as_view(), name='user_followers_list'),

@@ -13,15 +13,15 @@ export type ProfileData = {
 
 export const emptyProfileData = {
   id: 0,
-  achievements: [],
+  achievements: new Array(),
   email: "",
   profile_photo: "",
   username: "",
   bio: "",
-  followers: [],
+  followers: new Array(),
   reps: 0,
   perfect_reps: 0,
-  friend_requests: [],
+  friend_requests: new Array(),
 };
 
 export const invalidProfileData = {

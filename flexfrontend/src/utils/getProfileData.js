@@ -32,7 +32,6 @@ export const getOtherProfileDataAsync = async function (pk) {
       body: JSON.stringify(),
     })
     let data = await res.json();
-    console.log(data)
     return data
   } catch (error) {
     console.log(error);

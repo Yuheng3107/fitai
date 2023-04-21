@@ -7,13 +7,13 @@ import KeyProfileInfoDisplay from "./KeyProfileInfoDisplay";
 import ExerciseStatsDisplay from "./ExerciseStatsDisplay";
 import UserPosts from "./UserPosts";
 import { ProfileData, ExerciseStats } from "../../types/stateTypes";
-import FriendRequest from "./FriendRequest";
+import FriendCard from "./FriendCard";
 
-type FriendRequestDisplayProps = {
+type FriendDisplayProps = {
   friend_requests: any[];
 };
 
-const FriendRequestDisplay = ({ friend_requests }: FriendRequestDisplayProps) => {
+const FriendDisplay = ({ friend_requests }: FriendDisplayProps) => {
   const [isTrend, setTrend] = useState(true);
   return (
     <div>
@@ -21,10 +21,10 @@ const FriendRequestDisplay = ({ friend_requests }: FriendRequestDisplayProps) =>
         <div className="text-center">No Friend Requests</div>
       :
         friend_requests.map(item => (
-          <FriendRequest profileId={item} key={item}/>
+          <FriendCard profileId={item} key={item}/>
       ))}
     </div>
   )
 };
 
-export default FriendRequestDisplay;
+export default FriendDisplay;

@@ -3,16 +3,16 @@ import React, { useState, useEffect } from "react";
 import { IonButton } from '@ionic/react';
 import { ProfileData, emptyProfileData } from "../../types/stateTypes";
 
-import { acceptFriendRequest, declineFriendRequest } from "../../utils/friendRequests";
+import { acceptFriendRequest, declineFriendRequest } from "../../utils/friends";
 import { getOtherProfileDataAsync } from "../../utils/getProfileData";
 
 import { backend } from "../../App";
 
-type UserProfileTemplateProps = {
+type FriendRequestProps = {
   profileId: number;
 };
 
-const FriendRequest = ({ profileId }: UserProfileTemplateProps) => {
+const FriendRequest = ({ profileId }: FriendRequestProps) => {
   const [imageUrl, setImageUrl] = useState("");
   const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
 
