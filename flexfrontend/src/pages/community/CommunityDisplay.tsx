@@ -1,7 +1,12 @@
 
 import { IonPage, IonContent } from '@ionic/react';
+import { RouteComponentProps } from "react-router";
 
-function CommunityDisplay() {
+interface CommunityDisplayProps extends RouteComponentProps<{
+    communityId: string;
+}> { }
+
+function CommunityDisplay({ match }: CommunityDisplayProps) {
     return <IonPage>
         <IonContent>
             This is a community

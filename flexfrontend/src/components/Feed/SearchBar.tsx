@@ -11,6 +11,9 @@ function SearchBar() {
 
     function searchHandler (event: React.FormEvent) {
         event.preventDefault();
+        if (searchInput.trim() === "") {
+            return
+        }
         console.log("form submitted");
     }
 

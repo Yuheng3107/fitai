@@ -43,6 +43,7 @@ import EditProfile from "./pages/profile/EditProfile";
 import CreatePost from './pages/post/CreatePost';
 import FriendsList from './pages/profile/FriendsList';
 import CreateCommunity from './pages/community/CreateCommunity';
+import CommunityPage from './pages/community/CommunityPage';
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -60,6 +61,7 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import OtherUserProfile from './pages/other users/OtherUserProfile';
+import CommunityDisplay from './pages/community/CommunityDisplay';
 
 setupIonicReact();
 
@@ -101,9 +103,7 @@ const App: React.FC = () => {
             <Route exact path="/home/post/create">
               <CreatePost />
             </Route>
-            <Route exact path="/home/community/create">
-              <CreateCommunity />
-            </Route>
+            <Route path="/home/community" component={CommunityPage} />
             <Route exact path="/exercise">
               <ChooseExercise />
             </Route>
@@ -130,7 +130,7 @@ const App: React.FC = () => {
             <IonTabButton tab="home" href="/home">
               <IonIcon aria-hidden="true" icon={home} />
             </IonTabButton>
-            
+
             <IonTabButton tab="exercise" href="/exercise">
               {/* <div className="relative bg-sky-400 aspect-square rounded-full"> */}
               <IonIcon
