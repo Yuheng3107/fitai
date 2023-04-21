@@ -1,9 +1,14 @@
 version: '3'
 services:
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - db.env
   django:
     image: django-server
     ports:
       - "8000:8000"
     restart: always
     env_file:
-      - .env
+      - aws.env

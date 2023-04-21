@@ -14,6 +14,7 @@ import json
 from .models import UserPost, CommunityPost, Comment, Tags
 from exercises.models import Exercise # type: ignore
 from datetime import datetime, timezone
+from community.models import Community # type: ignore
 # Create your tests here.
 
 
@@ -747,3 +748,37 @@ class UserFeedViewTests(APITestCase):
         self.assertEqual(len(response_data), 2)
         self.assertEqual(response_data[0]["id"], post.id)
         self.assertEqual(response_data[1]["id"], post2.id)
+
+class CommunityPostSearchViewTests(APITestCase):
+    def test_search_community_posts(self):
+        url = reverse('search_community_posts')
+        community = baker.make(Community)
+        gay_post = baker.make(CommunityPost, community=community, likes=69, title="Gay Post")
+        gay_sex_post = baker.make(CommunityPost, community=community, likes=420, title="Gay Sex Post")
+        response = self.client.post(url, {})
+        # Check that 400 status code is given when no data is sent
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check that 400 status code is sent when content is missing
+        response = self.client.post(url, {"community_id": community.id})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check that 400 status code is sent when community_id is missing
+        response = self.client.post(url, {"content": "gay sex"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data = {
+            "community_id": community.id,
+            "content": "gay sex"
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data[0]['title'], gay_sex_post.title)
+        self.assertEqual(response_data[0]["likes"], gay_sex_post.likes)
+        data["content"] = "gay"
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data[0]['title'], gay_sex_post.title)
+        self.assertEqual(response_data[0]["likes"], gay_sex_post.likes)
+        self.assertEqual(response_data[1]['title'], gay_post.title)
+        self.assertEqual(response_data[1]['likes'], gay_post.likes)
+        

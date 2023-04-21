@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 import itertools as it
 import math
 from django.contrib.auth import get_user_model
-
+from django.db.models import Q
 # Create your views here.
 
 class UserPostCreateView(APIView):
@@ -703,3 +703,37 @@ class UserFeedView(APIView):
         #stitch
         data = list(it.chain(followed, recommended_friends, recommended_community))
         return Response(data)
+    
+class CommunityPostSearchView(APIView):
+    def post(self, request):
+        required_fields = ["content", "community_id"]
+        for field in required_fields:
+            if field not in request.data:
+                return Response(f"Add the {field} field in POST request", status=status.HTTP_400_BAD_REQUEST)
+            
+        # Split sentence of search into respective keywords
+        keywords = request.data["content"].split()
+        # Generate queries for checking if keywords in title and for checking if keywords in content of post
+        title_query = None
+        text_query = None
+        for keyword in keywords:
+            if title_query is None:
+                # Initialise title query to Q object for first query
+                title_query = Q(title__icontains=keyword)
+            else:
+                # Chain the queries so that final query filters for Communities with titles containing all the keywords
+                title_query = title_query & Q(title__icontains=keyword)
+            # Likewise for text_query
+            if text_query is None:
+                text_query = Q(text__icontains=keyword)
+            else:
+                text_query = text_query & Q(text__icontains=keyword)
+        
+        qs = CommunityPost.objects.filter(community=request.data["community_id"]).filter(title_query | text_query).order_by('-likes')
+        if qs.count() > 10:
+            # Get top 10 most liked posts if there are more than 10 posts
+            qs = qs[:10]
+        serializer = CommunityPostSerializer(qs, many=True)
+        return Response(serializer.data)
+        
+    

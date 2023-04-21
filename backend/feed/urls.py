@@ -39,4 +39,5 @@ urlpatterns = [
     path('community_post/delete/share/<int:pk>', CommunityPostShareDeleteView.as_view(), name='delete_community_post_share'),
     path('community_post/update/media', CommunityPostMediaUpdateView.as_view(), name='update_community_post_media'),
     path('community_post/delete/media/<int:pk>', CommunityPostMediaDeleteView.as_view(), name='delete_community_post_media'),
+    path('community_post/search', CommunityPostSearchView.as_view(), name='search_community_posts'),
 ]
