@@ -15,7 +15,6 @@ import { ProfileData, emptyProfileData, ExerciseStats, emptyExerciseStats } from
 
 // tailwind imports
 import "./theme/tailwind.css";
-
 import { Redirect, Route } from "react-router-dom";
 
 //Ionic Imports

@@ -13,14 +13,10 @@ type userPostProps = {
   loadUserPostData: () => void;
 };
 
-let hasLoaded = false;
 const UserPosts = ({ profileData, userPostArray, loadUserPostData }: userPostProps) => {
   useEffect(() => {
-    if (hasLoaded === false) {
-      loadUserPostData();
-      hasLoaded = true;
-    }
-  })
+    loadUserPostData();
+  }, [])
   return (
     <div
       id="userFeed"

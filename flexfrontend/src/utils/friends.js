@@ -50,8 +50,42 @@ export const sendFriendRequest = async function (pk) {
         "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
       },
       body: JSON.stringify({
-        fk_list: [pk],
+        user_id: pk,
       }),
+    })
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const deleteFriendRequest = async function (pk) {
+  try {
+    let res = await fetch(`${backend}/users/user/delete/friend_request/${pk}`, {
+      method: "DELETE",
+      credentials: "include", // include cookies in the request
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+      },
+    })
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const deleteFriend = async function (pk) {
+  try {
+    let res = await fetch(`${backend}/users/user/delete/friend/${pk}`, {
+      method: "DELETE",
+      credentials: "include", // include cookies in the request
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+      },
     })
     console.log(res);
     return res;

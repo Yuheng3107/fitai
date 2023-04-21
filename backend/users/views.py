@@ -147,12 +147,6 @@ class UserAchievementsUpdateView(UserManyToManyUpdateView):
         super().setup(request, *args, **kwargs)
         self.model = Achievement
         self.field_name = 'achievements'
-        
-class UserFriendRequestUpdateView(UserManyToManyUpdateView):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.model = get_user_model()
-        self.field_name = 'sent_friend_requests'
 
 class UserBlockedUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
@@ -294,6 +288,19 @@ class UserStreakUpdateView(APIView):
             request.user.save()
             return Response("Successfully Updated")
 
+class UserFriendRequestUpdatetView(APIView):
+    def post(self, request):
+         # Only logged in users can accept requests
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        if "user_id" not in request.data:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        id = request.data["user_id"]
+        if request.user.following.values_list('id', flat=True).filter(id=id).exists():
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        request.user.sent_friend_requests.add(id)
+        return Response("Successfully Added")
+
 class UserFriendRequestAcceptView(APIView):
     def post(self, request):
          # Only logged in users can accept requests
@@ -308,6 +315,18 @@ class UserFriendRequestAcceptView(APIView):
         request.user.following.add(id)
         request.user.friend_requests.remove(id)
         return Response("Successfully Added")
+
+class UserFriendDeleteView(APIView):
+    def delete(self, request, pk):
+        """Delete Friend"""
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            request.user.followers.remove(pk)
+            request.user.following.remove(pk)
+            return Response()
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
 class UserFriendRequestDeclineView(APIView):
     def post(self, request):

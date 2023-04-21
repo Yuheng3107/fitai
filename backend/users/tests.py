@@ -166,11 +166,11 @@ class UserOtherDetailViewTests(APITestCase):
         self.assertEqual(response.data.get("email", None), email)
         
 class UserManyToManyUpdateViewTests(APITestCase):
-    def test_update_user_friend_requests(self):
-        url = reverse('update_user_friend_requests')
-        friends = [baker.make('users.AppUser') for i in range(3)]
+    def test_update_user_achievements(self):
+        url = reverse('update_user_achievements')
+        achievements = [baker.make(Achievement) for i in range(3)]
         data = {
-            "fk_list": [friend.id for friend in friends]
+            "fk_list": [achievement.id for achievement in achievements]
         }
         user = baker.make('users.AppUser')
         response = self.client.post(url, data)
@@ -179,7 +179,7 @@ class UserManyToManyUpdateViewTests(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensures friends are successfully added
-        self.assertEqual(list(user.sent_friend_requests.all()), friends)
+        self.assertEqual(list(user.achievements.all()), achievements)
         
 class UserManyToManyDeleteViewTests(APITestCase):
     def test_delete_user_achievements(self):
@@ -296,7 +296,6 @@ class UserUpdateProfilePhotoViewTest(APITestCase):
         for file in files:
             if file.endswith('.jpg'):
                 os.remove(os.path.join(dir_path, file))
-            
 
 class UserFollowingListView(APITestCase):
     def test_get_user_following_list(self):
@@ -366,6 +365,26 @@ class UserStreakUpdateViewTests(APITestCase):
         self.assertEqual(user.longest_streak, new_longest_streak)
         self.assertTrue(user.active)
 
+class UserFriendRequestUpdateViewTests(APITestCase):
+    def test_update_user_friend_requests(self):
+        url = reverse('update_user_friend_requests')
+        friend = baker.make('users.AppUser')
+        data = {
+            "user_id": friend.id
+        }
+        user = baker.make('users.AppUser')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        user.following.add(friend)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        user.following.remove(friend)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensures friends are successfully added
+        self.assertEqual(user.sent_friend_requests.all()[0], friend)
+
 class UserFriendRequestAcceptViewTests(APITestCase):
     def test_accept_user_friend_requests(self):
         url = reverse('accept_user_friend_requests')
@@ -386,6 +405,21 @@ class UserFriendRequestAcceptViewTests(APITestCase):
         self.assertEqual(user.followers.all()[0],friend)
         self.assertEqual(friend.followers.all()[0],user)
         self.assertEqual(friend.sent_friend_requests.exists(), False)
+
+class UserFriendDeleteViewTests(APITestCase):
+    def test_delete_user_friend(self):
+        friend = baker.make('users.AppUser')
+        user = baker.make('users.AppUser')
+        user.followers.add(friend)
+        user.following.add(friend)
+        url = reverse('delete_user_friend', kwargs={"pk": friend.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(user.followers.exists(), False)
+        self.assertEqual(friend.followers.exists(), False)
 
 class UserFriendRequestDeclineViewTests(APITestCase):
     def test_accept_user_friend_requests(self):
