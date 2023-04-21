@@ -27,7 +27,6 @@ type ProfileProps = {
 }
 // for keeping track of how many sets of user posts
 let currentUserPostSet = 0;
-let hasLoaded = false;
 
 interface OtherUserProfileProps
     extends RouteComponentProps<{
@@ -41,11 +40,6 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
     const [loginStatus, setLoginStatus] = useState(false);
 
     useEffect(() => {
-        // if (hasLoaded === false) {
-        //     loadAllProfileData();
-        //     hasLoaded = true;
-        // }
-
         //useEffect with empty dependency array means this function will only run once right after the component is mounted
         loadAllProfileData();
 
