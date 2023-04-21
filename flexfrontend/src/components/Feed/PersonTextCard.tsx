@@ -10,7 +10,7 @@ import React, { useState, useEffect } from "react";
 import { backend } from "../../App";
 import { UserPostData, ProfileData, CommunityData, emptyCommunityData } from "../../types/stateTypes";
 import { timeSince } from "../../utils/generalUtils";
-import { getCommunityAsync } from "../../utils/getCommunityData";
+import { getCommunityAsync } from "../../utils/getData/getCommunityData";
 
 //ionic imports
 import {

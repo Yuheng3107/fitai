@@ -2,8 +2,8 @@ import { RouteComponentProps } from "react-router";
 import React, { useState, useEffect } from "react";
 
 //utils imports
-import { getAllProfileData } from "../../utils/getProfileData";
-import { getUserPostsAsync } from "../../utils/getPostData";
+import { getAllProfileData } from "../../utils/getData/getProfileData";
+import { getUserPostsAsync } from "../../utils/getData/getPostData";
 import { ExerciseStats, emptyExerciseStats, ProfileData, emptyProfileData } from "../../types/stateTypes";
 import { sendFriendRequest, deleteFriendRequest, deleteFriend } from "../../utils/friends";
 
@@ -49,13 +49,8 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
     useEffect(() => {
         //useEffect with empty dependency array means this function will only run once right after the component is mounted
         loadAllProfileData();
-        console.log("i load");
-        console.log(profileDataRedux);
-        if (profileDataRedux.followers.includes(parseInt(match.params.userId))) {
-            console.log("success")
-            setFriendStatus(2);
-        }
-        console.log(friendStatus);
+        if (profileDataRedux.followers.includes(parseInt(match.params.userId))) setFriendStatus(2);
+        if (profileDataRedux.sent_friend_requests.includes(parseInt(match.params.userId))) setFriendStatus(1);
     },[friendStatus, setFriendStatus]);
 
     const loadAllProfileData = async () => {

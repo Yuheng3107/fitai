@@ -1,6 +1,6 @@
-import { backend } from "../App.tsx";
+import { backend } from "../../App.tsx";
 import { getExerciseRegimeAsync } from "./getExerciseData";
-import { invalidProfileData, emptyExerciseStats } from "../types/stateTypes";
+import { invalidProfileData, emptyExerciseStats } from "../../types/stateTypes";
 
 export const getProfileDataAsync = async function () {
   try {
@@ -127,6 +127,7 @@ export const splitProfileData = function (data) {
       reps: data.reps,
       perfect_reps: data.perfect_reps,
       friend_requests: data.friend_requests,
+      sent_friend_requests: data.sent_friend_requests,
     },
     exerciseStats: {
       exercise_regimes: data.exercise_regimes,

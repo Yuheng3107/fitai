@@ -1,8 +1,8 @@
-import { backend } from "../App.tsx";
+import { backend } from "../../App";
 
-export const getExerciseAsync = async function (pk) {
+export const getCommunityAsync = async function (pk) {
   try {
-    let res = await fetch(`${backend}/exercises/exercise/${pk}`, {
+    let res = await fetch(`${backend}/community/community/${pk}`, {
       method: "GET",
       credentials: "include", // include cookies in the request
       headers: {
@@ -17,9 +17,9 @@ export const getExerciseAsync = async function (pk) {
   }
 }
 
-export const getExerciseRegimeAsync = async function (pk) {
+export const getCommunitiesListAsync = async () => {
   try {
-    let res = await fetch(`${backend}/exercises/exercise_regime/${pk}`, {
+    let res = await fetch(`${backend}/community/community/list`, {
       method: "GET",
       credentials: "include", // include cookies in the request
       headers: {

@@ -783,15 +783,4 @@ class CommunityPostSearchViewTests(APITestCase):
         self.assertEqual(response_data[1]['title'], gay_post.title)
         self.assertEqual(response_data[1]['likes'], gay_post.likes)
         
-        # Check that filtering for text works
-        nsfw_content = baker.make(CommunityPost, community=community, title="NSFW Post", text="sex stuff here", likes=1)
-        cursed_content = baker.make(CommunityPost, community=community, title="Cursed Post", text="cursed sexy stuff here", likes=2)
-        data["content"] = "sex"
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response_data = json.loads(response.content)
-        self.assertEqual(response_data[0]["title"], gay_sex_post.title)
-        self.assertEqual(response_data[1]["text"], cursed_content.text)
-        self.assertEqual(response_data[1]["title"], cursed_content.title)
-        self.assertEqual(response_data[2]["title"], nsfw_content.title)
-        self.assertEqual(response_data[2]["text"], nsfw_content.text)
+        

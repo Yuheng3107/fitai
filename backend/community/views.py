@@ -9,7 +9,7 @@ User = get_user_model()
 
 class CommunityCreateView(APIView):
     def post(self, request):
-        """To create new user post"""
+        """To create new community"""
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
