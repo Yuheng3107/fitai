@@ -12,6 +12,7 @@ import itertools as it
 import math
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.contrib.postgres.search import SearchVector
 # Create your views here.
 
 class UserPostCreateView(APIView):
@@ -712,6 +713,8 @@ class CommunityPostSearchView(APIView):
                 return Response(f"Add the {field} field in POST request", status=status.HTTP_400_BAD_REQUEST)
         if request.data["content"] == "":
             return Response("Content cannot be empty", status.HTTP_400_BAD_REQUEST)
+        qs = CommunityPost.objects.filter(community=request.data["community_id"]).annotate(search=SearchVector("title", "text"),).filter(search=request.data["content"]).order_by('-likes')
+        """
         # Split sentence of search into respective keywords
         keywords = request.data["content"].split()
         # Generate queries for checking if keywords in title and for checking if keywords in content of post
@@ -730,7 +733,7 @@ class CommunityPostSearchView(APIView):
             else:
                 text_query = text_query & Q(text__icontains=keyword)
         
-        qs = CommunityPost.objects.filter(community=request.data["community_id"]).filter(title_query | text_query).order_by('-likes')
+        qs = CommunityPost.objects.filter(community=request.data["community_id"]).filter(title_query | text_query).order_by('-likes')"""
         post_no = qs.count()
         if post_no == 0:
             return Response("No posts found")
