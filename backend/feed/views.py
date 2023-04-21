@@ -710,7 +710,8 @@ class CommunityPostSearchView(APIView):
         for field in required_fields:
             if field not in request.data:
                 return Response(f"Add the {field} field in POST request", status=status.HTTP_400_BAD_REQUEST)
-            
+        if request.data["content"] == "":
+            return Response("Content cannot be empty", status.HTTP_400_BAD_REQUEST)
         # Split sentence of search into respective keywords
         keywords = request.data["content"].split()
         # Generate queries for checking if keywords in title and for checking if keywords in content of post
@@ -730,7 +731,10 @@ class CommunityPostSearchView(APIView):
                 text_query = text_query & Q(text__icontains=keyword)
         
         qs = CommunityPost.objects.filter(community=request.data["community_id"]).filter(title_query | text_query).order_by('-likes')
-        if qs.count() > 10:
+        post_no = qs.count()
+        if post_no == 0:
+            return Response("No posts found")
+        if post_no > 10:
             # Get top 10 most liked posts if there are more than 10 posts
             qs = qs[:10]
         serializer = CommunityPostSerializer(qs, many=True)
