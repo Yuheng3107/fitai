@@ -11,4 +11,4 @@ function FriendsList() {
     </IonPage>
 }
 
-export default FriendsList;
+export default FriendsList

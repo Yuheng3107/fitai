@@ -10,6 +10,7 @@ export type ProfileData = {
   perfect_reps?: number;
   friend_requests?: any[];
   sent_friend_requests?: any[];
+  communities?: any[];
 };
 
 export const emptyProfileData = {
@@ -24,6 +25,7 @@ export const emptyProfileData = {
   perfect_reps: 0,
   friend_requests: new Array(),
   sent_friend_requests: new Array(),
+  communities: new Array(),
 };
 
 export const invalidProfileData = {

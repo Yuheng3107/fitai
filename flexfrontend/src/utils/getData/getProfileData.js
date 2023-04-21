@@ -128,6 +128,7 @@ export const splitProfileData = function (data) {
       perfect_reps: data.perfect_reps,
       friend_requests: data.friend_requests,
       sent_friend_requests: data.sent_friend_requests,
+      communities: data.communities,
     },
     exerciseStats: {
       exercise_regimes: data.exercise_regimes,
