@@ -10,17 +10,17 @@ import { ProfileData, ExerciseStats } from "../../types/stateTypes";
 import FriendCard from "./FriendCard";
 
 type FriendDisplayProps = {
-  friend_requests: any[];
+  friends: any[];
 };
 
-const FriendDisplay = ({ friend_requests }: FriendDisplayProps) => {
+const FriendDisplay = ({ friends }: FriendDisplayProps) => {
   const [isTrend, setTrend] = useState(true);
   return (
     <div>
-      {friend_requests.length === 0 ? 
-        <div className="text-center">No Friend Requests</div>
+      {friends.length === 0 ? 
+        <div className="text-center">No Friends</div>
       :
-        friend_requests.map(item => (
+        friends.map(item => (
           <FriendCard profileId={item} key={item}/>
       ))}
     </div>

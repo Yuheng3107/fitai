@@ -7,6 +7,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonMe
 import Feed from '../../components/Feed/Feed';
 import SearchBar from '../../components/Feed/SearchBar';
 import CommunitiesList from '../../components/home/CommunitiesList';
+import FriendsListButton from '../../components/home/FriendsListButton';
 
 const Home: React.FC = () => {
   const [sideMenuShowing, setSetMenuShowing] = useState(false);
@@ -25,6 +26,7 @@ const Home: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <CommunitiesList closeSideMenu={closeSideMenu}/>
+        <FriendsListButton closeSideMenu={closeSideMenu}/>
         <button onClick={() => {
           sideMenuRef.current?.close();
         }}>close</button>

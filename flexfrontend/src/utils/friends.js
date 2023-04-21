@@ -13,8 +13,8 @@ export const acceptFriendRequest = async function (pk) {
         user_id: pk,
       })
     })
-    let data = await res.json();
-    return data
+    console.log(res);
+    return res;
   } catch (error) {
     console.log(error);
   }
@@ -33,8 +33,8 @@ export const declineFriendRequest = async function (pk) {
         user_id: pk,
       })
     })
-    let data = await res.json();
-    return data
+    console.log(res);
+    return res;
   } catch (error) {
     console.log(error);
   }

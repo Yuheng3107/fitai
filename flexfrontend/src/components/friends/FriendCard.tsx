@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-import { IonButton } from '@ionic/react';
+import { IonButton, IonRouterLink } from '@ionic/react';
 import { ProfileData, emptyProfileData } from "../../types/stateTypes";
 
-import { acceptFriendRequest, declineFriendRequest } from "../../utils/friends";
+import { deleteFriend } from "../../utils/friends";
 import { getOtherProfileDataAsync } from "../../utils/getData/getProfileData";
 
 import { backend } from "../../App";
@@ -15,9 +15,11 @@ type FriendCardProps = {
 function FriendCard({ profileId }:FriendCardProps) {
     const [imageUrl, setImageUrl] = useState("");
     const [profileData, setProfileData] = useState<ProfileData>(emptyProfileData);
+    const [isFriend, setIsFriend] = useState(true);
   
     const removeFriend = async () => {
-      await acceptFriendRequest(profileId);
+      let response = await deleteFriend(profileId);
+      if (response?.status === 200) setIsFriend(false);
     }
     const getProfileData = async () => {
       setProfileData(await(getOtherProfileDataAsync(profileId)))
@@ -27,23 +29,23 @@ function FriendCard({ profileId }:FriendCardProps) {
       if (profileData?.profile_photo) {
         setImageUrl(backend.concat(profileData.profile_photo))
       }
-    }, [profileData?.profile_photo])
+    }, [profileData?.profile_photo, isFriend, setIsFriend])
   
     return (
       <div className="border border-zinc-500 mt-4 p-2 flex flex-row justify-evenly items-center">
-        <a href={`/profile/${profileData.id}`}>
+        <IonRouterLink routerLink={`/profile/${profileData.id}`} routerDirection="forward">
           <img
             alt="profile-picture"
             src={imageUrl}
             className="h-12 w-12 rounded-full object-cover"
           />
-        </a>
+        </IonRouterLink>
         <div className="ml-3 flex flex-row items-center">
-          <a id="username" className="font-semibold text-black" href={`/profile/${profileData.id}`}>
+          <IonRouterLink routerLink={`/profile/${profileData.id}`} routerDirection="forward" id="username" className="font-semibold text-black">
             {profileData?.username}
-          </a>
+          </IonRouterLink>
         </div>
-        <IonButton onClick={removeFriend}>Remove Friend</IonButton>
+        <IonButton onClick={removeFriend}>{ isFriend ? "Remove Friend" : "Friend Removed"}</IonButton>
       </div>
     );
 }
