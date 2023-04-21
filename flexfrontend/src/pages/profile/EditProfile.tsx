@@ -23,7 +23,7 @@ import { backend } from '../../App';
 import Button from '../../components/ui/Button';
 
 //utils imports
-import { getProfileData, getProfileDataAsync } from '../../utils/getProfileData';
+import { getProfileData, getProfileDataAsync } from '../../utils/getData/getProfileData';
 
 
 //types import

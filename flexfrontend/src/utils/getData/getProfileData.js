@@ -1,6 +1,6 @@
-import { backend } from "../App.tsx";
+import { backend } from "../../App.tsx";
 import { getExerciseRegimeAsync } from "./getExerciseData";
-import { invalidProfileData, emptyExerciseStats } from "../types/stateTypes";
+import { invalidProfileData, emptyExerciseStats } from "../../types/stateTypes";
 
 export const getProfileDataAsync = async function () {
   try {

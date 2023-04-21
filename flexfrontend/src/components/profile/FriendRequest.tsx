@@ -4,7 +4,7 @@ import { IonButton } from '@ionic/react';
 import { ProfileData, emptyProfileData } from "../../types/stateTypes";
 
 import { acceptFriendRequest, declineFriendRequest } from "../../utils/friendRequests";
-import { getOtherProfileDataAsync } from "../../utils/getProfileData";
+import { getOtherProfileDataAsync } from "../../utils/getData/getProfileData";
 
 import { backend } from "../../App";
 

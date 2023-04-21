@@ -7,8 +7,8 @@ import { profileDataActions } from './store/profileDataSlice';
 import { exerciseStatsActions } from './store/exerciseStatsSlice';
 
 //Util function imports
-import { getProfileData, getProfileDataAsync, getFavoriteExerciseAsync, getFavoriteExerciseRegimeAsync, splitProfileData } from './utils/getProfileData';
-import { getExerciseRegimeAsync } from './utils/getExerciseData';
+import { getProfileData, getProfileDataAsync, getFavoriteExerciseAsync, getFavoriteExerciseRegimeAsync, splitProfileData } from './utils/getData/getProfileData';
+import { getExerciseRegimeAsync } from './utils/getData/getExerciseData';
 
 //type import
 import { ProfileData, emptyProfileData, ExerciseStats, emptyExerciseStats } from './types/stateTypes';
