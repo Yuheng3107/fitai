@@ -13,8 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
-production = True
-print(production)
+USE_S3 = os.getenv('USE_S3') == 'TRUE'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 BACKEND_DIR = BASE_DIR
@@ -27,7 +26,8 @@ FRONTEND_DIR = BASE_DIR.parent / 'flexfrontend'
 SECRET_KEY = 'django-insecure-%z(y*@&b8ve)cdaa7lm7(yj07&#c2y2am_%b8zzv(apc-5kiay'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+DEBUG = not USE_S3
 ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1', 'fitai.click', '175.41.169.18']
 
 
@@ -106,14 +106,14 @@ CHANNEL_LAYERS = {
 }
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-if production:
+if not DEBUG:
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'flex',
-        'USER': 'admin',
-        'PASSWORD': 'P@ssword1234',
-        'HOST': 'db',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'Password1234',
+        'HOST': 'flex.ccffjzlp3u3k.ap-southeast-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
@@ -185,7 +185,7 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 
 
 # S3 STORAGE
-USE_S3 = os.getenv('USE_S3') == 'TRUE'
+
 
 if USE_S3:
     # aws settings
