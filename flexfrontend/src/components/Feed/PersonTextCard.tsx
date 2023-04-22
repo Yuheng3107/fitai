@@ -46,7 +46,7 @@ const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
     <div id="card-container" className="border border-zinc-500 mt-4 p-2">
       <div id="top-bar" className=" flex flex-row justify-between mb-2">
         <div className="flex flex-row">
-          <IonRouterLink routerLink={`/profile/${profileData.id}`} routerDirection="forward">
+          <IonRouterLink routerLink={`/home/profile/${profileData.id}`} routerDirection="forward">
             <img
               alt="profile-picture"
               src={imageUrl}
@@ -54,7 +54,7 @@ const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
             />
           </IonRouterLink>
           <div className="ml-3">
-            <IonRouterLink id="username" className="font-semibold text-black" routerLink={`/profile/${profileData.id}`} routerDirection="forward">
+            <IonRouterLink id="username" className="font-semibold text-black" routerLink={`/home/profile/${profileData.id}`} routerDirection="forward">
               {profileData?.username}
             </IonRouterLink>
             <p
@@ -63,7 +63,7 @@ const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
             >
               <span id="post-place">
                 {userPostData?.community === undefined ? 
-                  <IonRouterLink className="text-gray-700" routerLink={`/profile/${profileData.id}`} routerDirection="forward">
+                  <IonRouterLink className="text-gray-700" routerLink={`/home/profile/${profileData.id}`} routerDirection="forward">
                     Profile
                   </IonRouterLink>
                 : 
