@@ -7,7 +7,6 @@ type FriendRequestDisplayProps = {
 };
 
 const FriendRequestDisplay = ({ friend_requests }: FriendRequestDisplayProps) => {
-  const [isTrend, setTrend] = useState(true);
   return (
     <div>
       {friend_requests.length === 0 ? 
