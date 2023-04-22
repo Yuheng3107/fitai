@@ -4,10 +4,11 @@ import React, { useState, useEffect } from "react";
 //Redux imports
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 
-import Posts from "./Posts";
-import { getUserFeedAsync } from "../../utils/getData/getPostData";
+import Posts from "../Feed/Posts";
+import { getCommunityPostsAsync } from "../../utils/getData/getPostData";
 import { getManyOtherProfileDataAsync } from "../../utils/getData/getProfileData";
-import { getCommunityListAsync } from "../../utils/communities";
+
+import { CommunityData } from "../../types/stateTypes";
 
 import { backend } from "../../App";
 import { Link } from "react-router-dom";
@@ -15,7 +16,10 @@ import AddIcon from "../../assets/svgComponents/AddIcon";
 
 let currentFeedSet = 0;
 
-function Feed() {
+type CommunityFeedProps = {
+    communityData: CommunityData;
+}
+function CommunityFeed({ communityData }: CommunityFeedProps) {
     const profileDataRedux = useAppSelector((state) => state.profile.profileData);
     const [feedPost, setFeedPost] = useState<{postArray: any[], profileArray: any[], communityArray: any[]}>({
         postArray: [],
@@ -24,8 +28,10 @@ function Feed() {
     });
 
     const loadFeedData = async () => {
-        const postArray = await getUserFeedAsync(currentFeedSet);
-        console.log(currentFeedSet);
+        const postArray = await getCommunityPostsAsync(communityData.id, currentFeedSet);
+        console.log(currentFeedSet)
+        console.log(communityData.id)
+        console.log(postArray);
         let profiles:any[] = [];
         for (let i=0;i<postArray.length;i++) profiles.push(postArray[i].poster);
         let profileArray = await getManyOtherProfileDataAsync(profiles);
@@ -36,21 +42,10 @@ function Feed() {
             };
           }, {});
         for (let i=0;i<postArray.length;i++) profileArray[i] = profileMap[postArray[i].poster];
-
-        let communities:any[] = [];
-        for (let i=0;i<postArray.length;i++) if (postArray[i].community !== undefined) communities.push(postArray[i].community);
-        let communityArray = await getCommunityListAsync(communities);
-        const communityMap = communityArray.reduce((acc:any, community:any) => {
-            return {
-              ...acc,
-              [community.id]: community,
-            };
-          }, {});
-        for (let i=0;i<postArray.length;i++) communityArray[i] = communityMap[postArray[i].community];
         setFeedPost({
             postArray: feedPost.postArray.concat(postArray),
             profileArray: feedPost.profileArray.concat(profileArray),
-            communityArray: feedPost.communityArray.concat(communityArray),
+            communityArray: [communityData],
         });
         currentFeedSet += 1;
     }
@@ -81,4 +76,4 @@ function Feed() {
     </main>
 }
 
-export default Feed;
+export default CommunityFeed;

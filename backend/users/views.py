@@ -62,6 +62,16 @@ class UserOthersDetailView(APIView):
             return Response(serializer.data)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST) 
+
+class UserOthersListView(APIView):
+    def post(self, request):
+        """To get details of multiple Users"""
+        User = get_user_model()
+        if "user_ids" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        users = User.objects.filter(pk__in=request.data["user_ids"])
+        serializer = OtherUserSerializer(users, many=True)
+        return Response(serializer.data)
         
 class CheckLoginStatus(APIView):
     def get(self, request):

@@ -442,5 +442,22 @@ class UserFriendRequestDeclineViewTests(APITestCase):
         self.assertEqual(friend.followers.exists(), False)
         self.assertEqual(friend.sent_friend_requests.exists(), False)
 
+class OtherUserListViewTests(APITestCase):
+    def test_other_user_list(self):
+        """test the list method"""
+        url = reverse('other_user_list')
+        User = get_user_model()
+        user_no = 2
+        users = [baker.make(User) for i in range(user_no)]
+        data = {
+            "user_posts": [post.id for post in users]
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        for i, user in enumerate(users):
+            self.assertEquals(user.id, data[i]["id"])
+            self.assertEquals(user.email, data[i]["email"])
+            self.assertEquals(user.username, data[i]["username"])
         
         

@@ -5,7 +5,7 @@ import { backend } from "../../App";
 import ToggleBar from "./ToggleBar";
 import KeyProfileInfoDisplay from "./KeyProfileInfoDisplay";
 import ExerciseStatsDisplay from "./ExerciseStatsDisplay";
-import UserPosts from "./UserPosts";
+import Posts from "../Feed/Posts";
 import { ProfileData, ExerciseStats } from "../../types/stateTypes";
 
 type UserProfileTemplateProps = {
@@ -24,7 +24,14 @@ const UserProfileTemplate = ({ profileData, exerciseStats, userPostArray, loadUs
       {isTrend === true ?
         <ExerciseStatsDisplay exerciseStats={exerciseStats} />
         :
-        <UserPosts userPostArray={userPostArray} profileData={profileData} loadUserPostData={loadUserPostData} />
+        <Posts 
+          posts={{
+            postArray: userPostArray,
+            profileArray: [profileData],
+            communityArray: [null],
+          }} 
+          loadData={loadUserPostData}
+          />
       }
     </div>
   )

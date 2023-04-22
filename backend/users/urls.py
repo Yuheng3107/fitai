@@ -5,6 +5,7 @@ urlpatterns = [
     path('user/create', UserCreateView.as_view(), name='create_user'),
     path('user', UserDetailView.as_view(), name='user_detail'),
     path('user/<int:pk>', UserOthersDetailView.as_view(), name='other_user_detail'),
+    path('user/list', UserOthersListView.as_view(), name="other_user_list"),
     path('user/allowed', UserAllowedView.as_view(), name='user_allowed'),
     # Update normal user fields
     path('user/update', UserUpdateView.as_view(), name='update_user'),

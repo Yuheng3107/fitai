@@ -91,6 +91,7 @@ export type CommunityData = {
   name: string;
   description: string;
   banner: string;
+  community_photo: string;
   created_at: string;
   created_by: number;
   privacy_level: number;
@@ -101,6 +102,7 @@ export const emptyCommunityData = {
   name: "",
   description: "",
   banner: "",
+  community_photo: "",
   created_at: "",
   created_by: 0,
   privacy_level: 0,
@@ -111,6 +113,7 @@ export const invalidCommunityData = {
   name: "",
   description: "",
   banner: "",
+  community_photo: "",
   created_at: "",
   created_by: 0,
   privacy_level: 0,

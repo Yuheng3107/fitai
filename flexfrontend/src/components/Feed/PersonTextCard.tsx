@@ -8,9 +8,8 @@ import SendIcon from "../../assets/svgComponents/SendIcon";
 import React, { useState, useEffect } from "react";
 
 import { backend } from "../../App";
-import { UserPostData, ProfileData, CommunityData, emptyCommunityData } from "../../types/stateTypes";
+import { UserPostData, ProfileData, CommunityData } from "../../types/stateTypes";
 import { timeSince } from "../../utils/generalUtils";
-import { getCommunityAsync } from "../../utils/getData/getCommunityData";
 
 //ionic imports
 import {
@@ -22,25 +21,18 @@ import {
 type UserPostProps = {
   userPostData: UserPostData;
   profileData: ProfileData;
+  communityData: CommunityData;
 };
 
-const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
+const PersonTextCard = ({ userPostData, profileData, communityData }: UserPostProps) => {
   const [imageUrl, setImageUrl] = useState("");
-  const [communityData, setCommunityData] = useState<CommunityData>(emptyCommunityData);
   const postDate = new Date(userPostData.posted_at);
 
   useEffect(() => {
     if (profileData?.profile_photo) {
       setImageUrl(backend.concat(profileData.profile_photo))
     }
-    if (userPostData?.community !== undefined) {
-      getCommunityData(userPostData.community);
-    }
   }, [profileData?.profile_photo])
-
-  async function getCommunityData(pk:number) {
-    setCommunityData(await getCommunityAsync(pk));
-  }
 
   return (
     <div id="card-container" className="border border-zinc-500 mt-4 p-2">

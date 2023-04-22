@@ -722,6 +722,29 @@ class LatestUserPostViewTests(APITestCase):
         for i, post in enumerate(response_data):
             self.assertEqual(posts[-(i+11)].posted_at, datetime.strptime(post["posted_at"], '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc))
 
+class LatestCommunityPostViewTests(APITestCase):
+    def test_get_latest_community_posts(self):
+        url = reverse('latest_community_post')
+        community = baker.make(Community)
+        posts = [baker.make(CommunityPost, community=Community) for i in range(21)]
+        data = {
+            "set_no": 0,
+            "community_id": community.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        # Checks that last 10 entries of posts we generated are indeed returned by comparing the posted_at times
+        for i, post in enumerate(response_data):
+            self.assertEqual(posts[-(i+1)].posted_at, datetime.strptime(post["posted_at"], '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc))
+        data["set_no"] = 1
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        # Checks that newest set of entries (latest 10 posts) are returned by comparing the posted_at times
+        for i, post in enumerate(response_data):
+            self.assertEqual(posts[-(i+11)].posted_at, datetime.strptime(post["posted_at"], '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc))
+
 class UserFeedViewTests(APITestCase):
     def test_get_user_feed(self):
         url = reverse('user_feed')
