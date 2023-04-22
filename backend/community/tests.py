@@ -101,6 +101,8 @@ class CommunityCreateViewTests(APITestCase):
         self.assertEqual(community.description, content)
         self.assertEqual(community.created_by, user)
         self.assertEqual(community.privacy_level, privacy_level)
+        cm  = CommunityMembers.objects.get()
+        self.assertEqual(cm.moderator_level, 3)
 
 class CommunityUpdateViewTests(APITestCase):
     def test_update_community(self):
@@ -232,3 +234,55 @@ class CommunityMembersUpdateViewTests(APITestCase):
         member = CommunityMembers.objects.get(user=user2.id, community=community.id)
         self.assertEqual(member.moderator_level, 2)
         
+class CommunityUpdatePhotoViewTest(APITestCase):
+    def test_upload_photo(self):
+        url = reverse('update_community_photo')
+        
+        user = baker.make('users.AppUser')
+        community = baker.make(Community)
+        user.communities.add(community)
+        cm = CommunityMembers.objects.get()
+        cm.moderator_level = 3
+        cm.save()
+        data = {'id': community.id, "photo": SimpleUploadedFile('test.mp4', b'test', content_type='text/plain')}
+        # Need to have multipart format to enable file uploads
+        response = self.client.post(url, data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data, format="multipart")
+        # USED TO BE CHECK FOR WRONG FILETYPE
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Clean the static media directory
+        dir_path = os.getcwd()
+        dir_path = os.path.join(dir_path, 'static/media')
+        files = os.listdir(dir_path)
+        for file in files:
+            if file.endswith('.jpg'):
+                os.remove(os.path.join(dir_path, file))
+
+class CommunityUpdateBannerViewTest(APITestCase):
+    def test_upload_photo(self):
+        url = reverse('update_community_banner')
+        
+        user = baker.make('users.AppUser')
+        community = baker.make(Community)
+        user.communities.add(community)
+        cm = CommunityMembers.objects.get()
+        cm.moderator_level = 3
+        cm.save()
+        data = {'id': community.id, "photo": SimpleUploadedFile('test.mp4', b'test', content_type='text/plain')}
+        # Need to have multipart format to enable file uploads
+        response = self.client.post(url, data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url, data, format="multipart")
+        # USED TO BE CHECK FOR WRONG FILETYPE
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Clean the static media directory
+        dir_path = os.getcwd()
+        dir_path = os.path.join(dir_path, 'static/media')
+        files = os.listdir(dir_path)
+        for file in files:
+            if file.endswith('.jpg'):
+                os.remove(os.path.join(dir_path, file))
+

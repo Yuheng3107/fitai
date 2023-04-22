@@ -29,7 +29,10 @@ class CommunityCreateView(APIView):
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in UserPost
         community = Community.objects.create(created_by=request.user, **fields)
-            
+        request.user.communities.add(community)
+        cm = CommunityMembers.objects.get(user=request.user)
+        cm.moderator_level = 3
+        cm.save()
         return Response(status=status.HTTP_201_CREATED)
 
 class CommunityUpdateView(APIView):
@@ -75,24 +78,81 @@ class CommunityUpdateBannerView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
+        check_fields = ["id"]
+        # Check that all the required data is in the put request
+        for field in check_fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+
+        # Check that community exists
+        community = None
+        try:
+            community = Community.objects.get(pk=request.data["id"])
+        except Community.DoesNotExist:
+            return Response("Please put a valid Community id", status=status.HTTP_404_NOT_FOUND)
+
+        # Check that user is a member of the community
+        try:
+            member = CommunityMembers.objects.get(user=request.user.id, community=community.id)
+        except CommunityMembers.DoesNotExist:
+            return Response("Editing a community you are not a member of", status=status.HTTP_401_UNAUTHORIZED)
+
+        # need to be moderator level of at least 1
+        if member.moderator_level < 1:
+            return Response("Editing a community you are not a moderator of", status=status.HTTP_401_UNAUTHORIZED) 
+        
         uploaded_file_object = request.FILES.get("photo", None)
         # Check that profile photo is indeed uploaded
         if uploaded_file_object is None:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-        """
-        file_name = uploaded_file_object.name
-        start = file_name.rfind('.')
-        allowed_formats = [".png", ".jpeg", ".jpg", ".webp"]
-        if file_name[start:] not in allowed_formats:
-            return Response("File format is not allowed",status=status.HTTP_406_NOT_ACCEPTABLE)
-        """
         # File size in Megabytes
         file_size = uploaded_file_object.size / (1024*1024)
         if file_size > 2:
             return Response("File size greater than 2MB", status=status.HTTP_400_BAD_REQUEST)
-        user = request.user
-        user.profile_photo = uploaded_file_object
-        user.save()
+        community.banner = uploaded_file_object
+        community.save()
+        return Response()
+
+class CommunityUpdatePhotoView(APIView):
+    def post(self, request):
+        parser_classes = [FormParser, MultiPartParser]
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        check_fields = ["id"]
+        # Check that all the required data is in the put request
+        for field in check_fields:
+            if field not in request.data:
+                return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
+
+        # Check that community exists
+        community = None
+        try:
+            community = Community.objects.get(pk=request.data["id"])
+        except Community.DoesNotExist:
+            return Response("Please put a valid Community id", status=status.HTTP_404_NOT_FOUND)
+
+        # Check that user is a member of the community
+        try:
+            member = CommunityMembers.objects.get(user=request.user.id, community=community.id)
+        except CommunityMembers.DoesNotExist:
+            return Response("Editing a community you are not a member of", status=status.HTTP_401_UNAUTHORIZED)
+
+        # need to be moderator level of at least 1
+        if member.moderator_level < 1:
+            return Response("Editing a community you are not a moderator of", status=status.HTTP_401_UNAUTHORIZED) 
+        
+        uploaded_file_object = request.FILES.get("photo", None)
+        # Check that profile photo is indeed uploaded
+        if uploaded_file_object is None:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        # File size in Megabytes
+        file_size = uploaded_file_object.size / (1024*1024)
+        if file_size > 2:
+            return Response("File size greater than 2MB", status=status.HTTP_400_BAD_REQUEST)
+        community.community_photo = uploaded_file_object
+        community.save()
         return Response()
 
 class CommunityDetailView(APIView):
