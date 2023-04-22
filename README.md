@@ -66,3 +66,12 @@ In production this will be run every 24h by a CRON job
 
 To run backend server:
 daphne backend.asgi:application
+exec web python manage.py migrate --noinput
+
+## For Docker
+
+Take note that need to put service name under host in order for django to connect to db
+
+### To run migrations in the container
+
+docker compose exec web python manage.py migrate --noinput

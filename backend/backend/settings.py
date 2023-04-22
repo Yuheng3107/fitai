@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+
+production = True
+print(production)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 BACKEND_DIR = BASE_DIR
@@ -25,7 +28,7 @@ SECRET_KEY = 'django-insecure-%z(y*@&b8ve)cdaa7lm7(yj07&#c2y2am_%b8zzv(apc-5kiay
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1', 'fitai.click', '175.41.169.18']
 
 
 # Application definition
@@ -103,8 +106,19 @@ CHANNEL_LAYERS = {
 }
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
+if production:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'flex',
+        'USER': 'admin',
+        'PASSWORD': 'P@ssword1234',
+        'HOST': 'db',
+        'PORT': '5432',
+    }
+}
+else: 
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'flex',
