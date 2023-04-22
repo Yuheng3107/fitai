@@ -4,6 +4,7 @@ from rest_framework import status
 
 from .models import Community, CommunityMembers
 from .serializers import CommunitySerializer
+from rest_framework.parsers import FormParser, MultiPartParser
 # Create your views here.
 User = get_user_model()
 
@@ -66,6 +67,33 @@ class CommunityUpdateView(APIView):
         Community.objects.filter(pk=request.data["id"]).update(**fields)
 
         return Response(status=status.HTTP_200_OK)
+
+class CommunityUpdateBannerView(APIView):
+    def post(self, request):
+        parser_classes = [FormParser, MultiPartParser]
+        
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        uploaded_file_object = request.FILES.get("photo", None)
+        # Check that profile photo is indeed uploaded
+        if uploaded_file_object is None:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        """
+        file_name = uploaded_file_object.name
+        start = file_name.rfind('.')
+        allowed_formats = [".png", ".jpeg", ".jpg", ".webp"]
+        if file_name[start:] not in allowed_formats:
+            return Response("File format is not allowed",status=status.HTTP_406_NOT_ACCEPTABLE)
+        """
+        # File size in Megabytes
+        file_size = uploaded_file_object.size / (1024*1024)
+        if file_size > 2:
+            return Response("File size greater than 2MB", status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        user.profile_photo = uploaded_file_object
+        user.save()
+        return Response()
 
 class CommunityDetailView(APIView):
     def get(self, request, pk):

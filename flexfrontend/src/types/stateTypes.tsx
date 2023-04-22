@@ -105,3 +105,13 @@ export const emptyCommunityData = {
   created_by: 0,
   privacy_level: 0,
 };
+
+export const invalidCommunityData = {
+  id: -1,
+  name: "",
+  description: "",
+  banner: "",
+  created_at: "",
+  created_by: 0,
+  privacy_level: 0,
+};

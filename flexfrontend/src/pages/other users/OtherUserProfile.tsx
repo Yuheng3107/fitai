@@ -10,7 +10,6 @@ import { sendFriendRequest, deleteFriendRequest, deleteFriend } from "../../util
 //img imports
 import img404 from "../../assets/img/404.png"
 
-//ionic imports
 //Ionic Imports
 import {
     IonPage,

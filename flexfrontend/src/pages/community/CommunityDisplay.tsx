@@ -1,60 +1,71 @@
 
 import { useState, useEffect, useReducer } from 'react';
 
-import { IonPage, IonContent } from '@ionic/react';
+//Ionic Imports
+import {
+    IonPage,
+    IonContent,
+    IonHeader,
+    IonToolbar,
+    IonBackButton,
+    IonTitle,
+    IonButtons,
+    IonButton,
+} from '@ionic/react';
 import { RouteComponentProps } from "react-router";
+
+//img imports
+import img404 from "../../assets/img/404.png"
 
 //utils imports
 import { getCommunityAsync } from '../../utils/getData/getCommunityData';
 import { backend } from '../../App';
 import ShareIcon from '../../assets/svgComponents/ShareIcon';
+import { CommunityData, emptyCommunityData, invalidCommunityData } from '../../types/stateTypes';
 
 interface CommunityDisplayProps extends RouteComponentProps<{
     communityId: string;
 }> { }
 
 function CommunityDisplay({ match }: CommunityDisplayProps) {
-    const [communityData, setCommunityData] = useState({
-        banner: "",
-        created_at: "",
-        created_by: 0,
-        description: "",
-        id: 0,
-        name: "",
-        privacy_level: 0
-    });
+    const [communityData, setCommunityData] = useState<CommunityData>(emptyCommunityData);
 
     useEffect(() => {
         async function getCommunityData(pk: number) {
             let communityDetails = await getCommunityAsync(pk);
+            if (communityDetails === undefined) communityDetails = invalidCommunityData;
             console.log(communityDetails);
             setCommunityData(communityDetails);
         }
-
-
         getCommunityData(Number(match.params.communityId));
-
     }, [match])
 
     return <IonPage>
+        <IonHeader>
+            <IonToolbar>
+                <IonButtons slot="start">
+                    <IonBackButton></IonBackButton>
+                </IonButtons>
+                <IonTitle>{communityData.name}</IonTitle>
+            </IonToolbar>
+        </IonHeader>
         <IonContent>
-            <main className="h-full">
-                <MainInfo communityData={communityData} />
-            </main>
+            { communityData.id === -1 ?
+                <div className="flex flex-col justify-evenly items-center">
+                    <img src={img404} />
+                </div> 
+            :
+                <main className="h-full">
+                    <MainInfo communityData={communityData} />
+                </main>
+            }
+            
         </IonContent>
     </IonPage>
 }
 
 type MainInfoProps = {
-    communityData: {
-        banner: null | string;
-        created_at: string;
-        created_by: number;
-        description: string;
-        id: number;
-        name: string;
-        privacy_level: number
-    }
+    communityData: CommunityData;
 }
 function MainInfo({ communityData }: MainInfoProps) {
     return <div className="flex flex-col">

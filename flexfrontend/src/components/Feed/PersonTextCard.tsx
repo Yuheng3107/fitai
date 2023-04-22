@@ -61,7 +61,16 @@ const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
               id="subtitle"
               className="flex flex-row items-center text-sm text-gray-700"
             >
-              <span id="post-place">{userPostData?.community === undefined ? "Feed" : communityData?.name}</span>
+              <span id="post-place">
+                {userPostData?.community === undefined ? 
+                  <IonRouterLink className="text-gray-700" routerLink={`/profile/${profileData.id}`} routerDirection="forward">
+                    Profile
+                  </IonRouterLink>
+                : 
+                  <IonRouterLink className="text-gray-700" routerLink={`/home/community/${communityData.id}`} routerDirection="forward">
+                    {communityData?.name}
+                  </IonRouterLink>
+                }</span>
               <FilledCircle className="mx-1 h-1.5 w-1.5 aspect-square fill-slate-500" />
               <span id="time-stamp">{timeSince(postDate)}</span>
             </p>  

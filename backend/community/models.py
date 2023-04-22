@@ -11,6 +11,7 @@ class Community(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=10000)
     banner = models.ImageField(blank=True, null=True)
+    community_photo = models.ImageField(blank=True, null=True)
     created_at = models.TimeField(auto_now_add=True)
     created_by = models.ForeignKey(User,on_delete=models.SET_DEFAULT,default=None, null=True)
     privacy_level = models.SmallIntegerField(default=0)
