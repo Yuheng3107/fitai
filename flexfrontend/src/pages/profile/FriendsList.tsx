@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+
+// Ionic imports
 import {
     IonPage,
     IonContent
@@ -5,6 +8,7 @@ import {
 
 //redux imports
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { profileDataActions } from '../../store/profileDataSlice';
 
 // component imports
 import FriendDisplay from '../../components/friends/FriendDisplay';
@@ -13,7 +17,11 @@ import SentFriendRequestDisplay from '../../components/friends/SentFriendRequest
 
 function FriendsList() {
     const profileDataRedux = useAppSelector((state) => state.profile.profileData)
-
+    const dispatch = useAppDispatch();
+    // useEffect(() => {
+    //     console.log('use effect ran in friendslist.tsx');
+    //     dispatch(profileDataActions.updateProfileCounter);
+    // }, [])
     return <IonPage>
         <IonContent>
             <div>Friends</div>

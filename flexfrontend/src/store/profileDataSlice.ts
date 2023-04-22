@@ -13,6 +13,7 @@ const ProfileDataSlice = createSlice({
             state.profileData = action.payload;
         },
         updateProfileCounter: (state) => {
+            console.log("updateProfileCounter is now running");
             state.profileCounter = state.profileCounter + 1
         }
     }
