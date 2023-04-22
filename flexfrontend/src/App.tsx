@@ -72,6 +72,7 @@ const App: React.FC = () => {
   const [updateProfileState, setUpdateProfileState] = useState(0);
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData);
+  const updateProfileCounter = useAppSelector((state) => state.profile.profileCounter)
   const exerciseStatsRedux = useAppSelector((state) => state.exerciseStats);
   const dispatch = useAppDispatch();
 
@@ -79,9 +80,12 @@ const App: React.FC = () => {
     console.log('getprofiledata running from App.tsx')
     async function obtainProfileData() {
       let data = await getProfileDataAsync();
+      //get favorite exercse
       data.favorite_exercise = await getFavoriteExerciseAsync(data.id);
+      //get favorite exercise regime
       data.favorite_exercise_regime = await getFavoriteExerciseRegimeAsync(data.id);
       data.favorite_exercise_regime.name = null;
+      //get exercise regimes
       if (data.favorite_exercise_regime.exercise_regime !== null) data.favorite_exercise_regime = await getExerciseRegimeAsync(data.favorite_exercise_regime.exercise_regime);
       data = splitProfileData(data);
       dispatch(profileDataActions.setProfileData(data.profileData));
@@ -89,7 +93,7 @@ const App: React.FC = () => {
     }
 
     obtainProfileData();
-  }, [getProfileData, updateProfileState])
+  }, [getProfileData, updateProfileState,updateProfileCounter])
 
   return (
     <IonApp>
@@ -112,12 +116,13 @@ const App: React.FC = () => {
             <Route exact path="/profile">
               <Profile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
             </Route>
-            <Route exact path='/profile/create/'>
-              <EditProfile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
-            </Route>
+
             <Route exact path="/profile/:userId" render={(props) => {
               return <OtherUserProfile {...props} />;
             }} />
+            <Route exact path='/profile/create/'>
+              <EditProfile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
+            </Route>
             <Route exact path='/profile/friendslist/'>
               <FriendsList />
             </Route>

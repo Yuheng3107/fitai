@@ -2,6 +2,7 @@ import { backend } from "../../App.tsx";
 import { getExerciseRegimeAsync } from "./getExerciseData";
 import { invalidProfileData, emptyExerciseStats } from "../../types/stateTypes";
 
+//async implementation of getProfileData
 export const getProfileDataAsync = async function () {
   try {
     let res = await fetch(`${backend}/users/user`, {
@@ -20,6 +21,7 @@ export const getProfileDataAsync = async function () {
   }
 }
 
+//Get the profile Data of another user (requires that user's id)
 export const getOtherProfileDataAsync = async function (pk) {
   try {
     let res = await fetch(`${backend}/users/user/${pk}`, {
@@ -38,6 +40,7 @@ export const getOtherProfileDataAsync = async function (pk) {
   }
 }
 
+// Get the user's own profile data
 export const getProfileData =  (updateFunction) =>{
   fetch(`${backend}/users/user`, {
     method: "GET",
@@ -99,6 +102,7 @@ export const getFavoriteExerciseRegimeAsync = async function (pk) {
   }
 }
 
+//Gets the user's normal profile data plus favorite exercise and exercise regime
 export const getAllProfileData = async function (pk) {
   let data = await getOtherProfileDataAsync(pk);
   if (data === undefined) return ({
@@ -114,6 +118,8 @@ export const getAllProfileData = async function (pk) {
   return splitProfileData(data);
 }
 
+
+//Utility function, takes the "data" object and returns an object with "profileData" and "exerciseStats" properties
 export const splitProfileData = function (data) {
   return ({
     profileData: {

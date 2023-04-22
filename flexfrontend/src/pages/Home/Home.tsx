@@ -1,19 +1,22 @@
 import { useState, useRef } from 'react';
 
 //Ionic imports
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonMenu, IonMenuButton } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonMenu, IonMenuButton, IonButton } from '@ionic/react';
+
+//Redux imports
+import { useAppDispatch } from '../../store/hooks';
+import { profileDataActions } from '../../store/profileDataSlice';
 
 //Component imports
 import Feed from '../../components/Feed/Feed';
 import SearchBar from '../../components/Feed/SearchBar';
 import CommunitiesList from '../../components/home/CommunitiesList';
-import FriendsListButton from '../../components/home/FriendsListButton';
 
 const Home: React.FC = () => {
   const [sideMenuShowing, setSetMenuShowing] = useState(false);
   const sideMenuRef = useRef<HTMLIonMenuElement>(null);
-
-  function closeSideMenu () {
+const dispatch = useAppDispatch();
+  function closeSideMenu() {
     sideMenuRef.current?.close();
   }
   return <>
@@ -25,8 +28,13 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <CommunitiesList closeSideMenu={closeSideMenu}/>
-        <FriendsListButton closeSideMenu={closeSideMenu}/>
+        <CommunitiesList closeSideMenu={closeSideMenu} />
+        <IonButton routerLink="/profile/friendslist" onClick={() => {
+          closeSideMenu();
+          dispatch(profileDataActions.updateProfileCounter());
+        }}>
+          Friends
+        </IonButton>
         <button onClick={() => {
           sideMenuRef.current?.close();
         }}>close</button>
