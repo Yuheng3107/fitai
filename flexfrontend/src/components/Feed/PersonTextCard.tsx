@@ -10,7 +10,14 @@ import React, { useState, useEffect } from "react";
 import { backend } from "../../App";
 import { UserPostData, ProfileData, CommunityData, emptyCommunityData } from "../../types/stateTypes";
 import { timeSince } from "../../utils/generalUtils";
-import { getCommunityAsync } from "../../utils/getCommunityData";
+import { getCommunityAsync } from "../../utils/getData/getCommunityData";
+
+//ionic imports
+import {
+  IonRouterLink,
+  IonContent,
+  IonButton,
+} from "@ionic/react";
 
 type UserPostProps = {
   userPostData: UserPostData;
@@ -39,17 +46,17 @@ const PersonTextCard = ({ userPostData, profileData }: UserPostProps) => {
     <div id="card-container" className="border border-zinc-500 mt-4 p-2">
       <div id="top-bar" className=" flex flex-row justify-between mb-2">
         <div className="flex flex-row">
-          <a href={`/profile/${profileData.id}`}>
+          <IonRouterLink routerLink={`/profile/${profileData.id}`} routerDirection="forward">
             <img
               alt="profile-picture"
               src={imageUrl}
               className="h-12 w-12 rounded-full object-cover"
             />
-          </a>
+          </IonRouterLink>
           <div className="ml-3">
-            <a id="username" className="font-semibold text-black" href={`/profile/${profileData.id}`}>
+            <IonRouterLink id="username" className="font-semibold text-black" routerLink={`/profile/${profileData.id}`} routerDirection="forward">
               {profileData?.username}
-            </a>
+            </IonRouterLink>
             <p
               id="subtitle"
               className="flex flex-row items-center text-sm text-gray-700"

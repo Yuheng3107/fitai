@@ -1,4 +1,4 @@
-import { backend } from "../App.tsx";
+import { backend } from "../../App.tsx";
 
 export const getUserPostsAsync = async function (user_id, set_no) {
   try {

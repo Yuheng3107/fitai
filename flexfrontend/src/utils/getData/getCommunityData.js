@@ -1,4 +1,4 @@
-import { backend } from "../App.tsx";
+import { backend } from "../../App";
 
 export const getCommunityAsync = async function (pk) {
   try {

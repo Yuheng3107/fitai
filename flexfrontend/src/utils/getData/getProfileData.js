@@ -1,6 +1,6 @@
-import { backend } from "../App.tsx";
+import { backend } from "../../App.tsx";
 import { getExerciseRegimeAsync } from "./getExerciseData";
-import { invalidProfileData, emptyExerciseStats } from "../types/stateTypes";
+import { invalidProfileData, emptyExerciseStats } from "../../types/stateTypes";
 
 export const getProfileDataAsync = async function () {
   try {
@@ -32,7 +32,6 @@ export const getOtherProfileDataAsync = async function (pk) {
       body: JSON.stringify(),
     })
     let data = await res.json();
-    console.log(data)
     return data
   } catch (error) {
     console.log(error);
@@ -128,6 +127,8 @@ export const splitProfileData = function (data) {
       reps: data.reps,
       perfect_reps: data.perfect_reps,
       friend_requests: data.friend_requests,
+      sent_friend_requests: data.sent_friend_requests,
+      communities: data.communities,
     },
     exerciseStats: {
       exercise_regimes: data.exercise_regimes,

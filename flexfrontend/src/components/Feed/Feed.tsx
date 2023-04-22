@@ -5,8 +5,8 @@ import React, { useState, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 
 import FeedPosts from "./FeedPosts";
-import { getUserFeedAsync } from "../../utils/getPostData";
-import { getOtherProfileDataAsync } from "../../utils/getProfileData";
+import { getUserFeedAsync } from "../../utils/getData/getPostData";
+import { getOtherProfileDataAsync } from "../../utils/getData/getProfileData";
 
 import { backend } from "../../App";
 import { Link } from "react-router-dom";

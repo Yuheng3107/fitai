@@ -6,7 +6,7 @@ import { profileDataActions } from '../../store/profileDataSlice';
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
-import { getUserPostsAsync } from "../../utils/getPostData";
+import { getUserPostsAsync } from "../../utils/getData/getPostData";
 
 import { googleLogout } from "@react-oauth/google";
 import { emptyProfileData } from "../../types/stateTypes";
@@ -20,7 +20,6 @@ import {
 //component imports
 import Login from "../../components/login/Login";
 import UserProfileTemplate from "../../components/profile/UserProfileTemplate";
-import FriendRequestDisplay from "../../components/profile/FriendRequestDisplay";
 
 type ProfileProps = {
   updateProfileState: number;
@@ -61,7 +60,6 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
         {loginStatus ?
           <div>
             <UserProfileTemplate profileData={profileDataRedux} exerciseStats={exerciseStatsRedux} userPostArray={userPostArray} loadUserPostData={loadUserPostData}/>
-            <FriendRequestDisplay friend_requests={profileDataRedux.friend_requests}/>
           </div>
           :
           <Login setLoginStatus={setLoginStatus} setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />

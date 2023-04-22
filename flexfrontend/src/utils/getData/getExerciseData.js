@@ -1,4 +1,4 @@
-import { backend } from "../App.tsx";
+import { backend } from "../../App.tsx";
 
 export const getExerciseAsync = async function (pk) {
   try {

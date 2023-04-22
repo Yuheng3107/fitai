@@ -9,19 +9,23 @@ export type ProfileData = {
   reps?: number;
   perfect_reps?: number;
   friend_requests?: any[];
+  sent_friend_requests?: any[];
+  communities?: any[];
 };
 
 export const emptyProfileData = {
   id: 0,
-  achievements: [],
+  achievements: new Array(),
   email: "",
   profile_photo: "",
   username: "",
   bio: "",
-  followers: [],
+  followers: new Array(),
   reps: 0,
   perfect_reps: 0,
-  friend_requests: [],
+  friend_requests: new Array(),
+  sent_friend_requests: new Array(),
+  communities: new Array(),
 };
 
 export const invalidProfileData = {
