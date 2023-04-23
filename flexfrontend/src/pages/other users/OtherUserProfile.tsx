@@ -85,7 +85,7 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
             <IonHeader>
                 <IonToolbar>
                     <IonButtons slot="start">
-                        <IonBackButton></IonBackButton>
+                        <IonBackButton defaultHref="/home"></IonBackButton>
                     </IonButtons>
                     <IonTitle>{profileData?.username}'s Profile</IonTitle>
                 </IonToolbar>
