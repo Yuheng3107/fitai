@@ -25,12 +25,11 @@ type ProfileProps = {
   updateProfileState: number;
   setUpdateProfileState: (arg: number) => void;
 }
-// for keeping track of how many sets of user posts
-let currentUserPostSet = 0;
 
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [userPostArray, setUserPostArray] = useState([]);
   const [loginStatus, setLoginStatus] = useState(false);
+  const [currentUserPostSet, setCurrentUserPostSet] = useState(0);
   const dispatch = useAppDispatch();
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData)
@@ -51,7 +50,7 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
     let data = await getUserPostsAsync(profileDataRedux.id, currentUserPostSet);
     setUserPostArray(userPostArray.concat(data));
     console.log(data)
-    currentUserPostSet += 1;
+    setCurrentUserPostSet(currentUserPostSet + 1);
   };
 
   return (
