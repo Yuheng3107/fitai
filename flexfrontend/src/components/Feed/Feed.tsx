@@ -13,8 +13,6 @@ import { backend } from "../../App";
 import { Link } from "react-router-dom";
 import AddIcon from "../../assets/svgComponents/AddIcon";
 
-let currentFeedSet = 0;
-
 function Feed() {
     const profileDataRedux = useAppSelector((state) => state.profile.profileData);
     const [feedPost, setFeedPost] = useState<{postArray: any[], profileArray: any[], communityArray: any[]}>({
@@ -22,6 +20,7 @@ function Feed() {
         profileArray: [],
         communityArray: [],
     });
+    const [currentFeedSet, setCurrentFeedSet] = useState(0);
     useEffect(() => {
         loadFeedData();
     },[]);
@@ -55,7 +54,7 @@ function Feed() {
             profileArray: feedPost.profileArray.concat(profileArray),
             communityArray: feedPost.communityArray.concat(communityArray),
         });
-        currentFeedSet += 1;
+        setCurrentFeedSet(currentFeedSet+1);
     }
 
     function createPostHandler(event: React.MouseEvent<HTMLButtonElement>) {
