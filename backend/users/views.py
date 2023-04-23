@@ -221,6 +221,7 @@ class UserManyToManyDeleteView(APIView):
     
     def delete(self, request, pk):
         """Delete m2m relationship"""
+        # Make sure user is authenticated
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         # Checks that there is a model setup
@@ -261,6 +262,13 @@ class UserCommunitiesDeleteView(UserManyToManyDeleteView):
         super().setup(request, *args, **kwargs)
         self.model = Community
         self.field_name = 'communities'
+    def delete(self, request, pk, *args, **kwargs):
+        response = super().delete(request, pk, *args, **kwargs)
+        # Let super method validate data sent, only update member_count if removing m2m is successful
+        if response.status_code != status.HTTP_200_OK:
+            return response
+        update_community_member_count(-1, pk)    
+        return response
         
 class UserExercisesDeleteView(UserManyToManyDeleteView):
     def setup(self, request, *args, **kwargs):

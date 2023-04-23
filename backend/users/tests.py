@@ -495,3 +495,16 @@ class UserCommunityUpdateViewTests(APITestCase):
         # Get the most updated instance of community
         community = Community.objects.get(pk=community.id)
         self.assertEqual(community.member_count, 69)
+
+class UserCommunityDeleteViewTests(APITestCase):
+    def test_community_member_count_decrease(self):
+        
+        community = baker.make(Community, member_count=70)
+        user = baker.make(User, communities=[community], make_m2m=True)
+        self.client.force_authenticate(user=user)
+        url = reverse('delete_user_communities', kwargs={"pk": community.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Get the most updated instance of community
+        community = Community.objects.get(pk=community.id)
+        self.assertEqual(community.member_count, 69)
