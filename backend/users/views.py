@@ -9,7 +9,9 @@ from community.models import Community #type: ignore
 from exercises.models import Exercise, ExerciseRegime #type: ignore
 from chat.models import ChatGroup #type: ignore
 from rest_framework.parsers import FormParser, MultiPartParser
+from django.db.models import Count
 
+User = get_user_model()
 class UserCreateView(APIView):
     def post(self, request):
         """API used internally to create users in DB from social logins"""
@@ -341,4 +343,21 @@ class UserFriendRequestDeclineView(APIView):
         request.user.friend_requests.remove(id)
         return Response("Successfully Declined")
 
+class UserSearchView(APIView):
+    def post(self, request):
+        required_fields = ["content"]
+        for field in required_fields:
+            if field not in request.data:
+                return Response(f"Add the {field} field in POST request", status=status.HTTP_400_BAD_REQUEST)
+        if request.data["content"] == "":
+            return Response("Content cannot be empty", status.HTTP_400_BAD_REQUEST)
+        qs = User.objects.filter(username__search=request.data["content"])
+        user_count = qs.count()
+        if user_count == 0:
+            return Response("No users matching search terms found", status=status.HTTP_404_NOT_FOUND)
+        elif user_count > 10:
+            # Return top 10 users with most followers
+            qs = qs[:10]
+        serializer = UserSerializer(qs, many=True)
+        return Response(serializer.data)
     

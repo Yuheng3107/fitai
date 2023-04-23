@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'achievements.apps.AchievementsConfig',
     'community.apps.CommunityConfig',
+    # Postgres
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
