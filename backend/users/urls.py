@@ -39,4 +39,6 @@ urlpatterns = [
     path('user/list/followers', UserFollowerListView.as_view(), name='user_followers_list'),
     # Streak Views
     path('user/streak/update', UserStreakUpdateView.as_view(), name='update_user_streak'),
+    # Search
+    path('user/search', UserSearchView.as_view(), name='search_users'),
 ]

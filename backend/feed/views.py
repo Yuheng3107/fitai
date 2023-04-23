@@ -758,4 +758,20 @@ class CommunityPostSearchView(APIView):
         serializer = CommunityPostSerializer(qs, many=True)
         return Response(serializer.data)
         
-    
+class UserPostSearchView(APIView):
+    def post(self, request):
+        required_fields = ["content", "user_id"]
+        for field in required_fields:
+            if field not in request.data:
+                return Response(f"Add the {field} field in POST request", status=status.HTTP_400_BAD_REQUEST)
+        if request.data["content"] == "":
+            return Response("Content cannot be empty", status.HTTP_400_BAD_REQUEST)
+        qs = UserPost.objects.filter(user=request.data["user_id"]).annotate(search=SearchVector("title", "text"),).filter(search=request.data["content"]).order_by('-likes')
+        post_no = qs.count()
+        if post_no == 0:
+            return Response("No posts found")
+        if post_no > 10:
+            # Get top 10 most liked posts if there are more than 10 posts
+            qs = qs[:10]
+        serializer = UserPostSerializer(qs, many=True)
+        return Response(serializer.data)

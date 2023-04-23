@@ -14,6 +14,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 from .serializer import UserSerializer
 # Create your tests here.
+User = get_user_model()
 class UsersManagersTests(TestCase):
     def setUp(self):
         self.User = get_user_model()
@@ -442,6 +443,26 @@ class UserFriendRequestDeclineViewTests(APITestCase):
         self.assertEqual(friend.followers.exists(), False)
         self.assertEqual(friend.sent_friend_requests.exists(), False)
 
+class UserSearchViewTests(APITestCase):
+    def test_search_users(self):
+        url = reverse('search_users')
+        data = {}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data["content"] = ""
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        followers = baker.make(User, _quantity=10)
+        user_a = baker.make(User, username='user_a', followers=followers)
+        user_b = baker.make(User, username='user_b')
+        data["content"] = "user"
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data[0]["username"], user_a.username)
+        self.assertEqual(response_data[1]["username"], user_b.username)
+        
+        
 class OtherUserListViewTests(APITestCase):
     def test_other_user_list(self):
         """test the list method"""
