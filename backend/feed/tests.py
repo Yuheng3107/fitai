@@ -469,6 +469,7 @@ class CommunityPostCreateViewTests(APITestCase):
         text = "Test UserPost Content"
         data = {
             "text": text,
+            "title": "hello",
             "community_id": community.id
         }
         # Check that data cannot be accessed if you are not logged in
@@ -483,13 +484,15 @@ class CommunityPostCreateViewTests(APITestCase):
         # check no community
         data = {
             "text": text,
+            "title": "hi",
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # check community id
         data = {
             "text": text,
-            "community_id": 696969
+            "community_id": 696969,
+            "title": "hi",
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
