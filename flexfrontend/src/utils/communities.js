@@ -59,7 +59,7 @@ export const joinCommunityAsync = async function (pk) {
 
 export const leaveCommunityAsync = async function (pk) {
   try {
-    let res = await fetch(`${backend}/users/user/delete/communites/${pk}`, {
+    let res = await fetch(`${backend}/users/user/delete/communities/${pk}`, {
       method: "DELETE",
       credentials: "include", // include cookies in the request
       headers: {
