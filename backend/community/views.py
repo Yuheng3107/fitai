@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import Community, CommunityMembers
 from .serializers import CommunitySerializer
 from rest_framework.parsers import FormParser, MultiPartParser
+from django.contrib.postgres.search import SearchVector
 # Create your views here.
 User = get_user_model()
 
@@ -180,3 +181,10 @@ class CommunityMemberUpdateView(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
+class CommunitySearchView(APIView):
+    def post(self, request):
+        required_fields = ["content"]
+        for field in required_fields:
+            if field not in request.data:
+                return Response(f"Please put {field} field in post request", status=status.HTTP_400_BAD_REQUEST)
+        qs = Community.objects.filter()
