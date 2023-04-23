@@ -18,12 +18,6 @@ type PostProps = {
 
 let hasLoaded = false;
 const Posts = ({ posts, loadData }: PostProps) => {
-  useEffect(() => {
-    if (hasLoaded === false) {
-      loadData();
-      hasLoaded = true;
-    }
-  }, [])
   return (
     <div
       id="userFeed"

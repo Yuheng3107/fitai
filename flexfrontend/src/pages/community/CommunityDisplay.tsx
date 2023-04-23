@@ -19,6 +19,9 @@ import img404 from "../../assets/img/404.png"
 
 //utils imports
 import { getCommunityAsync } from '../../utils/communities';
+import { getCommunityPostsAsync } from "../../utils/getData/getPostData";
+import { getManyOtherProfileDataAsync } from "../../utils/getData/getProfileData";
+
 import { backend } from '../../App';
 import ShareIcon from '../../assets/svgComponents/ShareIcon';
 import { CommunityData, emptyCommunityData, invalidCommunityData } from '../../types/stateTypes';
@@ -29,8 +32,15 @@ interface CommunityDisplayProps extends RouteComponentProps<{
     communityId: string;
 }> { }
 
+let currentFeedSet = 0;
+
 function CommunityDisplay({ match }: CommunityDisplayProps) {
     const [communityData, setCommunityData] = useState<CommunityData>(emptyCommunityData);
+    const [feedPosts, setFeedPosts] = useState<{postArray: any[], profileArray: any[], communityArray: any[]}>({
+        postArray: [],
+        profileArray: [],
+        communityArray: [],
+    });
 
     useEffect(() => {
         async function getCommunityData(pk: number) {
@@ -41,6 +51,28 @@ function CommunityDisplay({ match }: CommunityDisplayProps) {
         }
         getCommunityData(Number(match.params.communityId));
     }, [match])
+
+    const loadFeedData = async () => {
+        const postArray = await getCommunityPostsAsync(match.params.communityId, currentFeedSet);
+        console.log(`set:${currentFeedSet}`)
+        console.log(postArray);
+        let profiles:any[] = [];
+        for (let i=0;i<postArray.length;i++) profiles.push(postArray[i].poster);
+        let profileArray = await getManyOtherProfileDataAsync(profiles);
+        const profileMap = profileArray.reduce((acc:any, profile:any) => {
+            return {
+              ...acc,
+              [profile.id]: profile,
+            };
+          }, {});
+        for (let i=0;i<postArray.length;i++) profileArray[i] = profileMap[postArray[i].poster];
+        setFeedPosts({
+            postArray: feedPosts.postArray.concat(postArray),
+            profileArray: feedPosts.profileArray.concat(profileArray),
+            communityArray: [communityData],
+        });
+        currentFeedSet += 1;
+    }
 
     return <IonPage>
         <IonHeader>
@@ -59,6 +91,7 @@ function CommunityDisplay({ match }: CommunityDisplayProps) {
             :
                 <main className="h-full">
                     <MainInfo communityData={communityData} />
+                    <CommunityFeed feedPosts={feedPosts} loadData={loadFeedData} />
                 </main>
             }
             
@@ -105,7 +138,6 @@ function MainInfo({ communityData }: MainInfoProps) {
             
         </div>
         <p id="description" className="px-6 mt-3">{communityData.description}</p>
-        <CommunityFeed communityData={communityData}/>
     </div>
 }
 

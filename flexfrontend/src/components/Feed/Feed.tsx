@@ -22,10 +22,13 @@ function Feed() {
         profileArray: [],
         communityArray: [],
     });
-
+    useEffect(() => {
+        loadFeedData();
+    },[]);
     const loadFeedData = async () => {
         const postArray = await getUserFeedAsync(currentFeedSet);
-        console.log(currentFeedSet);
+        console.log(`set:${currentFeedSet}`)
+        console.log(postArray);
         let profiles:any[] = [];
         for (let i=0;i<postArray.length;i++) profiles.push(postArray[i].poster);
         let profileArray = await getManyOtherProfileDataAsync(profiles);
