@@ -136,7 +136,7 @@ class UserManyToManyUpdateView(APIView):
     
     def post(self, request):
         """Adds new m2m relationships to user model"""
-        
+        # User must be authenticated
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         # Checks that there is a model setup
@@ -174,9 +174,22 @@ class UserFollowingUpdateView(UserManyToManyUpdateView):
         
 class UserCommunitiesUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
+        
         super().setup(request, *args, **kwargs)
         self.model = Community
         self.field_name = 'communities'
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        # Let super method validate data sent, only update member_count if it adding m2m is successful
+        if response.status_code != status.HTTP_200_OK:
+            return response
+        pk_list = request.data.get("fk_list", None)
+        if pk_list is not None:
+            # Supposed to have one pk only
+            pk = pk_list[0]
+            update_community_member_count(1, pk)
+        return response
+            
         
 class UserExercisesUpdateView(UserManyToManyUpdateView):
     def setup(self, request, *args, **kwargs):
@@ -370,4 +383,14 @@ class UserSearchView(APIView):
             qs = qs[:10]
         serializer = UserSerializer(qs, many=True)
         return Response(serializer.data)
+
+def update_community_member_count(num: int, pk: int):
+    """
+    Function to update community member_count whenever user joins or leaves a community
+    Num is amount to increment (+ve) or decrement (-ve), pk is primary key of community
+    """
+    community = Community.objects.get(pk=pk)
+    community.member_count += num
+    community.save()
+
     

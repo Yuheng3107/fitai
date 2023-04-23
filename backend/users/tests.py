@@ -481,4 +481,17 @@ class OtherUserListViewTests(APITestCase):
             self.assertEquals(user.email, data[i]["email"])
             self.assertEquals(user.username, data[i]["username"])
         
-        
+class UserCommunityUpdateViewTests(APITestCase):
+    def test_community_member_count_increase(self):
+        url = reverse('update_user_communities')
+        community = baker.make(Community, member_count=68)
+        user = baker.make(User)
+        self.client.force_authenticate(user=user)
+        data = {
+            "fk_list": [community.id]
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Get the most updated instance of community
+        community = Community.objects.get(pk=community.id)
+        self.assertEqual(community.member_count, 69)
