@@ -9,7 +9,7 @@ urlpatterns = [
     path('community/update/banner', CommunityUpdateBannerView.as_view(), name='update_community_banner'),
     path('community/update/community_photo', CommunityUpdatePhotoView.as_view(), name='update_community_photo'),
     path('community/delete/<int:pk>', CommunityDeleteView.as_view(), name='delete_community'),
-    
+    path('community/search', CommunitySearchView.as_view(), name='search_community'),
     # Members
     path('community_members/update', CommunityMemberUpdateView.as_view(), name='update_community_members'),
 ]

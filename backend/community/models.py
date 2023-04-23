@@ -15,7 +15,7 @@ class Community(models.Model):
     created_at = models.TimeField(auto_now_add=True)
     created_by = models.ForeignKey(User,on_delete=models.SET_DEFAULT,default=None, null=True)
     privacy_level = models.SmallIntegerField(default=0)
-
+    member_count = models.PositiveIntegerField(default=0)
     def __str__(self):
         return self.name
 

@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import Community, CommunityMembers
 from .serializers import CommunitySerializer
 from rest_framework.parsers import FormParser, MultiPartParser
+from django.contrib.postgres.search import SearchVector
 # Create your views here.
 User = get_user_model()
 
@@ -240,3 +241,20 @@ class CommunityMemberUpdateView(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
+class CommunitySearchView(APIView):
+    def post(self, request):
+        required_fields = ["content"]
+        for field in required_fields:
+            if field not in request.data:
+                return Response(f"Please put {field} field in post request", status=status.HTTP_400_BAD_REQUEST)
+        qs = Community.objects.annotate(
+            search=SearchVector("name", "description"),
+        ).filter(search=request.data["content"]).order_by('-member_count')
+        community_no = qs.count()
+        if community_no == 0:
+            return Response("No communities matching search terms found", status=status.HTTP_404_NOT_FOUND)
+        if community_no > 10:
+            # Get top 10 communities with most people if there are more than 10 communities matching search terms
+            qs = qs[:10]
+        serializer = CommunitySerializer(qs, many=True)
+        return Response(serializer.data)
