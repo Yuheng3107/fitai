@@ -18,9 +18,6 @@ type CommunityFeedProps = {
     loadData: () => void;
 }
 function CommunityFeed({ feedPosts, loadData }: CommunityFeedProps) {
-    useEffect(() => {
-        loadData();
-    },[]);
     function createPostHandler(event: React.MouseEvent<HTMLButtonElement>) {
         fetch(`${backend}/feed/user_post/create`, {
             method: "POST",
@@ -46,5 +43,6 @@ function CommunityFeed({ feedPosts, loadData }: CommunityFeedProps) {
         </Link>
     </main>
 }
+
 
 export default CommunityFeed;

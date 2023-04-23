@@ -23,10 +23,10 @@ import { getCommunityPostsAsync } from "../../utils/getData/getPostData";
 import { getManyOtherProfileDataAsync } from "../../utils/getData/getProfileData";
 
 import { backend } from '../../App';
-import ShareIcon from '../../assets/svgComponents/ShareIcon';
 import { CommunityData, emptyCommunityData, invalidCommunityData } from '../../types/stateTypes';
 
 import CommunityFeed from '../../components/community/CommunityFeed';
+import CommunityInfo from '../../components/community/CommunityInfo';
 
 interface CommunityDisplayProps extends RouteComponentProps<{
     communityId: string;
@@ -49,6 +49,7 @@ function CommunityDisplay({ match }: CommunityDisplayProps) {
             setCommunityData(communityDetails);
         }
         getCommunityData(Number(match.params.communityId));
+        loadFeedData();
     }, [match])
 
     const loadFeedData = async () => {
@@ -89,7 +90,7 @@ function CommunityDisplay({ match }: CommunityDisplayProps) {
                 </div> 
             :
                 <main className="h-full">
-                    <MainInfo communityData={communityData} />
+                    <CommunityInfo communityData={communityData} />
                     <CommunityFeed feedPosts={feedPosts} loadData={loadFeedData} />
                 </main>
             }
@@ -97,47 +98,4 @@ function CommunityDisplay({ match }: CommunityDisplayProps) {
         </IonContent>
     </IonPage>
 }
-
-type MainInfoProps = {
-    communityData: CommunityData;
-}
-function MainInfo({ communityData }: MainInfoProps) {
-    const [bannerUrl, setBannerUrl] = useState("");
-    const [communityPhotoUrl, setCommunityPhotoUrl] = useState("");
-
-    useEffect(() => {
-        if (communityData?.banner !== null) setBannerUrl(backend.concat(communityData.banner))
-        if (communityData?.community_photo !== null) setCommunityPhotoUrl(backend.concat(communityData.community_photo))
-    });
-
-    return <div className="flex flex-col">
-        <div className="w-full h-36 object-cover">
-            <img src={bannerUrl} className="w-full h-36 object-cover" alt="" />
-            
-        </div>
-        
-        <div id="name-and-actions" className="mt-3 px-8 flex flex-row justify-between">
-            {communityData.community_photo === null ? "No photo Here" :
-                <img alt="community-picture" src={communityPhotoUrl} className="h-20 w-20 rounded-full object-cover border border-zinc-500"/>}
-            <div className="flex flex-col justify-evenly">
-               <span className="text-2xl font-semibold text-left">{communityData.name}</span>
-                <div className="flex flex-row justify-between">
-                    <span className="">69 Members</span>
-                    <div className="flex flex-row">
-                        <button className=" mr-1 px-4 rounded-full bg-orange-400 text-white h-8">
-                            join
-                        </button>
-                        <button className=" aspect-square bg-gray-300 rounded-full h-8 flex justify-center items-center">
-                            <ShareIcon className={`h-6 w-6`}/>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            
-            
-        </div>
-        <p id="description" className="px-6 mt-3">{communityData.description}</p>
-    </div>
-}
-
 export default CommunityDisplay;

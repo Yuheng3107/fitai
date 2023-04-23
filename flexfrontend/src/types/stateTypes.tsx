@@ -95,6 +95,7 @@ export type CommunityData = {
   created_at: string;
   created_by: number;
   privacy_level: number;
+  member_count: number;
 };
 
 export const emptyCommunityData = {
@@ -106,6 +107,7 @@ export const emptyCommunityData = {
   created_at: "",
   created_by: 0,
   privacy_level: 0,
+  member_count: 0,
 };
 
 export const invalidCommunityData = {
@@ -117,4 +119,5 @@ export const invalidCommunityData = {
   created_at: "",
   created_by: 0,
   privacy_level: 0,
+  member_count: 0,
 };
