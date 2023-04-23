@@ -1,5 +1,6 @@
 //React imports
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 //ionic imports
 import {
@@ -14,7 +15,7 @@ import {
 } from "@ionic/react";
 import { closeOutline } from "ionicons/icons";
 import TextInput from "../../components/ui/TextInput";
-import { createUserPost } from '../../utils/data/posts';
+import { createUserPostAsync } from '../../utils/data/posts';
 
 import { backend } from '../../App';
 
@@ -22,6 +23,7 @@ import { backend } from '../../App';
 function CreatePost() {
     const [postTitleInput, setPostTitleInput] = useState("");
     const [postTextInput, setPostTextInput] = useState("");
+    const history = useHistory();
 
     return <IonPage>
         <IonHeader>
@@ -34,7 +36,10 @@ function CreatePost() {
                 <IonTitle>Create Post</IonTitle>
                 <IonButtons slot="end">
                     <IonButton className="mr-1 rounded-lg bg-sky-400 py-2 px-3 text-white"
-                        onClick={(event) => createUserPost(postTitleInput, postTextInput)}>
+                        onClick={async (event) => {
+                            let response = await createUserPostAsync(postTitleInput, postTextInput);
+                            if (response?.status === 201) history.push("/home");
+                        }}>
                         Post
                     </IonButton>
                 </IonButtons>

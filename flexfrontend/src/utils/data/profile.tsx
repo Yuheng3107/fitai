@@ -135,7 +135,6 @@ export const getAllProfileData = async function (pk:Number) {
   return splitProfileData(data);
 }
 
-
 //Utility function, takes the "data" object and returns an object with "profileData" and "exerciseStats" properties
 export const splitProfileData = function (data:any) {
   return ({

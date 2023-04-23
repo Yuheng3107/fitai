@@ -1,5 +1,6 @@
 //React imports
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 //ionic imports
 import {
@@ -16,7 +17,7 @@ import { RouteComponentProps } from "react-router";
 
 import { closeOutline } from "ionicons/icons";
 import TextInput from "../../components/ui/TextInput";
-import { createCommunityPost } from '../../utils/data/posts';
+import { createCommunityPostAsync } from '../../utils/data/posts';
 
 import { backend } from '../../App';
 
@@ -26,6 +27,7 @@ interface CommunityDisplayProps extends RouteComponentProps<{
 function CreateCommunityPost({ match }: CommunityDisplayProps) {
     const [postTitleInput, setPostTitleInput] = useState("");
     const [postTextInput, setPostTextInput] = useState("");
+    const history = useHistory();
 
     return <IonPage>
         <IonHeader>
@@ -38,7 +40,10 @@ function CreateCommunityPost({ match }: CommunityDisplayProps) {
                 <IonTitle>Create Community Post</IonTitle>
                 <IonButtons slot="end">
                     <IonButton className="mr-1 rounded-lg bg-sky-400 text-white"
-                        onClick={(event) => createCommunityPost(Number(match.params.communityId), postTitleInput, postTextInput)} type="submit">
+                        onClick={async (event) => {
+                            let response = await createCommunityPostAsync(Number(match.params.communityId), postTitleInput, postTextInput);
+                            if (response?.status === 201) history.push(`/home/community/${match.params.communityId}`);
+                        }}>
                         Post
                     </IonButton>
                 </IonButtons>

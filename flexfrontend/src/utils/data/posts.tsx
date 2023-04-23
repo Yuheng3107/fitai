@@ -65,29 +65,29 @@ export const getUserFeedAsync = async function (set_no: number) {
   }
 }
 
-export const createUserPost = function (postTitleInput:string, postTextInput:string) {
-  fetch(`${backend}/feed/user_post/create`, {
+export const createUserPostAsync = async function (postTitleInput:string, postTextInput:string) {
+  try {
+    let res = await fetch(`${backend}/feed/user_post/create`, {
       method: "POST",
       headers: {
-          "X-CSRFToken": String(
-              document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
-          ),
-          "Content-type": "application/json"
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]),
+        "Content-type": "application/json"
       },
       credentials: "include",
       body: JSON.stringify({
-          title: postTitleInput,
-          text: postTextInput,
+        title: postTitleInput,
+        text: postTextInput,
       }),
-  }).then((response) => {
-      console.log(response);
-  }).catch((err) => {
-      console.log(err);
-  });
+    })
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-export const createCommunityPost = function (community:number, postTitleInput:string, postTextInput:string) {
-  fetch(`${backend}/feed/community_post/create`, {
+export const createCommunityPostAsync = async function (community:number, postTitleInput:string, postTextInput:string) {
+  try {
+    let res = await fetch(`${backend}/feed/community_post/create`, {
       method: "POST",
       headers: {
           "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]),
@@ -99,9 +99,9 @@ export const createCommunityPost = function (community:number, postTitleInput:st
           title: postTitleInput,
           text: postTextInput,
       }),
-  }).then((response) => {
-      console.log(response);
-  }).catch((err) => {
-      console.log(err);
-  });
+    })
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
 }

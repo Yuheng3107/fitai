@@ -10,7 +10,6 @@ import { Link } from "react-router-dom";
 import AddIcon from "../../assets/svgComponents/AddIcon";
 
 
-
 type CommunityFeedProps = {
     postArray: any[];
     profileArray: any[];
