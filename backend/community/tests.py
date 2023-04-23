@@ -232,3 +232,36 @@ class CommunityMembersUpdateViewTests(APITestCase):
         member = CommunityMembers.objects.get(user=user2.id, community=community.id)
         self.assertEqual(member.moderator_level, 2)
         
+class CommunitySearchViewTest(APITestCase):
+    def test_search_community(self):
+        url = reverse('search_community')
+        data = {}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data["content"] = "gay ass"
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        squat_community = baker.make(Community, name="Squats", description="Thunder thighs only", member_count=100)
+        calisthenics_community = baker.make(Community, name="Calisthenics", description="Exercises like squats or push-ups", member_count=1000)
+        data["content"] = "squat"
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data[0]["name"], calisthenics_community.name)
+        self.assertEqual(response_data[0]["description"], calisthenics_community.description)
+        self.assertEqual(response_data[1]["name"], squat_community.name)
+        self.assertEqual(response_data[1]["description"], squat_community.description)
+        data["content"] = "thigh"
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data[0]["name"], squat_community.name)
+        self.assertEqual(response_data[0]["description"], squat_community.description)
+        data["content"] = "calisthen"
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data[0]["name"], calisthenics_community.name)
+        self.assertEqual(response_data[0]["description"], calisthenics_community.description)
+        
+        

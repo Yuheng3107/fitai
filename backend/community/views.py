@@ -192,7 +192,7 @@ class CommunitySearchView(APIView):
         ).filter(search=request.data["content"]).order_by('-member_count')
         community_no = qs.count()
         if community_no == 0:
-            return Response("No communities matching search terms found")
+            return Response("No communities matching search terms found", status=status.HTTP_404_NOT_FOUND)
         if community_no > 10:
             # Get top 10 communities with most people if there are more than 10 communities matching search terms
             qs = qs[:10]
