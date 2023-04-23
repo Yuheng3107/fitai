@@ -726,7 +726,7 @@ class LatestCommunityPostViewTests(APITestCase):
     def test_get_latest_community_posts(self):
         url = reverse('latest_community_post')
         community = baker.make(Community)
-        posts = [baker.make(CommunityPost, community=Community) for i in range(21)]
+        posts = [baker.make(CommunityPost, community=community) for i in range(21)]
         data = {
             "set_no": 0,
             "community_id": community.id

@@ -99,7 +99,6 @@ function MainInfo({ communityData }: MainInfoProps) {
                             <ShareIcon className={`h-6 w-6`}/>
                         </button>
                     </div>
-                       
                 </div> 
             </div>
             

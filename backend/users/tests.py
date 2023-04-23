@@ -450,7 +450,7 @@ class OtherUserListViewTests(APITestCase):
         user_no = 2
         users = [baker.make(User) for i in range(user_no)]
         data = {
-            "user_posts": [post.id for post in users]
+            "user_ids": [post.id for post in users]
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
