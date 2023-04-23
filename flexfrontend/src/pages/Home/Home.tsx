@@ -11,6 +11,8 @@ import { profileDataActions } from '../../store/profileDataSlice';
 import Feed from '../../components/Feed/Feed';
 import SearchBar from '../../components/Feed/SearchBar';
 import CommunitiesList from '../../components/home/CommunitiesList';
+import { Link } from "react-router-dom";
+import AddIcon from "../../assets/svgComponents/AddIcon";
 
 const Home: React.FC = () => {
   const [sideMenuShowing, setSetMenuShowing] = useState(false);
@@ -52,6 +54,9 @@ const dispatch = useAppDispatch();
       </IonHeader>
       <IonContent fullscreen className="relative">
         <Feed />
+        <Link to="/home/post/create" className="w-14 h-14 bg-sky-500 rounded-full fixed right-4 bottom-4 flex justify-center items-center" >
+            <AddIcon className="fill-slate-50"/>
+        </Link>
       </IonContent>
     </IonPage>
   </>

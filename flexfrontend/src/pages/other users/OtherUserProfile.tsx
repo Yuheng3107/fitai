@@ -2,10 +2,10 @@ import { RouteComponentProps } from "react-router";
 import React, { useState, useEffect } from "react";
 
 //utils imports
-import { getAllProfileData } from "../../utils/getData/getProfileData";
-import { getUserPostsAsync } from "../../utils/getData/getPostData";
+import { getAllProfileData } from "../../utils/data/profile";
+import { getUserPostsAsync } from "../../utils/data/posts";
 import { ExerciseStats, emptyExerciseStats, ProfileData, emptyProfileData } from "../../types/stateTypes";
-import { sendFriendRequest, deleteFriendRequest, deleteFriend } from "../../utils/friends";
+import { sendFriendRequest, deleteFriendRequest, deleteFriend } from "../../utils/data/friends";
 
 //img imports
 import img404 from "../../assets/img/404.png"
@@ -53,30 +53,30 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
     },[friendStatus, setFriendStatus, profileDataRedux]);
 
     const loadAllProfileData = async () => {
-        let data = await getAllProfileData(match.params.userId);
+        let data = await getAllProfileData(Number(match.params.userId));
         setProfileData(data.profileData);
         setExerciseStats(data.exerciseStats);
         console.log(data.profileData);
     };
 
     const loadUserPostData = async () => {
-        let data = await getUserPostsAsync(match.params.userId, currentUserPostSet);
+        let data = await getUserPostsAsync(Number(match.params.userId), currentUserPostSet);
         setUserPostArray(userPostArray.concat(data));
         currentUserPostSet += 1;
     };
 
     const friendRequest = async () => {
-        let response = await sendFriendRequest(match.params.userId);
+        let response = await sendFriendRequest(Number(match.params.userId));
         if (response?.status === 200) setFriendStatus(1);
     }
 
     const removeFriendRequest = async () => {
-        let response = await deleteFriendRequest(match.params.userId);
+        let response = await deleteFriendRequest(Number(match.params.userId));
         if (response?.status === 200) setFriendStatus(0);
     }
 
     const removeFriend = async () => {
-        let response = await deleteFriend(match.params.userId);
+        let response = await deleteFriend(Number(match.params.userId));
         if (response?.status === 200) setFriendStatus(0);
     }
 

@@ -18,9 +18,9 @@ import { RouteComponentProps } from "react-router";
 import img404 from "../../assets/img/404.png"
 
 //utils imports
-import { getCommunityAsync } from '../../utils/communities';
-import { getCommunityPostsAsync } from "../../utils/getData/getPostData";
-import { getManyOtherProfileDataAsync } from "../../utils/getData/getProfileData";
+import { getCommunityAsync } from '../../utils/data/communities';
+import { getCommunityPostsAsync } from "../../utils/data/posts";
+import { getManyOtherProfileDataAsync } from "../../utils/data/profile";
 
 import { backend } from '../../App';
 import { CommunityData, emptyCommunityData, invalidCommunityData } from '../../types/stateTypes';
@@ -31,29 +31,23 @@ import CommunityInfo from '../../components/community/CommunityInfo';
 interface CommunityDisplayProps extends RouteComponentProps<{
     communityId: string;
 }> { }
-
+let currentFeedSet = 0;
 function CommunityDisplay({ match }: CommunityDisplayProps) {
     const [communityData, setCommunityData] = useState<CommunityData>(emptyCommunityData);
-    const [feedPosts, setFeedPosts] = useState<{postArray: any[], profileArray: any[], communityArray: any[]}>({
-        postArray: [],
-        profileArray: [],
-        communityArray: [],
-    });
-    const [currentFeedSet, setCurrentFeedSet] = useState(0);
+    const [postArray, setPostArray] = useState<any[]>([]);
+    const [profileArray, setProfileArray] = useState<any[]>([]);
 
     useEffect(() => {
         async function getCommunityData(pk: number) {
             let communityDetails = await getCommunityAsync(pk);
             if (communityDetails === undefined) communityDetails = invalidCommunityData;
-            console.log(communityDetails);
             setCommunityData(communityDetails);
         }
-        getCommunityData(Number(match.params.communityId));
-        loadFeedData();
+        getCommunityData(parseInt(match.params.communityId));
     }, [match])
 
     const loadFeedData = async () => {
-        const postArray = await getCommunityPostsAsync(match.params.communityId, currentFeedSet);
+        const postArray = await getCommunityPostsAsync(Number(match.params.communityId), currentFeedSet);
         console.log(`set:${currentFeedSet}`)
         console.log(postArray);
         let profiles:any[] = [];
@@ -66,12 +60,9 @@ function CommunityDisplay({ match }: CommunityDisplayProps) {
             };
           }, {});
         for (let i=0;i<postArray.length;i++) profileArray[i] = profileMap[postArray[i].poster];
-        setFeedPosts({
-            postArray: feedPosts.postArray.concat(postArray),
-            profileArray: feedPosts.profileArray.concat(profileArray),
-            communityArray: [communityData],
-        });
-        setCurrentFeedSet(currentFeedSet+1);
+        setPostArray(postArray);
+        setProfileArray(profileArray);
+        currentFeedSet += 1;
     }
 
     return <IonPage>
@@ -91,7 +82,7 @@ function CommunityDisplay({ match }: CommunityDisplayProps) {
             :
                 <main className="h-full">
                     <CommunityInfo communityData={communityData} />
-                    <CommunityFeed feedPosts={feedPosts} loadData={loadFeedData} />
+                    <CommunityFeed postArray={postArray} profileArray={profileArray} communityData={communityData} loadData={loadFeedData} />
                 </main>
             }
             

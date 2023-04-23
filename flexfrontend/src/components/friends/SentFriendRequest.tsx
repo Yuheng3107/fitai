@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import { IonButton, IonRouterLink } from '@ionic/react';
 import { ProfileData, emptyProfileData } from "../../types/stateTypes";
 
-import { sendFriendRequest, deleteFriendRequest } from "../../utils/friends";
-import { getOtherProfileDataAsync } from "../../utils/getData/getProfileData";
+import { sendFriendRequest, deleteFriendRequest } from "../../utils/data/friends";
+import { getOtherProfileDataAsync } from "../../utils/data/profile";
 
 import { backend } from "../../App";
 

@@ -6,7 +6,7 @@ import { profileDataActions } from '../../store/profileDataSlice';
 
 //utils imports
 import checkLoginStatus from "../../utils/checkLogin";
-import { getUserPostsAsync } from "../../utils/getData/getPostData";
+import { getUserPostsAsync } from "../../utils/data/posts";
 
 import { googleLogout } from "@react-oauth/google";
 import { emptyProfileData } from "../../types/stateTypes";
@@ -25,11 +25,10 @@ type ProfileProps = {
   updateProfileState: number;
   setUpdateProfileState: (arg: number) => void;
 }
-
+let currentUserPostSet = 0;
 const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const [userPostArray, setUserPostArray] = useState([]);
   const [loginStatus, setLoginStatus] = useState(false);
-  const [currentUserPostSet, setCurrentUserPostSet] = useState(0);
   const dispatch = useAppDispatch();
 
   const profileDataRedux = useAppSelector((state) => state.profile.profileData)
@@ -49,8 +48,8 @@ const Tab3 = ({ updateProfileState, setUpdateProfileState }: ProfileProps) => {
   const loadUserPostData = async () => {
     let data = await getUserPostsAsync(profileDataRedux.id, currentUserPostSet);
     setUserPostArray(userPostArray.concat(data));
-    console.log(data)
-    setCurrentUserPostSet(currentUserPostSet + 1);
+    console.log(data);
+    currentUserPostSet += 1;
   };
 
   return (

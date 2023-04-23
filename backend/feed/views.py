@@ -27,7 +27,7 @@ class UserPostCreateView(APIView):
             if field not in request.data or request.data[field] == "":
                 return Response(f"Please add the {field} field in your request", status=status.HTTP_400_BAD_REQUEST)
         
-        create_fields = ["text", "shared_id", "privacy_level", "title"]
+        create_fields = ["text", "privacy_level", "title"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in UserPost
         UserPost.objects.create(poster=request.user, **fields)
@@ -197,7 +197,7 @@ class CommunityPostCreateView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
-        check_fields = ["text", "community_id"]
+        check_fields = ["text", "community_id", "title"]
         # Check that all the required data is in the post request
         for field in check_fields:
             if field not in request.data or request.data[field] == "":
@@ -208,7 +208,7 @@ class CommunityPostCreateView(APIView):
         except Community.DoesNotExist:
             return Response("Please put a valid community id", status=status.HTTP_400_BAD_REQUEST)
 
-        create_fields = ["text"]
+        create_fields = ["text", "title"]
         fields = {field: request.data[field] for field in create_fields if field in request.data}
         # Unpack the dictionary and pass them as keyword arguments to create in CommunityPost
         post = CommunityPost.objects.create(community=community, poster=request.user, **fields)

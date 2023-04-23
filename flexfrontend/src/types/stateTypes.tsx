@@ -1,16 +1,16 @@
 export type ProfileData = {
   id: number;
-  achievements: any[];
+  achievements: Number[];
   username: string;
   email: string;
   profile_photo: string;
   bio?: string;
-  followers?: any[];
+  followers?: Number[];
   reps?: number;
   perfect_reps?: number;
-  friend_requests?: any[];
-  sent_friend_requests?: any[];
-  communities?: any[];
+  friend_requests?: Number[];
+  sent_friend_requests?: Number[];
+  communities?: Number[];
 };
 
 export const emptyProfileData = {
@@ -55,8 +55,8 @@ export const emptyUserPostData = {
 };
 
 export type ExerciseStats = {
-  exercise_regimes: any[];
-  exercises: any[];
+  exercise_regimes: Number[];
+  exercises: Number[];
   calories_burnt: number;
   streak: number;
   favorite_exercise: {

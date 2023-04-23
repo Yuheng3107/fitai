@@ -10,7 +10,7 @@ export const getProfileDataAsync = async function () {
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
     })
     let data = await res.json();
@@ -21,16 +21,15 @@ export const getProfileDataAsync = async function () {
 }
 
 //Get the profile Data of another user (requires that user's id)
-export const getOtherProfileDataAsync = async function (pk) {
+export const getOtherProfileDataAsync = async function (pk:Number) {
   try {
     let res = await fetch(`${backend}/users/user/${pk}`, {
       method: "GET",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
-      body: JSON.stringify(),
     })
     let data = await res.json();
     return data
@@ -39,14 +38,14 @@ export const getOtherProfileDataAsync = async function (pk) {
   }
 }
 
-export const getManyOtherProfileDataAsync = async function (pks) {
+export const getManyOtherProfileDataAsync = async function (pks:Number[]) {
   try {
     let res = await fetch(`${backend}/users/user/list`, {
       method: "POST",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
       body: JSON.stringify({
         user_ids: pks
@@ -60,15 +59,14 @@ export const getManyOtherProfileDataAsync = async function (pks) {
 }
 
 // Get the user's own profile data
-export const getProfileData =  (updateFunction) =>{
+export const getProfileData =  (updateFunction:any) =>{
   fetch(`${backend}/users/user`, {
     method: "GET",
     credentials: "include", // include cookies in the request
     headers: {
       "Content-Type": "application/json",
-      "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+      "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
     },
-    body: JSON.stringify(),
   })
     .then((res) => {
       console.log(res);
@@ -81,14 +79,14 @@ export const getProfileData =  (updateFunction) =>{
     .catch((err) => console.log(err));
 }
 
-export const getFavoriteExerciseAsync = async function (pk) {
+export const getFavoriteExerciseAsync = async function (pk:Number) {
   try {
     let res = await fetch(`${backend}/exercises/exercise/favorite`, {
       method: "POST",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
       body: JSON.stringify({
         user_id: pk,
@@ -101,14 +99,14 @@ export const getFavoriteExerciseAsync = async function (pk) {
   }
 }
 
-export const getFavoriteExerciseRegimeAsync = async function (pk) {
+export const getFavoriteExerciseRegimeAsync = async function (pk:Number) {
   try {
     let res = await fetch(`${backend}/exercises/exercise_regime/favorite`, {
       method: "POST",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
       body: JSON.stringify({
         user_id: pk,
@@ -122,7 +120,7 @@ export const getFavoriteExerciseRegimeAsync = async function (pk) {
 }
 
 //Gets the user's normal profile data plus favorite exercise and exercise regime
-export const getAllProfileData = async function (pk) {
+export const getAllProfileData = async function (pk:Number) {
   let data = await getOtherProfileDataAsync(pk);
   if (data === undefined) return ({
     profileData: invalidProfileData,
@@ -139,7 +137,7 @@ export const getAllProfileData = async function (pk) {
 
 
 //Utility function, takes the "data" object and returns an object with "profileData" and "exerciseStats" properties
-export const splitProfileData = function (data) {
+export const splitProfileData = function (data:any) {
   return ({
     profileData: {
       id: data.id,

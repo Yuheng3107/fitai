@@ -1,13 +1,13 @@
-import { backend } from "../../App.tsx";
+import { backend } from "../../App";
 
-export const getExerciseAsync = async function (pk) {
+export const getExerciseAsync = async function (pk:Number) {
   try {
     let res = await fetch(`${backend}/exercises/exercise/${pk}`, {
       method: "GET",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
     })
     let data = await res.json();
@@ -17,14 +17,14 @@ export const getExerciseAsync = async function (pk) {
   }
 }
 
-export const getExerciseRegimeAsync = async function (pk) {
+export const getExerciseRegimeAsync = async function (pk:Number) {
   try {
     let res = await fetch(`${backend}/exercises/exercise_regime/${pk}`, {
       method: "GET",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
     })
     let data = await res.json();

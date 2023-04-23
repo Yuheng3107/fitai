@@ -1,13 +1,13 @@
-import { backend } from "../App";
+import { backend } from "../../App";
 
-export const getCommunityAsync = async function (pk) {
+export const getCommunityAsync = async function (pk:Number) {
   try {
     let res = await fetch(`${backend}/community/community/${pk}`, {
       method: "GET",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
     })
     let data = await res.json();
@@ -17,14 +17,14 @@ export const getCommunityAsync = async function (pk) {
   }
 }
 
-export const getCommunityListAsync = async function (pks) {
+export const getCommunityListAsync = async function (pks:Number[]) {
   try {
     let res = await fetch(`${backend}/community/community/list`, {
       method: "POST",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
       body: JSON.stringify({
         communities: pks,
@@ -37,14 +37,14 @@ export const getCommunityListAsync = async function (pks) {
   }
 }
 
-export const joinCommunityAsync = async function (pk) {
+export const joinCommunityAsync = async function (pk:Number) {
   try {
     let res = await fetch(`${backend}/users/user/update/communities`, {
       method: "POST",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
       body: JSON.stringify({
         fk_list: [pk],
@@ -57,14 +57,14 @@ export const joinCommunityAsync = async function (pk) {
   }
 }
 
-export const leaveCommunityAsync = async function (pk) {
+export const leaveCommunityAsync = async function (pk:Number) {
   try {
     let res = await fetch(`${backend}/users/user/delete/communities/${pk}`, {
       method: "DELETE",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+        "X-CSRFToken": String(document.cookie?.match(/csrftoken=([\w-]+)/)?.[1] ),
       },
     })
     console.log(res);

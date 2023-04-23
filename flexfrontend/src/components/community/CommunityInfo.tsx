@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 
 // utils imports
-import { joinCommunityAsync, leaveCommunityAsync } from "../../utils/communities";
+import { joinCommunityAsync, leaveCommunityAsync } from "../../utils/data/communities";
 
 //Redux imports
 import { useAppSelector } from '../../store/hooks';

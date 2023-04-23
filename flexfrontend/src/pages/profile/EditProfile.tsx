@@ -23,7 +23,7 @@ import { backend } from '../../App';
 import Button from '../../components/ui/Button';
 
 //utils imports
-import { getProfileData, getProfileDataAsync } from '../../utils/getData/getProfileData';
+import { getProfileData, getProfileDataAsync } from '../../utils/data/profile';
 
 
 //types import
@@ -76,7 +76,6 @@ function EditProfile({ setUpdateProfileState, updateProfileState }: EditProfileP
             console.log(err);
         });
     }
-
 
     const editProfileComponents = <div className="p-10">
         <UpdateProfilePic setUpdateProfileState={setUpdateProfileState} updateProfileState={updateProfileState} />

@@ -12,33 +12,22 @@ import AddIcon from "../../assets/svgComponents/AddIcon";
 
 
 type CommunityFeedProps = {
-    feedPosts: {
-        postArray: any[], profileArray: any[], communityArray: any[],
-    };
+    postArray: any[];
+    profileArray: any[];
+    communityData: CommunityData
     loadData: () => void;
 }
-function CommunityFeed({ feedPosts, loadData }: CommunityFeedProps) {
-    function createPostHandler(event: React.MouseEvent<HTMLButtonElement>) {
-        fetch(`${backend}/feed/user_post/create`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": String(
-                    document.cookie?.match(/csrftoken=([\w-]+)/)?.[1]
-                ),
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                text: "what's up baby"
-            }),
-        }).then((response) => {
-            // do something with response
-            console.log(response);
-        });
-    }
+function CommunityFeed({ postArray, profileArray, communityData, loadData }: CommunityFeedProps) {
+    useEffect(() => {
+        loadData();
+    },[])
     return <main className="w-full relative">
-        <Posts posts={feedPosts} loadData={loadData} />
-        <Link to="/home/post/create" className="w-14 h-14 bg-sky-500 rounded-full fixed right-4 bottom-4 flex justify-center items-center" >
+        <Posts posts={{
+            postArray: postArray,
+            profileArray: profileArray,
+            communityArray: [communityData],
+        }} loadData={loadData} />
+        <Link to={`/home/community/${communityData.id}/create`} className="w-14 h-14 bg-sky-500 rounded-full fixed right-4 bottom-4 flex justify-center items-center" >
             <AddIcon className="fill-slate-50"/>
         </Link>
     </main>

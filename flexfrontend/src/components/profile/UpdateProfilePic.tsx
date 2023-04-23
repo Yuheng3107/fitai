@@ -13,7 +13,7 @@ import { useAppDispatch } from '../../store/hooks';
 
 //utils import
 import cropImage from '../../utils/crop';
-import { getProfileData } from '../../utils/getData/getProfileData';
+import { getProfileData } from '../../utils/data/profile';
 
 //types import
 import { ProfileData, emptyProfileData } from '../../types/stateTypes';

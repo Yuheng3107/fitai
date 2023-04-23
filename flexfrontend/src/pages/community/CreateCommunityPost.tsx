@@ -12,14 +12,18 @@ import {
     IonButton,
     IonTitle,
 } from "@ionic/react";
+import { RouteComponentProps } from "react-router";
+
 import { closeOutline } from "ionicons/icons";
 import TextInput from "../../components/ui/TextInput";
-import { createUserPost } from '../../utils/data/posts';
+import { createCommunityPost } from '../../utils/data/posts';
 
 import { backend } from '../../App';
 
-
-function CreatePost() {
+interface CommunityDisplayProps extends RouteComponentProps<{
+    communityId: string;
+}> { }
+function CreateCommunityPost({ match }: CommunityDisplayProps) {
     const [postTitleInput, setPostTitleInput] = useState("");
     const [postTextInput, setPostTextInput] = useState("");
 
@@ -31,10 +35,10 @@ function CreatePost() {
                         <IonBackButton text="" icon={closeOutline}></IonBackButton>
                     </div>
                 </IonButtons>
-                <IonTitle>Create Post</IonTitle>
+                <IonTitle>Create Community Post</IonTitle>
                 <IonButtons slot="end">
-                    <IonButton className="mr-1 rounded-lg bg-sky-400 py-2 px-3 text-white"
-                        onClick={(event) => createUserPost(postTitleInput, postTextInput)}>
+                    <IonButton className="mr-1 rounded-lg bg-sky-400 text-white"
+                        onClick={(event) => createCommunityPost(Number(match.params.communityId), postTitleInput, postTextInput)} type="submit">
                         Post
                     </IonButton>
                 </IonButtons>
@@ -60,4 +64,4 @@ function CreatePost() {
     </IonPage>
 }
 
-export default CreatePost;
+export default CreateCommunityPost;
