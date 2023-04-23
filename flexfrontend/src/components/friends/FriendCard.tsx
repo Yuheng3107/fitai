@@ -33,7 +33,7 @@ function FriendCard({ profileId }:FriendCardProps) {
   
     return (
       <div className="border border-zinc-500 mt-4 p-2 flex flex-row justify-evenly items-center">
-        <IonRouterLink routerLink={`/profile/${profileData.id}`} routerDirection="forward">
+        <IonRouterLink routerLink={`/home/profile/${profileData.id}`} routerDirection="forward">
           <img
             alt="profile-picture"
             src={imageUrl}
@@ -41,7 +41,7 @@ function FriendCard({ profileId }:FriendCardProps) {
           />
         </IonRouterLink>
         <div className="ml-3 flex flex-row items-center">
-          <IonRouterLink routerLink={`/profile/${profileData.id}`} routerDirection="forward" id="username" className="font-semibold text-black">
+          <IonRouterLink routerLink={`/home/profile/${profileData.id}`} routerDirection="forward" id="username" className="font-semibold text-black">
             {profileData?.username}
           </IonRouterLink>
         </div>

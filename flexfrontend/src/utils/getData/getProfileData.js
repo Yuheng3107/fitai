@@ -1,4 +1,4 @@
-import { backend } from "../../App.tsx";
+import { backend } from "../../App";
 import { getExerciseRegimeAsync } from "./getExerciseData";
 import { invalidProfileData, emptyExerciseStats } from "../../types/stateTypes";
 
@@ -12,7 +12,6 @@ export const getProfileDataAsync = async function () {
         "Content-Type": "application/json",
         "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
       },
-      body: JSON.stringify(),
     })
     let data = await res.json();
     return data
@@ -32,6 +31,26 @@ export const getOtherProfileDataAsync = async function (pk) {
         "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
       },
       body: JSON.stringify(),
+    })
+    let data = await res.json();
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getManyOtherProfileDataAsync = async function (pks) {
+  try {
+    let res = await fetch(`${backend}/users/user/list`, {
+      method: "POST",
+      credentials: "include", // include cookies in the request
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+      },
+      body: JSON.stringify({
+        user_ids: pks
+      }),
     })
     let data = await res.json();
     return data

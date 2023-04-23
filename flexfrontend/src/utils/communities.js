@@ -1,18 +1,14 @@
-import { backend } from "../../App.tsx";
+import { backend } from "../App";
 
-export const getUserPostsAsync = async function (user_id, set_no) {
+export const getCommunityAsync = async function (pk) {
   try {
-    let res = await fetch(`${backend}/feed/user_post/latest`, {
-      method: "POST",
+    let res = await fetch(`${backend}/community/community/${pk}`, {
+      method: "GET",
       credentials: "include", // include cookies in the request
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
       },
-      body: JSON.stringify({
-        user_id: user_id,
-        set_no: set_no,
-      })
     })
     let data = await res.json();
     return data
@@ -21,9 +17,9 @@ export const getUserPostsAsync = async function (user_id, set_no) {
   }
 }
 
-export const getCommunityPostsAsync = async function (community_id, set_no) {
+export const getCommunityListAsync = async function (pks) {
   try {
-    let res = await fetch(`${backend}/feed/community_post/latest`, {
+    let res = await fetch(`${backend}/community/community/list`, {
       method: "POST",
       credentials: "include", // include cookies in the request
       headers: {
@@ -31,9 +27,8 @@ export const getCommunityPostsAsync = async function (community_id, set_no) {
         "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
       },
       body: JSON.stringify({
-        community_id: community_id,
-        set_no: set_no,
-      })
+        communities: pks,
+      }),
     })
     let data = await res.json();
     return data
@@ -42,9 +37,9 @@ export const getCommunityPostsAsync = async function (community_id, set_no) {
   }
 }
 
-export const getUserFeedAsync = async function (set_no) {
+export const joinCommunityAsync = async function (pk) {
   try {
-    let res = await fetch(`${backend}/feed/feed`, {
+    let res = await fetch(`${backend}/users/user/update/communities`, {
       method: "POST",
       credentials: "include", // include cookies in the request
       headers: {
@@ -52,14 +47,28 @@ export const getUserFeedAsync = async function (set_no) {
         "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
       },
       body: JSON.stringify({
-        set_no: set_no,
-      })
+        fk_list: [pk],
+      }),
     })
-    let data = await res.json();
-    data.sort( function(a,b) {
-      return new Date(b.posted_at) - new Date(a.posted_at);
-    });
-    return data
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const leaveCommunityAsync = async function (pk) {
+  try {
+    let res = await fetch(`${backend}/users/user/delete/communites/${pk}`, {
+      method: "DELETE",
+      credentials: "include", // include cookies in the request
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.cookie?.match(/csrftoken=([\w-]+)/)?.[1],
+      },
+    })
+    console.log(res);
+    return res;
   } catch (error) {
     console.log(error);
   }

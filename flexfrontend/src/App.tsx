@@ -117,7 +117,7 @@ const App: React.FC = () => {
               <Profile updateProfileState={updateProfileState} setUpdateProfileState={setUpdateProfileState} />
             </Route>
 
-            <Route exact path="/profile/:userId" render={(props) => {
+            <Route exact path="/home/profile/:userId" render={(props) => {
               return <OtherUserProfile {...props} />;
             }} />
             <Route exact path='/profile/create/'>

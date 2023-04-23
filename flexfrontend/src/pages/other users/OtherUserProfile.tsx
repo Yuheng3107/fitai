@@ -50,7 +50,7 @@ const OtherUserProfile: React.FC<OtherUserProfileProps> = ({ match }) => {
         loadAllProfileData();
         if (profileDataRedux.followers.includes(parseInt(match.params.userId))) setFriendStatus(2);
         if (profileDataRedux.sent_friend_requests.includes(parseInt(match.params.userId))) setFriendStatus(1);
-    },[friendStatus, setFriendStatus]);
+    },[friendStatus, setFriendStatus, profileDataRedux]);
 
     const loadAllProfileData = async () => {
         let data = await getAllProfileData(match.params.userId);
