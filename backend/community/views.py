@@ -187,4 +187,14 @@ class CommunitySearchView(APIView):
         for field in required_fields:
             if field not in request.data:
                 return Response(f"Please put {field} field in post request", status=status.HTTP_400_BAD_REQUEST)
-        qs = Community.objects.filter()
+        qs = Community.objects.annotate(
+            search=SearchVector("name", "description"),
+        ).filter(search=request.data["content"]).order_by('-member_count')
+        community_no = qs.count()
+        if community_no == 0:
+            return Response("No communities matching search terms found")
+        if community_no > 10:
+            # Get top 10 communities with most people if there are more than 10 communities matching search terms
+            qs = qs[:10]
+        serializer = CommunitySerializer(qs, many=True)
+        return Response(serializer.data)
