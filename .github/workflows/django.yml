@@ -41,3 +41,7 @@ jobs:
           cd ./backend
           pipenv run python manage.py check
           pipenv run python manage.py test
+      - name: Merge dev branch into prod
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: prod
