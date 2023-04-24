@@ -1,7 +1,0 @@
-{
-  "name": "flexfrontend",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react"
-}

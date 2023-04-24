@@ -1,3 +1,6 @@
 [submodule "backend"]
 	path = backend
 	url = git@github.com:Yuheng3107/flex-backend.git
+[submodule "flex-frontend"]
+	path = flex-frontend
+	url = git@github.com:Yuheng3107/flex-frontend.git
