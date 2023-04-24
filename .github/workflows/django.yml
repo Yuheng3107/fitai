@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Django CI Tests for dev branch
     runs-on: ubuntu-latest
     services:
       postgres:
