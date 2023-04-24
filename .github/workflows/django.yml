@@ -7,7 +7,7 @@ on:
     branches: ["dev"]
 
 jobs:
-  build:
+  django-tests-dev:
     name: Django CI Tests for dev branch
     runs-on: ubuntu-latest
     services:
