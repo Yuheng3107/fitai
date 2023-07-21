@@ -1,5 +1,5 @@
 # Flex Main Page
-
+This hosts the code used in the MVP for Flex, our startup where we aimed to use Machine Learning for real-time form correction. The repo was made public because the startup failed to take off due to lack of experience in prospecting the market.
 ## To use new repo
 
 run this `git config --global alias.clone-all 'clone --recurse-submodules'
